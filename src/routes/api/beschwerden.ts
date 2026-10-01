@@ -19,9 +19,9 @@ export const Route = createFileRoute("/api/beschwerden")({
         const body = await request.json().catch(() => null);
         const validation = validateComplaint(body);
         if (!validation.ok) return Response.json(validation, { status: 400 });
-        const { location, category, description, name, email, occurredAt, contactPhone } = validation.value;
+        const { location, category, description, name, email, occurredAt, contactPhone, priority } = validation.value;
         const reference = `GW-${new Date().toISOString().slice(0, 10).replaceAll("-", "")}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
-        await saveComplaint({ reference, createdAt: new Date().toISOString(), location, category, description, name, email, occurredAt, contactPhone });
+        await saveComplaint({ reference, createdAt: new Date().toISOString(), location, category, description, name, email, occurredAt, contactPhone, priority });
         return Response.json({ ok: true, reference }, { status: 201, headers: { "Cache-Control": "no-store" } });
       },
       PATCH: async ({ request }) => {

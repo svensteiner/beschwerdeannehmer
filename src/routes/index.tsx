@@ -47,6 +47,7 @@ function ComplaintHome() {
             <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-10000px", opacity: 0 }} />
             <label>Garage / Standort *<input name="location" required placeholder="z. B. Garage Hauptbahnhof" /></label>
             <label>Worum geht es? *<select name="category" required defaultValue=""><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkplatz oder Schranke</option><option>Abrechnung</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
+            <label>Dringlichkeit<select name="priority" defaultValue="normal"><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
             <div style={styles.grid}><label>Wann war der Vorfall?<input name="occurredAt" type="datetime-local" /></label><label>Telefon für Rückfragen<input name="contactPhone" type="tel" autoComplete="tel" /></label></div>
             <label>Ihre Schilderung *<textarea name="description" required minLength={20} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /></label>
             <div style={styles.grid}><label>Name *<input name="name" required /></label><label>E-Mail *<input name="email" type="email" required /></label></div>

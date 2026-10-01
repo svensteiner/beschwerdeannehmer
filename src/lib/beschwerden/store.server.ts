@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
+import type { ComplaintPriority } from "./validation";
 
 export type ComplaintStatus = "neu" | "in_pruefung" | "beantwortet" | "geschlossen";
 export type Complaint = {
@@ -12,6 +13,7 @@ export type Complaint = {
   email: string;
   occurredAt: string;
   contactPhone: string;
+  priority: ComplaintPriority;
   status: ComplaintStatus;
   response?: string;
 };
