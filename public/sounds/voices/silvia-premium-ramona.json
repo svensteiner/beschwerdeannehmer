@@ -1,0 +1,8 @@
+{
+  "model": "local-piper",
+  "voiceId": "ramona-low",
+  "configuredDefaultVoice": "ramona-low",
+  "localModel": "ramona-low.onnx",
+  "source": "lokal erzeugt im isolierten TTS-Testpfad",
+  "text": "Grüß Gott, hier ist Silvia von der Tierordination. Meine Hündin Bella braucht bitte einen Termin zur Kontrolle. Natürlich. Frisst und trinkt sie normal? Ja, alles wie immer. Das klingt beruhigend. Für eine genaue Einschätzung sprechen Sie bitte mit der Tierärztin. Am Mittwochvormittag wäre noch ein Termin möglich. Das passt gut. Ich halte Ihre Anfrage fest. Bitte bringen Sie den Impfpass mit. Auf Wiederhören und alles Gute für Bella."
+}

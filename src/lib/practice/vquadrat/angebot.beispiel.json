@@ -1,0 +1,26 @@
+{
+  "quelle": "tafel",
+  "host": "laptop",
+  "verbunden": false,
+  "grund": "notConnected",
+  "akte": {
+    "pet": "Bella",
+    "owner": "Frau Wallner",
+    "phone": "0316 73 59 40",
+    "email": "wallner@example.com",
+    "chip": null
+  },
+  "slot": {
+    "start": "2026-09-02T08:00:00+02:00",
+    "pet": "Bella",
+    "owner": "Frau Wallner",
+    "reason": "Kontrolle",
+    "status": "gelegt"
+  },
+  "kontakt": {
+    "owner": "Frau Wallner",
+    "phone": "0316 73 59 40",
+    "email": "wallner@example.com"
+  },
+  "vquadrat": null
+}

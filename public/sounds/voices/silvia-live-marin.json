@@ -1,0 +1,11 @@
+{
+  "model": "gpt-live-1",
+  "voice": "marin",
+  "generatedAt": "2026-09-10T17:58:24.368Z",
+  "transcript": "Grüß Gott, hier ist Silvia, die digitale Rezeption Ihrer Tierordination. Schön, dass Sie anrufen. Ob Sie einen Termin brauchen oder eine Frage haben: Erzählen Sie mir in Ruhe, worum es geht.",
+  "usage": {
+    "seconds": 28
+  },
+  "reason": "close_requested",
+  "audioSeconds": 27.92
+}

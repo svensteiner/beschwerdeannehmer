@@ -1,0 +1,19 @@
+# Dateien, die Cursor-KI (z. B. DeepSeek) nie lesen oder hochladen darf
+# Geheimnisse
+.env
+.env.*
+!.env.example
+
+# Praxisdaten und Datenbanken
+.silvia-data/
+.silvia-data.bak-*/
+*.FDB
+*.fdb
+
+# Grosse bzw. erzeugte Ordner
+node_modules/
+.output/
+artifacts/
+playwright-report/
+test-results/
+.tmp-*

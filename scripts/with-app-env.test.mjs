@@ -1,0 +1,183 @@
+import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
+import { mkdirSync, mkdtempSync, symlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { test } from "node:test";
+import { promisify } from "node:util";
+import {
+  APP_ENV_REL_PATH,
+  mergeAppEnv,
+  parseAppEnv,
+  projectRoot,
+  readAppEnv,
+  resolveSpawn,
+} from "./with-app-env.mjs";
+import { assertNoViteSecrets, viteSecretKeys } from "./vite-env-safety.mjs";
+
+const execFileAsync = promisify(execFile);
+const WRAPPER = join(projectRoot(), "scripts/with-app-env.mjs");
+const PRINT_FLAG = "process.stdout.write(String(process.env.VITE_AUTH_ENABLED));";
+
+function makeWorkspace(appEnvJson) {
+  const root = mkdtempSync(join(tmpdir(), "app-env-"));
+  if (appEnvJson !== undefined) {
+    mkdirSync(join(root, ".grok"), { recursive: true });
+    writeFileSync(join(root, APP_ENV_REL_PATH), appEnvJson);
+  }
+  return root;
+}
+
+test("starts vite through its local JS entry without a shell", () => {
+  const invocation = resolveSpawn("vite", ["build", "--mode", "development"]);
+  assert.equal(invocation.file, process.execPath);
+  assert.deepEqual(invocation.args, [
+    join(projectRoot(), "node_modules", "vite", "bin", "vite.js"),
+    "build",
+    "--mode",
+    "development",
+  ]);
+  assert.equal(invocation.shell, false);
+});
+
+test("keeps VITE_-prefixed string entries", () => {
+  assert.deepEqual(parseAppEnv('{"VITE_AUTH_ENABLED":"false"}'), {
+    VITE_AUTH_ENABLED: "false",
+  });
+});
+
+test("rejects secret-like browser variables without showing their values", () => {
+  assert.deepEqual(viteSecretKeys({ VITE_AUTH_ENABLED: "true", VITE_OPENAI_API_KEY: "hidden", VITE_APP_TOKEN: "hidden" }), [
+    "VITE_APP_TOKEN",
+    "VITE_OPENAI_API_KEY",
+  ]);
+  assert.throws(
+    () => assertNoViteSecrets({ VITE_OPENAI_API_KEY: "must-not-appear" }),
+    (error) => {
+      assert.match(String(error?.message ?? ""), /VITE_OPENAI_API_KEY/);
+      assert.doesNotMatch(String(error?.message ?? ""), /must-not-appear/);
+      return true;
+    },
+  );
+});
+
+test("drops non-VITE keys, non-string values and malformed documents", () => {
+  assert.deepEqual(parseAppEnv('{"DATABASE_URL":"postgres://x","VITE_N":1,"VITE_OK":"y"}'), {
+    VITE_OK: "y",
+  });
+  assert.deepEqual(parseAppEnv("not json"), {});
+  assert.deepEqual(parseAppEnv('["VITE_AUTH_ENABLED"]'), {});
+  assert.deepEqual(parseAppEnv("null"), {});
+});
+
+test("a missing app-env.json is a clean no-op", () => {
+  assert.deepEqual(readAppEnv(makeWorkspace()), {});
+});
+
+test("reads the app env from a workspace", () => {
+  const root = makeWorkspace('{"VITE_AUTH_ENABLED":"false"}');
+  assert.deepEqual(readAppEnv(root), { VITE_AUTH_ENABLED: "false" });
+});
+
+test("an explicit process-env override wins over the file", () => {
+  const merged = mergeAppEnv(
+    { VITE_AUTH_ENABLED: "false" },
+    { VITE_AUTH_ENABLED: "true", PATH: "/usr/bin" },
+  );
+  assert.equal(merged.VITE_AUTH_ENABLED, "true");
+  assert.equal(merged.PATH, "/usr/bin");
+});
+
+test("the template ships auth off", () => {
+  assert.deepEqual(readAppEnv(projectRoot()), { VITE_AUTH_ENABLED: "false" });
+});
+
+test("vite loadEnv resolves the wrapped value", () => {
+  // What `import.meta.env.VITE_AUTH_ENABLED` becomes: loadEnv prefix-matches
+  // process.env, so the wrapper's merge has to land before Vite starts.
+  // Do not `import { loadEnv } from "vite"` here — Vite 8 loads rolldown
+  // native bindings that SIGSEGV the test worker under qemu-user.
+  const root = makeWorkspace('{"VITE_AUTH_ENABLED":"false"}');
+  const merged = mergeAppEnv(readAppEnv(root), { PATH: "/usr/bin" });
+  assert.equal(merged.VITE_AUTH_ENABLED, "false");
+});
+
+test("the wrapped command runs with the app env applied", async () => {
+  const { stdout } = await execFileAsync(process.execPath, [
+    WRAPPER,
+    process.execPath,
+    "-e",
+    PRINT_FLAG,
+  ]);
+  assert.equal(stdout, "false");
+});
+
+test("the wrapped command sees an explicit override, not the file value", async () => {
+  const { stdout } = await execFileAsync(
+    process.execPath,
+    [WRAPPER, process.execPath, "-e", PRINT_FLAG],
+    { env: { ...process.env, VITE_AUTH_ENABLED: "true" } },
+  );
+  assert.equal(stdout, "true");
+});
+
+test("the wrapper stops before a secret-like browser variable reaches its child", async () => {
+  await assert.rejects(
+    execFileAsync(process.execPath, [WRAPPER, process.execPath, "-e", "process.stdout.write('child-ran')"], {
+      env: { ...process.env, VITE_OPENAI_API_KEY: "must-not-appear" },
+    }),
+    (error) => {
+      assert.notEqual(error.code, 0);
+      const output = `${error.stdout ?? ""}\n${error.stderr ?? ""}`;
+      assert.match(output, /VITE_OPENAI_API_KEY/);
+      assert.doesNotMatch(output, /must-not-appear|child-ran/);
+      return true;
+    },
+  );
+});
+
+test("the wrapper propagates the command's exit code", async () => {
+  await assert.rejects(
+    execFileAsync(process.execPath, [WRAPPER, process.execPath, "-e", "process.exit(3)"]),
+    (err) => err.code === 3,
+  );
+});
+
+test("a signal-killed command is never reported as success", async () => {
+  // The wrapper's own SIGTERM handler must not swallow the re-raised signal:
+  // a cancelled build reporting exit 0 is a silently passing gate.
+  await assert.rejects(
+    execFileAsync(process.execPath, [
+      WRAPPER,
+      process.execPath,
+      "-e",
+      "process.kill(process.pid, 'SIGTERM');setTimeout(() => {}, 1000);",
+    ]),
+    (err) => err.signal === "SIGTERM" || err.code !== 0,
+  );
+});
+
+test("the CLI still runs when invoked through a symlinked path", async (t) => {
+  // node realpaths import.meta.url but not process.argv[1], so a raw comparison
+  // turns the wrapper into a no-op that exits 0 without starting anything.
+  const link = join(mkdtempSync(join(tmpdir(), "app-env-link-")), "scripts");
+  try {
+    symlinkSync(join(projectRoot(), "scripts"), link);
+  } catch (err) {
+    // Windows without Developer Mode/admin rights denies symlink creation
+    // (EPERM) even for unprivileged users who can still run the real CLI —
+    // that's a sandbox limitation, not a regression in the CLI itself.
+    if (err.code === "EPERM") {
+      t.skip("symlinks need elevated privileges on this Windows host (EPERM)");
+      return;
+    }
+    throw err;
+  }
+  const { stdout } = await execFileAsync(process.execPath, [
+    join(link, "with-app-env.mjs"),
+    process.execPath,
+    "-e",
+    PRINT_FLAG,
+  ]);
+  assert.equal(stdout, "false");
+});

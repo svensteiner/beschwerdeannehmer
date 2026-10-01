@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  postgres-hoer-audit:
+    name: PostgreSQL-Hörprotokoll-Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Eigenständige, flüchtige Testdatenbank: keine Praxis- oder Geheimdaten.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: silvia_audit_test
+          POSTGRES_USER: silvia_audit
+          POSTGRES_PASSWORD: silvia_audit_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U silvia_audit -d silvia_audit_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit PostgreSQL hearing corrections
+        run: npm run audit:postgres-hoer
+        env:
+          HOER_AUDIT_DATABASE_URL: postgresql://silvia_audit:silvia_audit_only@127.0.0.1:5432/silvia_audit_test
+          HOER_AUDIT_REQUIRED: "1"
+
+      - name: Audit PostgreSQL practice facts
+        run: npm run audit:postgres-facts
+        env:
+          FACTS_AUDIT_DATABASE_URL: postgresql://silvia_audit:silvia_audit_only@127.0.0.1:5432/silvia_audit_test
+          FACTS_AUDIT_REQUIRED: "1"
+
+      - name: Audit PostgreSQL appointment slots
+        run: npm run audit:postgres-appointments
+        env:
+          APPOINTMENT_AUDIT_DATABASE_URL: postgresql://silvia_audit:silvia_audit_only@127.0.0.1:5432/silvia_audit_test
+          APPOINTMENT_AUDIT_REQUIRED: "1"
+
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit production dependencies
+        run: npm run audit:dependencies
+
+      - name: Install Chromium for browser audits
+        run: npx --no-install playwright install chromium
+
+      - name: Isolated browser release gate
+        run: npm run e2e:release-gate
+
+      - name: Run tests
+        run: npm test
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build public deployment
+        run: npm run build
+
+      # Der Tagesbetrieb ist ein eigener Nitro node-server Build. Der folgende
+      # Audit muss genau dieses Paket starten, nicht den Vercel-Ausgabeordner.
+      - name: Build local desk production
+        run: npm run build
+        env:
+          SILVIA_LOCAL_NITRO: "1"
+
+      - name: Production security smoke audit
+        run: npm run audit:production
+        env:
+          SPEECH_BODY_AUDIT: "1"
+          FILM_AUDIO_AUDIT: "1"
+
+      - name: Fresh installation audit
+        run: npm run audit:fresh-install
+
+      - name: Version switch audit
+        run: npm run audit:version-switch
+
+      - name: Appointment conversation audit
+        run: npm run audit:appointment
+
+      - name: Backup and restore audit
+        run: npm run audit:backup-restore
+
+      - name: Homepage audit
+        run: npm run audit:homepage
+
+      - name: Privacy audit
+        run: npm run audit:privacy
+
+      - name: Speech and authentication audit
+        run: npm run audit:auth-speech

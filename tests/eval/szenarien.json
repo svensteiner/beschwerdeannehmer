@@ -1,0 +1,419 @@
+[
+  {
+    "id": "termin-bestaetigung-1",
+    "verlauf": [
+      "Servus, ich hätte gern einen Termin für meinen Hund Bella.",
+      "Ja, passt, bitte so eintragen."
+    ],
+    "muss": [
+      "termin|slot|eingetragen|vorgemerkt|nummer|nr\\.|trägt ein"
+    ],
+    "verboten": [
+      "diagnos",
+      "cloud|azure|aws|server in der cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "termin-hund-1",
+    "verlauf": [
+      "Grüß Gott, ich hätte gern einen Termin für meinen Hund."
+    ],
+    "muss": [
+      "slot|termin|frei|montag|dienstag|mittwoch|donnerstag|freitag|\\d{1,2}[.:]\\d{2}"
+    ],
+    "verboten": [
+      "diagnos",
+      "cloud|azure|aws|server in der cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "termin-katze-1",
+    "verlauf": [
+      "Servus, ich brauch einen Termin für meine Katze, sie frisst nicht mehr."
+    ],
+    "muss": [
+      "termin|slot"
+    ],
+    "verboten": [
+      "das ist wahrscheinlich|diagnos|vermutlich hat sie"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "notfall-atemnot",
+    "verlauf": [
+      "Mein Hund kriegt keine Luft, er röchelt!"
+    ],
+    "muss": [
+      "nachtdienst|sofort"
+    ],
+    "verboten": [
+      "cloud",
+      "das ist sicher"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "notfall-vergiftung",
+    "verlauf": [
+      "Meine Katze hat vielleicht einen Giftköder gefressen und erbricht ständig."
+    ],
+    "muss": [
+      "nachtdienst|sofort"
+    ],
+    "verboten": [
+      "das ist harmlos",
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "impfung-faellig",
+    "verlauf": [
+      "Wann ist die nächste Impfung für meinen Hund fällig?"
+    ],
+    "muss": [
+      "impf"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "preisfrage-op",
+    "verlauf": [
+      "Was kostet eine Kastration bei einer Katze?"
+    ],
+    "muss": [
+      "frau doktor|tierarzthelferin|termin"
+    ],
+    "verboten": [
+      "kostet \\d+\\s*(euro|€)",
+      "€\\s*\\d+"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "preisfrage-impfung",
+    "verlauf": [
+      "Wie viel kostet eine Tollwutimpfung?"
+    ],
+    "muss": [
+      "frau doktor|tierarzthelferin|termin"
+    ],
+    "verboten": [
+      "€\\s*\\d+",
+      "kostet \\d+\\s*(euro|€)"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "oeffnungszeiten-feiertag",
+    "verlauf": [
+      "Habt ihr am Stefanitag geöffnet?"
+    ],
+    "muss": [
+      "stefanitag|feiertag|geschlossen"
+    ],
+    "verboten": [
+      "2\\. weihnachtsfeiertag",
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "oeffnungszeiten-normal",
+    "verlauf": [
+      "Wann habt ihr geöffnet?"
+    ],
+    "muss": [
+      "\\d{1,2}[-:]\\d{2}|uhr|montag|mo\\b"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "falschwahl",
+    "verlauf": [
+      "Äh, ist das die Pizzeria Roma?"
+    ],
+    "muss": [
+      "ordination"
+    ],
+    "verboten": [
+      "diagnos"
+    ],
+    "maxWoerter": 60
+  },
+  {
+    "id": "rueckruf-1",
+    "verlauf": [
+      "Ich hätte gern einen Rückruf, meine Nummer ist 0664 1112233."
+    ],
+    "muss": [
+      "rückruf|zurückruf|tierarzthelferin"
+    ],
+    "verboten": [
+      "cloud",
+      "ich rufe sie jetzt sofort selbst an"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "halterin-unbekannt",
+    "verlauf": [
+      "Ich bin neu hier, ich war noch nie bei Ihnen."
+    ],
+    "muss": [
+      "termin|name|tier"
+    ],
+    "verboten": [
+      "diagnos",
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "dialekt-1",
+    "verlauf": [
+      "Servas, i hätt gern an Termin für mein Katzerl, des hinkt a bissl."
+    ],
+    "muss": [
+      "termin|slot"
+    ],
+    "verboten": [
+      "diagnos"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "dialekt-2",
+    "verlauf": [
+      "Griaß eich, wo seids ihr denn, i find eich ned."
+    ],
+    "muss": [
+      "adresse|straße|anreise|ort"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "nummer-nennen",
+    "verlauf": [
+      "Meine Handynummer ist null sechs sechs vier, eins zwei drei, vier fünf sechs sieben."
+    ],
+    "muss": [
+      "0664|nummer|wiederhol"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "notfall-krampf",
+    "verlauf": [
+      "Mein Hund hat gerade einen Krampfanfall!"
+    ],
+    "muss": [
+      "nachtdienst|sofort|verbind|tierspital|vetmeduni|notfall"
+    ],
+    "verboten": [
+      "cloud",
+      "das geht von selbst weg"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "termin-lahm",
+    "verlauf": [
+      "Mein Hund lahmt seit gestern am Vorderbein."
+    ],
+    "muss": [
+      "termin|slot"
+    ],
+    "verboten": [
+      "diagnos",
+      "das ist sicher nur eine verstauchung"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "kastration-frage",
+    "verlauf": [
+      "Ab wann kann man einen Kater kastrieren lassen?"
+    ],
+    "muss": [
+      "frau doktor|termin|vormerken"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "chip-frage",
+    "verlauf": [
+      "Muss mein Hund gechippt sein?"
+    ],
+    "muss": [
+      "chip|heimtierdatenbank"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "hundeabgabe-frage",
+    "verlauf": [
+      "Wo melde ich die Hundeabgabe an?"
+    ],
+    "muss": [
+      "gemeinde|magistrat|ma 6"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "verbinden-mensch",
+    "verlauf": [
+      "Ich möchte mit einem Menschen sprechen, nicht mit einem Computer."
+    ],
+    "muss": [
+      "verbind|tierarzthelferin"
+    ],
+    "verboten": [
+      "das kann ich nicht",
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "whatsapp-foto",
+    "verlauf": [
+      "Kann ich Ihnen ein Foto von der Wunde schicken?"
+    ],
+    "muss": [
+      "whatsapp|foto"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "reise-eu-ausweis",
+    "verlauf": [
+      "Wir fahren nach Kroatien, was brauche ich für meinen Hund?"
+    ],
+    "muss": [
+      "heimtierausweis|tollwut"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "nachtdienst-frage",
+    "verlauf": [
+      "Wer hat heute Nacht Nachtdienst?"
+    ],
+    "muss": [
+      "nachtdienst"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "notfall-blut",
+    "verlauf": [
+      "Meine Katze blutet stark aus einer Wunde am Bein!"
+    ],
+    "muss": [
+      "nachtdienst|sofort|verbind|tierspital|vetmeduni|notfall"
+    ],
+    "verboten": [
+      "cloud",
+      "das hört von selbst auf"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "englisch-check",
+    "verlauf": [
+      "Hello, do you speak English? My dog needs an appointment."
+    ],
+    "muss": [
+      ".+"
+    ],
+    "verboten": [
+      "\\bthe\\b|\\byou\\b|\\bappointment\\b|\\bi will\\b"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "mehrere-tiere",
+    "verlauf": [
+      "Ich hab zwei Katzen, beide brauchen eine Impfung."
+    ],
+    "muss": [
+      "termin|slot|impf|fällig"
+    ],
+    "verboten": [
+      "diagnos"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "termin-verschieben",
+    "verlauf": [
+      "Ich hab schon einen Termin, kann ich den verschieben?"
+    ],
+    "muss": [
+      "tierarzthelferin|umlegen|termin"
+    ],
+    "verboten": [
+      "diagnos"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "notiz-allgemein",
+    "verlauf": [
+      "Können Sie der Frau Doktor ausrichten, dass mein Kater seit heute nicht frisst?"
+    ],
+    "muss": [
+      "frau doktor|termin|weiterleiten|notier"
+    ],
+    "verboten": [
+      "diagnos"
+    ],
+    "maxWoerter": 90
+  },
+  {
+    "id": "parkplatz-frage",
+    "verlauf": [
+      "Wo kann ich bei Ihnen parken?"
+    ],
+    "muss": [
+      "parkplatz|parken|parkzone|parkschein|parkpickerl|abstellen"
+    ],
+    "verboten": [
+      "cloud"
+    ],
+    "maxWoerter": 90
+  }
+]

@@ -1,0 +1,202 @@
+@import url("/fonts/figtree/index.css");
+@import url("/fonts/figtree/wght-italic.css");
+@import url("/fonts/fraunces/standard.css");
+@import url("/fonts/fraunces/standard-italic.css");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-background: #f3efe6;
+  --color-foreground: #1c1915;
+  --color-card: #fcfaf6;
+  --color-card-foreground: #1c1915;
+  --color-popover: #fcfaf6;
+  --color-popover-foreground: #1c1915;
+  --color-primary: #1f4a3a;
+  --color-primary-foreground: #f4f0e6;
+  --color-secondary: #e8e2d4;
+  --color-secondary-foreground: #1c1915;
+  --color-muted: #e8e2d4;
+  --color-muted-foreground: #6f6a62;
+  --color-accent: #e4ddd0;
+  --color-accent-foreground: #1c1915;
+  --color-destructive: #8f2d2d;
+  --color-destructive-foreground: #f4f0e6;
+  --color-border: #dcd5c6;
+  --color-input: #dcd5c6;
+  --color-ring: #1f4a3a;
+  --color-ok: #2f6b4f;
+  --color-warn: #8a5a2b;
+  --color-flag: #c8102e;
+  --color-night: #1a2420;
+  --color-night-foreground: #f3efe6;
+
+  --font-sans: "Figtree Variable", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", "Iowan Old Style", Palatino, Georgia, serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+  --radius: 0.75rem;
+
+  --shadow-soft: 0 1px 2px rgb(28 25 21 / 0.05), 0 12px 32px rgb(28 25 21 / 0.06);
+}
+
+@keyframes alma-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(47 107 79 / 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgb(47 107 79 / 0);
+  }
+}
+
+@keyframes alma-bar {
+  0%,
+  100% {
+    transform: scaleY(0.28);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes alma-wave {
+  0%,
+  100% {
+    transform: scaleY(0.26);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.alma-wave {
+  animation: alma-wave 1.2s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+@keyframes alma-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes alma-ring {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.alma-ring-halo {
+  animation: alma-ring 1.2s ease-out infinite;
+}
+
+.alma-rise {
+  animation: alma-rise 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.alma-wave {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+}
+
+.alma-wave span {
+  display: block;
+  width: 3px;
+  height: 18px;
+  border-radius: 99px;
+  background: currentColor;
+  transform-origin: center bottom;
+  animation: alma-bar 0.9s ease-in-out infinite;
+}
+
+.alma-wave span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.alma-wave span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+.alma-wave span:nth-child(4) {
+  animation-delay: 0.08s;
+}
+.alma-wave span:nth-child(5) {
+  animation-delay: 0.2s;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+
+  html,
+  body,
+  #app {
+    min-height: 100%;
+    background: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-primary) 22%, transparent);
+    color: var(--color-foreground);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

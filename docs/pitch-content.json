@@ -1,0 +1,46 @@
+{
+  "date": "14. September 2026",
+  "audience": "Gespräch mit Ordinationsleitungen und Pilotpartnern",
+  "slides": [
+    {
+      "title": "Silvia.\nEin herzliches Grüß Gott\nfür Ihre Ordination.",
+      "body": "Die digitale Empfangsassistentin für Tierordinationen in Österreich.",
+      "caption": "Produktvorstellung · Entwicklungsstand September 2026",
+      "notes": "Produktpositionierung, keine Zusage einer abgeschlossenen Markteinführung. Quelle: docs/SILVIA-SPEZIFIKATION.md."
+    },
+    {
+      "title": "Mehr Aufmerksamkeit\nfür Mensch und Tier.",
+      "body": "Während das Team vor Ort hilft, soll Silvia telefonische Anliegen freundlich aufnehmen und den nächsten Schritt vorbereiten.",
+      "caption": "Unser Ziel: den Empfang entlasten. Die tatsächliche Entlastung wird im Pilotbetrieb gemessen.",
+      "notes": "Nutzenhypothese, keine gemessene Zeitersparnis oder zugesicherte Erreichbarkeit. Quelle: docs/SILVIA-SPEZIFIKATION.md."
+    },
+    {
+      "title": "Ihre Ordination gibt den Ton an.",
+      "body": "Begrüßung, Öffnungszeiten und Hinweise aus dem Praxisalltag bilden die Grundlage für Silvias Antworten.",
+      "secondary": "Warm, weiblich klingend und österreichisch. Herzlich, sympathisch und mit einem kleinen Lächeln in der Stimme.",
+      "caption": "Ton und Verhalten: Speichern und Rollenbeschränkung lokal geprüft. Stimmabnahme offen.",
+      "notes": "Lokale Audits c60303e und c4cd596 prüfen das Speichern von Ton und Verhalten durch die Inhaberin, die unveränderte Anzeige nach Reload, die deaktivierte Kassa-Oberfläche und die serverseitige Zurückweisung eines echten savePracticeBehavior-Requests. Der Testanruf c4cd596 prüft zusätzlich den Testmodus ohne Praxistabellenänderung und einen lokalen Kontrolllauf. Stimmabnahme, echte Hardware und österreichischer Akzent bleiben offen. Quelle: docs/SILVIA-SPEZIFIKATION.md."
+    },
+    {
+      "title": "Zwei Varianten. Ein Anspruch.",
+      "body": "Silvia Premium\nLokaler Trainingsdialog und Hörprobe.",
+      "secondary": "Silvia Live\nGetrennter Hörtest mit gpt-live-1 und Marin. Nur mit erfundenen Inhalten.",
+      "caption": "Premium: Homepage-Audio und Bedienung lokal geprüft. Live: sicherer Teststart vorbereitet, echter Hörtest offen.",
+      "notes": "Premium verwendet eine lokale Gesprächskette. Lokale Browserprüfungen decken Auflegen, Unterbrechung, verspätete Antworten und den Abbruch vorgeladener Sprachstücke ab. Der getrennte Start `npm run live:sandbox -- --confirm-synthetic` erzwingt RAM-Daten, eine leere Datenbank und den lokalen Host. Er ruft OpenAI erst nach einer zweiten sichtbaren Browserbestätigung auf. Ein echter Provider- oder Hörtest mit gpt-live-1 und Marin fand noch nicht statt. Preise, Antwortzeit und Produktionsfreigabe sind offen. Quellen: docs/SILVIA-SPEZIFIKATION.md, docs/SILVIA_LIVE_DEMO.md, docs/PRODUKTIONSREIFE.md."
+    },
+    {
+      "title": "Vertrauen beginnt\nmit klaren Grenzen.",
+      "body": "Verbindliche Vorgabe: Echte Praxisdaten dürfen niemals an externe KI-Dienste gelangen.",
+      "secondary": "Die normale Gesprächskette blockiert externe Chat-, Sprach- und Proxyziele vor dem Versand. Datenfluss und Rechtsabnahme bleiben offen.",
+      "caption": "Vquadrat-Testkopie: lokal und lesend geprüft. Keine Termin-Schreibrechte.",
+      "notes": "Die verbindliche Vorgabe untersagt, echte Praxisdaten an externe KI-Dienste zu geben. Die normale Modelllaufzeit blockiert externe Chat-, STT- und TTS-Ziele sowie Proxys vor dem Versand. Der lokale, lesende Vquadrat-Pfad wurde gegen eine getrennte Testkopie geprüft: 11 von 11 erwarteten Tabellen und Spalten, Schreibflags 0, readOnly true und keine Termin-Schreibrechte. Datenfluss, Anbieteraufbewahrung und Rechtsabnahme bleiben offen. Quellen: docs/SILVIA-SPEZIFIKATION.md, docs/PRODUKTIONSREIFE.md."
+    },
+    {
+      "title": "Nächster Schritt: gemeinsame Abnahme",
+      "body": "Mit erfundenen Anliegen prüfen wir Klang, Gesprächsfluss und Unterbrechen.",
+      "secondary": "Silvia Live startet getrennt ohne Datenbank. Vquadrat bleibt lesend und abgekoppelt.",
+      "caption": "Der echte Hörtest braucht eine bewusste Freigabe. Datenschutz- und Praxissoftware-Abnahme bleiben offen.",
+      "notes": "Die lokale Vquadrat-Testkopie lief über Connector und flüchtige Silvia-Bridge ohne Schreibaufruf. Eine menschliche Oberflächen- und Feldfreigabe, Terminabläufe sowie eine externe PMS-Freigabe bleiben offen. Auch reale Mikrofon- und Akzenttests, Gesprächsqualität und Antwortzeit stehen aus. Der echte Cloud-Live-Test benötigt eine gesonderte Kostenfreigabe und ausschließlich erfundene Eingaben. GitHub Actions konnte die aktuellen Cloud-Prüfungen wegen eines Konto-Zahlungs- oder Ausgabenlimits nicht starten; die lokalen Nachweise bleiben davon getrennt. Quellen: docs/SILVIA-SPEZIFIKATION.md, docs/PRODUKTIONSREIFE.md."
+    }
+  ]
+}

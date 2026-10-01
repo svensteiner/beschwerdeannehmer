@@ -1,0 +1,255 @@
+/*
+ * iOS "Add to Home Screen" tutorial styles.
+ * Served for `?install=1&platform=ios` requests via server/middleware/grok-pwa.ts.
+ * The device class on <html> (device-phone | device-tablet | device-desktop,
+ * plus ios-27-plus | ios-below-27) is set by the inline script in install-page.html.
+ */
+
+:root {
+  color-scheme: dark;
+  --bg: #000000;
+  --fg: #f5f5f7;
+  --muted: #9a9aa2;
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --accent: #1f4a3a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.page {
+  min-height: 100svh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(24px, env(safe-area-inset-top)) 24px
+    max(24px, env(safe-area-inset-bottom));
+  gap: 24px;
+}
+
+/* Powered-by header */
+.powered {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+.powered-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.grok-logo {
+  display: block;
+}
+
+.powered-grok {
+  font-weight: 600;
+  color: var(--fg);
+}
+
+/* Main content blocks */
+.content,
+.content-desktop {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 28px;
+  margin: auto 0;
+}
+
+h1 {
+  font-size: clamp(24px, 6vw, 34px);
+  line-height: 1.15;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+/* Onboarding illustration */
+.ob {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.ob-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      120% 120% at 50% 0%,
+      rgba(31, 74, 58, 0.35),
+      rgba(0, 0, 0, 0) 60%
+    ),
+    linear-gradient(180deg, #14161a, #0b0c0e);
+  border: 1px solid var(--glass-border);
+}
+
+/* Steps */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  align-items: center;
+}
+
+.step {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.glass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glass--icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.glass--icon img {
+  display: block;
+}
+
+.add-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.plus-icon {
+  display: block;
+}
+
+/* Desktop fallback call to action */
+.desktop-note {
+  color: var(--muted);
+  font-size: 16px;
+  margin: 0;
+  max-width: 42ch;
+}
+
+.desktop-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: var(--fg);
+  color: #000;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.desktop-open:hover {
+  opacity: 0.88;
+}
+
+/*
+ * Device- and iOS-version-conditional visibility.
+ * Default everything hidden, then reveal the branch that matches <html>.
+ */
+.content,
+.content-desktop,
+.ob-phone,
+.ob-ipad,
+.loc-phone,
+.loc-ipad,
+.step-ios27,
+.step-ios-legacy {
+  display: none;
+}
+
+/* Touch devices: show the iOS tutorial, hide the desktop card. */
+.device-phone .content,
+.device-tablet .content {
+  display: flex;
+}
+
+.device-phone .ob-phone,
+.device-tablet .ob-ipad {
+  display: block;
+}
+
+.device-phone .loc-phone,
+.device-tablet .loc-ipad {
+  display: inline;
+}
+
+.device-phone .step,
+.device-tablet .step {
+  display: inline-flex;
+}
+
+/* iOS 27+ exposes the puzzle/extensions affordance; older iOS uses share only. */
+.ios-27-plus .step-ios27 {
+  display: inline-flex;
+}
+
+.ios-below-27 .step-ios-legacy {
+  display: inline-flex;
+}
+
+/* No detected iOS version: default to the modern flow. */
+.device-phone:not(.ios-27-plus):not(.ios-below-27) .step-ios27,
+.device-tablet:not(.ios-27-plus):not(.ios-below-27) .step-ios27 {
+  display: inline-flex;
+}
+
+/* Desktop (and anything non-touch): show the "open on your phone" card. */
+.device-desktop .content-desktop {
+  display: flex;
+}

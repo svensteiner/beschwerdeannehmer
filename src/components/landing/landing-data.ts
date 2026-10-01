@@ -1,0 +1,42 @@
+export const BOARD_ROWS = [
+  {
+    time: "03:12",
+    pet: "Bella",
+    owner: "Fam. Novak",
+    note: "Atemnot genannt – Hinweis auf den tierärztlichen Notdienst, fürs Team offen",
+    status: "Nachtdienst",
+    tone: "flag" as const,
+  },
+  {
+    time: "06:48",
+    pet: "Rudi",
+    owner: "Frau Leitner",
+    note: "Hustet seit früh – Termin heute 14:20, SMS-Entwurf bereit",
+    status: "Gebucht",
+    tone: "ok" as const,
+  },
+  {
+    time: "07:55",
+    pet: "Fritz",
+    owner: "Frau Leitner",
+    note: "Impfung fällig. Notiz aus der Akte: kommt nur in der Box",
+    status: "Gebucht",
+    tone: "ok" as const,
+  },
+  {
+    time: "12:31",
+    pet: "Mimi",
+    owner: "Herr Gruber",
+    note: "Mittagspause, WhatsApp: Frage zur Dosierung – wartet auf die Frau Doktor",
+    status: "Für Sie offen",
+    tone: "warn" as const,
+  },
+  {
+    time: "13:04",
+    pet: "Sammy",
+    owner: "Frau Aigner",
+    note: "Wollte Freitag – Mariä Empfängnis, kein Termin angeboten. Montag 9:10 vorgemerkt",
+    status: "Gebucht",
+    tone: "ok" as const,
+  },
+];
