@@ -19,3 +19,12 @@ test("Beschwerde-Speicher: ändert den Status kontrolliert", async () => {
     assert.equal(await updateComplaintStatus("GW-NICHT", "geschlossen"), null);
     delete process.env.GARAGEN_DATA_DIR; await rm(root, { recursive: true, force: true });
 });
+
+test("Beschwerde-Speicher: nimmt mehrere Vorgänge nacheinander an", async () => {
+    const root = await mkdtemp(join(tmpdir(), "garagen-")); process.env.GARAGEN_DATA_DIR = root;
+    const base = { createdAt: "2026-10-01T00:00:00.000Z", location: "Testgarage", category: "Sonstiges", description: "Eine ausreichend lange synthetische Beschwerde.", name: "Test", email: "test@example.invalid", occurredAt: "", contactPhone: "" };
+    await saveComplaint({ ...base, reference: "GW-TEST-3" });
+    await saveComplaint({ ...base, reference: "GW-TEST-4" });
+    assert.equal((await listComplaints()).length, 2);
+    delete process.env.GARAGEN_DATA_DIR; await rm(root, { recursive: true, force: true });
+});

@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 export type ComplaintStatus = "neu" | "in_pruefung" | "beantwortet" | "geschlossen";
@@ -33,9 +33,7 @@ export async function saveComplaint(input: Omit<Complaint, "status">): Promise<C
   const complaint: Complaint = { ...input, status: "neu" };
   const target = filePath();
   await mkdir(dirname(target), { recursive: true });
-  const temporary = `${target}.tmp-${process.pid}`;
-  await writeFile(temporary, JSON.stringify([complaint, ...current], null, 2), "utf8");
-  await rename(temporary, target);
+  await writeFile(target, JSON.stringify([complaint, ...current], null, 2), "utf8");
   return complaint;
 }
 
