@@ -10,65 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppRouteImport } from './routes/app'
-import { Route as AvvRouteImport } from './routes/avv'
 import { Route as BearbeitungRouteImport } from './routes/bearbeitung'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
-import { Route as DemoRouteImport } from './routes/demo'
-import { Route as HolenWartenRouteImport } from './routes/holen-warten'
 import { Route as ImpressumRouteImport } from './routes/impressum'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as PreiseRouteImport } from './routes/preise'
-import { Route as RegistrierenRouteImport } from './routes/registrieren'
-import { Route as SprechenRouteImport } from './routes/sprechen'
-import { Route as WerkzeugeRouteImport } from './routes/werkzeuge'
 import { Route as ApiBeschwerdenRouteImport } from './routes/api/beschwerden'
-import { Route as ApiPmsSyncRouteImport } from './routes/api/pms-sync'
-import { Route as ApiTafelBackupRouteImport } from './routes/api/tafel-backup'
-import { Route as ApiTafelHolenRouteImport } from './routes/api/tafel-holen'
-import { Route as AppIndexRouteImport } from './routes/app/index'
-import { Route as AppAkteRouteImport } from './routes/app/akte'
-import { Route as AppAnrufeRouteImport } from './routes/app/anrufe'
-import { Route as AppAuswertungRouteImport } from './routes/app/auswertung'
-import { Route as AppEinrichtungRouteImport } from './routes/app/einrichtung'
-import { Route as AppEinstellungenRouteImport } from './routes/app/einstellungen'
-import { Route as AppKalenderRouteImport } from './routes/app/kalender'
-import { Route as AppNachrichtenRouteImport } from './routes/app/nachrichten'
-import { Route as AppNotfallRouteImport } from './routes/app/notfall'
-import { Route as AppRueckrufeRouteImport } from './routes/app/rueckrufe'
-import { Route as AppStatusRouteImport } from './routes/app/status'
-import { Route as AppTrainingRouteImport } from './routes/app/training'
-import { Route as DemoIndexRouteImport } from './routes/demo/index'
-import { Route as DemoAkteRouteImport } from './routes/demo/akte'
-import { Route as DemoAnalyseRouteImport } from './routes/demo/analyse'
-import { Route as DemoAnrufeRouteImport } from './routes/demo/anrufe'
-import { Route as DemoKalenderRouteImport } from './routes/demo/kalender'
-import { Route as DemoNachrichtenRouteImport } from './routes/demo/nachrichten'
-import { Route as DemoNotfallRouteImport } from './routes/demo/notfall'
-import { Route as FilmAudioSlugRouteImport } from './routes/film-audio/$slug'
-import { Route as LeitungSlugRouteImport } from './routes/leitung/$slug'
-import { Route as ApiLiveDemoCloseRouteImport } from './routes/api/live-demo/close'
-import { Route as ApiLiveDemoCreateRouteImport } from './routes/api/live-demo/create'
-import { Route as ApiLiveDemoStatusRouteImport } from './routes/api/live-demo/status'
-import { Route as ApiLiveCreateRouteImport } from './routes/api/live/create'
-import { Route as ApiLiveStatusRouteImport } from './routes/api/live/status'
-import { Route as ApiStimmeHoerenRouteImport } from './routes/api/stimme/hoeren'
-import { Route as ApiStimmeSprechenRouteImport } from './routes/api/stimme/sprechen'
-import { Route as ApiTelefonAntwortRouteImport } from './routes/api/telefon/antwort'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AvvRoute = AvvRouteImport.update({
-  id: '/avv',
-  path: '/avv',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BearbeitungRoute = BearbeitungRouteImport.update({
@@ -81,44 +30,9 @@ const DatenschutzRoute = DatenschutzRouteImport.update({
   path: '/datenschutz',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoRoute = DemoRouteImport.update({
-  id: '/demo',
-  path: '/demo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HolenWartenRoute = HolenWartenRouteImport.update({
-  id: '/holen-warten',
-  path: '/holen-warten',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ImpressumRoute = ImpressumRouteImport.update({
   id: '/impressum',
   path: '/impressum',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PreiseRoute = PreiseRouteImport.update({
-  id: '/preise',
-  path: '/preise',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegistrierenRoute = RegistrierenRouteImport.update({
-  id: '/registrieren',
-  path: '/registrieren',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SprechenRoute = SprechenRouteImport.update({
-  id: '/sprechen',
-  path: '/sprechen',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const WerkzeugeRoute = WerkzeugeRouteImport.update({
-  id: '/werkzeuge',
-  path: '/werkzeuge',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBeschwerdenRoute = ApiBeschwerdenRouteImport.update({
@@ -126,483 +40,50 @@ const ApiBeschwerdenRoute = ApiBeschwerdenRouteImport.update({
   path: '/api/beschwerden',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPmsSyncRoute = ApiPmsSyncRouteImport.update({
-  id: '/api/pms-sync',
-  path: '/api/pms-sync',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiTafelBackupRoute = ApiTafelBackupRouteImport.update({
-  id: '/api/tafel-backup',
-  path: '/api/tafel-backup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiTafelHolenRoute = ApiTafelHolenRouteImport.update({
-  id: '/api/tafel-holen',
-  path: '/api/tafel-holen',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppIndexRoute = AppIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAkteRoute = AppAkteRouteImport.update({
-  id: '/akte',
-  path: '/akte',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAnrufeRoute = AppAnrufeRouteImport.update({
-  id: '/anrufe',
-  path: '/anrufe',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAuswertungRoute = AppAuswertungRouteImport.update({
-  id: '/auswertung',
-  path: '/auswertung',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppEinrichtungRoute = AppEinrichtungRouteImport.update({
-  id: '/einrichtung',
-  path: '/einrichtung',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppEinstellungenRoute = AppEinstellungenRouteImport.update({
-  id: '/einstellungen',
-  path: '/einstellungen',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppKalenderRoute = AppKalenderRouteImport.update({
-  id: '/kalender',
-  path: '/kalender',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppNachrichtenRoute = AppNachrichtenRouteImport.update({
-  id: '/nachrichten',
-  path: '/nachrichten',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppNotfallRoute = AppNotfallRouteImport.update({
-  id: '/notfall',
-  path: '/notfall',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppRueckrufeRoute = AppRueckrufeRouteImport.update({
-  id: '/rueckrufe',
-  path: '/rueckrufe',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppStatusRoute = AppStatusRouteImport.update({
-  id: '/status',
-  path: '/status',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppTrainingRoute = AppTrainingRouteImport.update({
-  id: '/training',
-  path: '/training',
-  getParentRoute: () => AppRoute,
-} as any)
-const DemoIndexRoute = DemoIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DemoRoute,
-} as any)
-const DemoAkteRoute = DemoAkteRouteImport.update({
-  id: '/akte',
-  path: '/akte',
-  getParentRoute: () => DemoRoute,
-} as any)
-const DemoAnalyseRoute = DemoAnalyseRouteImport.update({
-  id: '/analyse',
-  path: '/analyse',
-  getParentRoute: () => DemoRoute,
-} as any)
-const DemoAnrufeRoute = DemoAnrufeRouteImport.update({
-  id: '/anrufe',
-  path: '/anrufe',
-  getParentRoute: () => DemoRoute,
-} as any)
-const DemoKalenderRoute = DemoKalenderRouteImport.update({
-  id: '/kalender',
-  path: '/kalender',
-  getParentRoute: () => DemoRoute,
-} as any)
-const DemoNachrichtenRoute = DemoNachrichtenRouteImport.update({
-  id: '/nachrichten',
-  path: '/nachrichten',
-  getParentRoute: () => DemoRoute,
-} as any)
-const DemoNotfallRoute = DemoNotfallRouteImport.update({
-  id: '/notfall',
-  path: '/notfall',
-  getParentRoute: () => DemoRoute,
-} as any)
-const FilmAudioSlugRoute = FilmAudioSlugRouteImport.update({
-  id: '/film-audio/$slug',
-  path: '/film-audio/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LeitungSlugRoute = LeitungSlugRouteImport.update({
-  id: '/leitung/$slug',
-  path: '/leitung/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiLiveDemoCloseRoute = ApiLiveDemoCloseRouteImport.update({
-  id: '/api/live-demo/close',
-  path: '/api/live-demo/close',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiLiveDemoCreateRoute = ApiLiveDemoCreateRouteImport.update({
-  id: '/api/live-demo/create',
-  path: '/api/live-demo/create',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiLiveDemoStatusRoute = ApiLiveDemoStatusRouteImport.update({
-  id: '/api/live-demo/status',
-  path: '/api/live-demo/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiLiveCreateRoute = ApiLiveCreateRouteImport.update({
-  id: '/api/live/create',
-  path: '/api/live/create',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiLiveStatusRoute = ApiLiveStatusRouteImport.update({
-  id: '/api/live/status',
-  path: '/api/live/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiStimmeHoerenRoute = ApiStimmeHoerenRouteImport.update({
-  id: '/api/stimme/hoeren',
-  path: '/api/stimme/hoeren',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiStimmeSprechenRoute = ApiStimmeSprechenRouteImport.update({
-  id: '/api/stimme/sprechen',
-  path: '/api/stimme/sprechen',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiTelefonAntwortRoute = ApiTelefonAntwortRouteImport.update({
-  id: '/api/telefon/antwort',
-  path: '/api/telefon/antwort',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/app': typeof AppRouteWithChildren
-  '/avv': typeof AvvRoute
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
-  '/demo': typeof DemoRouteWithChildren
-  '/holen-warten': typeof HolenWartenRoute
   '/impressum': typeof ImpressumRoute
-  '/login': typeof LoginRoute
-  '/preise': typeof PreiseRoute
-  '/registrieren': typeof RegistrierenRoute
-  '/sprechen': typeof SprechenRoute
-  '/werkzeuge': typeof WerkzeugeRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
-  '/api/pms-sync': typeof ApiPmsSyncRoute
-  '/api/tafel-backup': typeof ApiTafelBackupRoute
-  '/api/tafel-holen': typeof ApiTafelHolenRoute
-  '/app/akte': typeof AppAkteRoute
-  '/app/anrufe': typeof AppAnrufeRoute
-  '/app/auswertung': typeof AppAuswertungRoute
-  '/app/einrichtung': typeof AppEinrichtungRoute
-  '/app/einstellungen': typeof AppEinstellungenRoute
-  '/app/kalender': typeof AppKalenderRoute
-  '/app/nachrichten': typeof AppNachrichtenRoute
-  '/app/notfall': typeof AppNotfallRoute
-  '/app/rueckrufe': typeof AppRueckrufeRoute
-  '/app/status': typeof AppStatusRoute
-  '/app/training': typeof AppTrainingRoute
-  '/demo/akte': typeof DemoAkteRoute
-  '/demo/analyse': typeof DemoAnalyseRoute
-  '/demo/anrufe': typeof DemoAnrufeRoute
-  '/demo/kalender': typeof DemoKalenderRoute
-  '/demo/nachrichten': typeof DemoNachrichtenRoute
-  '/demo/notfall': typeof DemoNotfallRoute
-  '/film-audio/$slug': typeof FilmAudioSlugRoute
-  '/leitung/$slug': typeof LeitungSlugRoute
-  '/app/': typeof AppIndexRoute
-  '/demo/': typeof DemoIndexRoute
-  '/api/live-demo/close': typeof ApiLiveDemoCloseRoute
-  '/api/live-demo/create': typeof ApiLiveDemoCreateRoute
-  '/api/live-demo/status': typeof ApiLiveDemoStatusRoute
-  '/api/live/create': typeof ApiLiveCreateRoute
-  '/api/live/status': typeof ApiLiveStatusRoute
-  '/api/stimme/hoeren': typeof ApiStimmeHoerenRoute
-  '/api/stimme/sprechen': typeof ApiStimmeSprechenRoute
-  '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/avv': typeof AvvRoute
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
-  '/holen-warten': typeof HolenWartenRoute
   '/impressum': typeof ImpressumRoute
-  '/login': typeof LoginRoute
-  '/preise': typeof PreiseRoute
-  '/registrieren': typeof RegistrierenRoute
-  '/sprechen': typeof SprechenRoute
-  '/werkzeuge': typeof WerkzeugeRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
-  '/api/pms-sync': typeof ApiPmsSyncRoute
-  '/api/tafel-backup': typeof ApiTafelBackupRoute
-  '/api/tafel-holen': typeof ApiTafelHolenRoute
-  '/app/akte': typeof AppAkteRoute
-  '/app/anrufe': typeof AppAnrufeRoute
-  '/app/auswertung': typeof AppAuswertungRoute
-  '/app/einrichtung': typeof AppEinrichtungRoute
-  '/app/einstellungen': typeof AppEinstellungenRoute
-  '/app/kalender': typeof AppKalenderRoute
-  '/app/nachrichten': typeof AppNachrichtenRoute
-  '/app/notfall': typeof AppNotfallRoute
-  '/app/rueckrufe': typeof AppRueckrufeRoute
-  '/app/status': typeof AppStatusRoute
-  '/app/training': typeof AppTrainingRoute
-  '/demo/akte': typeof DemoAkteRoute
-  '/demo/analyse': typeof DemoAnalyseRoute
-  '/demo/anrufe': typeof DemoAnrufeRoute
-  '/demo/kalender': typeof DemoKalenderRoute
-  '/demo/nachrichten': typeof DemoNachrichtenRoute
-  '/demo/notfall': typeof DemoNotfallRoute
-  '/film-audio/$slug': typeof FilmAudioSlugRoute
-  '/leitung/$slug': typeof LeitungSlugRoute
-  '/app': typeof AppIndexRoute
-  '/demo': typeof DemoIndexRoute
-  '/api/live-demo/close': typeof ApiLiveDemoCloseRoute
-  '/api/live-demo/create': typeof ApiLiveDemoCreateRoute
-  '/api/live-demo/status': typeof ApiLiveDemoStatusRoute
-  '/api/live/create': typeof ApiLiveCreateRoute
-  '/api/live/status': typeof ApiLiveStatusRoute
-  '/api/stimme/hoeren': typeof ApiStimmeHoerenRoute
-  '/api/stimme/sprechen': typeof ApiStimmeSprechenRoute
-  '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/app': typeof AppRouteWithChildren
-  '/avv': typeof AvvRoute
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
-  '/demo': typeof DemoRouteWithChildren
-  '/holen-warten': typeof HolenWartenRoute
   '/impressum': typeof ImpressumRoute
-  '/login': typeof LoginRoute
-  '/preise': typeof PreiseRoute
-  '/registrieren': typeof RegistrierenRoute
-  '/sprechen': typeof SprechenRoute
-  '/werkzeuge': typeof WerkzeugeRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
-  '/api/pms-sync': typeof ApiPmsSyncRoute
-  '/api/tafel-backup': typeof ApiTafelBackupRoute
-  '/api/tafel-holen': typeof ApiTafelHolenRoute
-  '/app/akte': typeof AppAkteRoute
-  '/app/anrufe': typeof AppAnrufeRoute
-  '/app/auswertung': typeof AppAuswertungRoute
-  '/app/einrichtung': typeof AppEinrichtungRoute
-  '/app/einstellungen': typeof AppEinstellungenRoute
-  '/app/kalender': typeof AppKalenderRoute
-  '/app/nachrichten': typeof AppNachrichtenRoute
-  '/app/notfall': typeof AppNotfallRoute
-  '/app/rueckrufe': typeof AppRueckrufeRoute
-  '/app/status': typeof AppStatusRoute
-  '/app/training': typeof AppTrainingRoute
-  '/demo/akte': typeof DemoAkteRoute
-  '/demo/analyse': typeof DemoAnalyseRoute
-  '/demo/anrufe': typeof DemoAnrufeRoute
-  '/demo/kalender': typeof DemoKalenderRoute
-  '/demo/nachrichten': typeof DemoNachrichtenRoute
-  '/demo/notfall': typeof DemoNotfallRoute
-  '/film-audio/$slug': typeof FilmAudioSlugRoute
-  '/leitung/$slug': typeof LeitungSlugRoute
-  '/app/': typeof AppIndexRoute
-  '/demo/': typeof DemoIndexRoute
-  '/api/live-demo/close': typeof ApiLiveDemoCloseRoute
-  '/api/live-demo/create': typeof ApiLiveDemoCreateRoute
-  '/api/live-demo/status': typeof ApiLiveDemoStatusRoute
-  '/api/live/create': typeof ApiLiveCreateRoute
-  '/api/live/status': typeof ApiLiveStatusRoute
-  '/api/stimme/hoeren': typeof ApiStimmeHoerenRoute
-  '/api/stimme/sprechen': typeof ApiStimmeSprechenRoute
-  '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/app'
-    | '/avv'
-    | '/bearbeitung'
-    | '/datenschutz'
-    | '/demo'
-    | '/holen-warten'
-    | '/impressum'
-    | '/login'
-    | '/preise'
-    | '/registrieren'
-    | '/sprechen'
-    | '/werkzeuge'
-    | '/api/beschwerden'
-    | '/api/pms-sync'
-    | '/api/tafel-backup'
-    | '/api/tafel-holen'
-    | '/app/akte'
-    | '/app/anrufe'
-    | '/app/auswertung'
-    | '/app/einrichtung'
-    | '/app/einstellungen'
-    | '/app/kalender'
-    | '/app/nachrichten'
-    | '/app/notfall'
-    | '/app/rueckrufe'
-    | '/app/status'
-    | '/app/training'
-    | '/demo/akte'
-    | '/demo/analyse'
-    | '/demo/anrufe'
-    | '/demo/kalender'
-    | '/demo/nachrichten'
-    | '/demo/notfall'
-    | '/film-audio/$slug'
-    | '/leitung/$slug'
-    | '/app/'
-    | '/demo/'
-    | '/api/live-demo/close'
-    | '/api/live-demo/create'
-    | '/api/live-demo/status'
-    | '/api/live/create'
-    | '/api/live/status'
-    | '/api/stimme/hoeren'
-    | '/api/stimme/sprechen'
-    | '/api/telefon/antwort'
+    '/' | '/bearbeitung' | '/datenschutz' | '/impressum' | '/api/beschwerden'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/avv'
-    | '/bearbeitung'
-    | '/datenschutz'
-    | '/holen-warten'
-    | '/impressum'
-    | '/login'
-    | '/preise'
-    | '/registrieren'
-    | '/sprechen'
-    | '/werkzeuge'
-    | '/api/beschwerden'
-    | '/api/pms-sync'
-    | '/api/tafel-backup'
-    | '/api/tafel-holen'
-    | '/app/akte'
-    | '/app/anrufe'
-    | '/app/auswertung'
-    | '/app/einrichtung'
-    | '/app/einstellungen'
-    | '/app/kalender'
-    | '/app/nachrichten'
-    | '/app/notfall'
-    | '/app/rueckrufe'
-    | '/app/status'
-    | '/app/training'
-    | '/demo/akte'
-    | '/demo/analyse'
-    | '/demo/anrufe'
-    | '/demo/kalender'
-    | '/demo/nachrichten'
-    | '/demo/notfall'
-    | '/film-audio/$slug'
-    | '/leitung/$slug'
-    | '/app'
-    | '/demo'
-    | '/api/live-demo/close'
-    | '/api/live-demo/create'
-    | '/api/live-demo/status'
-    | '/api/live/create'
-    | '/api/live/status'
-    | '/api/stimme/hoeren'
-    | '/api/stimme/sprechen'
-    | '/api/telefon/antwort'
+  to: '/' | '/bearbeitung' | '/datenschutz' | '/impressum' | '/api/beschwerden'
   id:
     | '__root__'
     | '/'
-    | '/app'
-    | '/avv'
     | '/bearbeitung'
     | '/datenschutz'
-    | '/demo'
-    | '/holen-warten'
     | '/impressum'
-    | '/login'
-    | '/preise'
-    | '/registrieren'
-    | '/sprechen'
-    | '/werkzeuge'
     | '/api/beschwerden'
-    | '/api/pms-sync'
-    | '/api/tafel-backup'
-    | '/api/tafel-holen'
-    | '/app/akte'
-    | '/app/anrufe'
-    | '/app/auswertung'
-    | '/app/einrichtung'
-    | '/app/einstellungen'
-    | '/app/kalender'
-    | '/app/nachrichten'
-    | '/app/notfall'
-    | '/app/rueckrufe'
-    | '/app/status'
-    | '/app/training'
-    | '/demo/akte'
-    | '/demo/analyse'
-    | '/demo/anrufe'
-    | '/demo/kalender'
-    | '/demo/nachrichten'
-    | '/demo/notfall'
-    | '/film-audio/$slug'
-    | '/leitung/$slug'
-    | '/app/'
-    | '/demo/'
-    | '/api/live-demo/close'
-    | '/api/live-demo/create'
-    | '/api/live-demo/status'
-    | '/api/live/create'
-    | '/api/live/status'
-    | '/api/stimme/hoeren'
-    | '/api/stimme/sprechen'
-    | '/api/telefon/antwort'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRouteWithChildren
-  AvvRoute: typeof AvvRoute
   BearbeitungRoute: typeof BearbeitungRoute
   DatenschutzRoute: typeof DatenschutzRoute
-  DemoRoute: typeof DemoRouteWithChildren
-  HolenWartenRoute: typeof HolenWartenRoute
   ImpressumRoute: typeof ImpressumRoute
-  LoginRoute: typeof LoginRoute
-  PreiseRoute: typeof PreiseRoute
-  RegistrierenRoute: typeof RegistrierenRoute
-  SprechenRoute: typeof SprechenRoute
-  WerkzeugeRoute: typeof WerkzeugeRoute
   ApiBeschwerdenRoute: typeof ApiBeschwerdenRoute
-  ApiPmsSyncRoute: typeof ApiPmsSyncRoute
-  ApiTafelBackupRoute: typeof ApiTafelBackupRoute
-  ApiTafelHolenRoute: typeof ApiTafelHolenRoute
-  FilmAudioSlugRoute: typeof FilmAudioSlugRoute
-  LeitungSlugRoute: typeof LeitungSlugRoute
-  ApiLiveDemoCloseRoute: typeof ApiLiveDemoCloseRoute
-  ApiLiveDemoCreateRoute: typeof ApiLiveDemoCreateRoute
-  ApiLiveDemoStatusRoute: typeof ApiLiveDemoStatusRoute
-  ApiLiveCreateRoute: typeof ApiLiveCreateRoute
-  ApiLiveStatusRoute: typeof ApiLiveStatusRoute
-  ApiStimmeHoerenRoute: typeof ApiStimmeHoerenRoute
-  ApiStimmeSprechenRoute: typeof ApiStimmeSprechenRoute
-  ApiTelefonAntwortRoute: typeof ApiTelefonAntwortRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -612,20 +93,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/avv': {
-      id: '/avv'
-      path: '/avv'
-      fullPath: '/avv'
-      preLoaderRoute: typeof AvvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bearbeitung': {
@@ -642,60 +109,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DatenschutzRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo': {
-      id: '/demo'
-      path: '/demo'
-      fullPath: '/demo'
-      preLoaderRoute: typeof DemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/holen-warten': {
-      id: '/holen-warten'
-      path: '/holen-warten'
-      fullPath: '/holen-warten'
-      preLoaderRoute: typeof HolenWartenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/impressum': {
       id: '/impressum'
       path: '/impressum'
       fullPath: '/impressum'
       preLoaderRoute: typeof ImpressumRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/preise': {
-      id: '/preise'
-      path: '/preise'
-      fullPath: '/preise'
-      preLoaderRoute: typeof PreiseRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/registrieren': {
-      id: '/registrieren'
-      path: '/registrieren'
-      fullPath: '/registrieren'
-      preLoaderRoute: typeof RegistrierenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sprechen': {
-      id: '/sprechen'
-      path: '/sprechen'
-      fullPath: '/sprechen'
-      preLoaderRoute: typeof SprechenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/werkzeuge': {
-      id: '/werkzeuge'
-      path: '/werkzeuge'
-      fullPath: '/werkzeuge'
-      preLoaderRoute: typeof WerkzeugeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/beschwerden': {
@@ -705,315 +123,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBeschwerdenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/pms-sync': {
-      id: '/api/pms-sync'
-      path: '/api/pms-sync'
-      fullPath: '/api/pms-sync'
-      preLoaderRoute: typeof ApiPmsSyncRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/tafel-backup': {
-      id: '/api/tafel-backup'
-      path: '/api/tafel-backup'
-      fullPath: '/api/tafel-backup'
-      preLoaderRoute: typeof ApiTafelBackupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/tafel-holen': {
-      id: '/api/tafel-holen'
-      path: '/api/tafel-holen'
-      fullPath: '/api/tafel-holen'
-      preLoaderRoute: typeof ApiTafelHolenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/app/': {
-      id: '/app/'
-      path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/akte': {
-      id: '/app/akte'
-      path: '/akte'
-      fullPath: '/app/akte'
-      preLoaderRoute: typeof AppAkteRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/anrufe': {
-      id: '/app/anrufe'
-      path: '/anrufe'
-      fullPath: '/app/anrufe'
-      preLoaderRoute: typeof AppAnrufeRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/auswertung': {
-      id: '/app/auswertung'
-      path: '/auswertung'
-      fullPath: '/app/auswertung'
-      preLoaderRoute: typeof AppAuswertungRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/einrichtung': {
-      id: '/app/einrichtung'
-      path: '/einrichtung'
-      fullPath: '/app/einrichtung'
-      preLoaderRoute: typeof AppEinrichtungRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/einstellungen': {
-      id: '/app/einstellungen'
-      path: '/einstellungen'
-      fullPath: '/app/einstellungen'
-      preLoaderRoute: typeof AppEinstellungenRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/kalender': {
-      id: '/app/kalender'
-      path: '/kalender'
-      fullPath: '/app/kalender'
-      preLoaderRoute: typeof AppKalenderRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/nachrichten': {
-      id: '/app/nachrichten'
-      path: '/nachrichten'
-      fullPath: '/app/nachrichten'
-      preLoaderRoute: typeof AppNachrichtenRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/notfall': {
-      id: '/app/notfall'
-      path: '/notfall'
-      fullPath: '/app/notfall'
-      preLoaderRoute: typeof AppNotfallRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/rueckrufe': {
-      id: '/app/rueckrufe'
-      path: '/rueckrufe'
-      fullPath: '/app/rueckrufe'
-      preLoaderRoute: typeof AppRueckrufeRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/status': {
-      id: '/app/status'
-      path: '/status'
-      fullPath: '/app/status'
-      preLoaderRoute: typeof AppStatusRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/training': {
-      id: '/app/training'
-      path: '/training'
-      fullPath: '/app/training'
-      preLoaderRoute: typeof AppTrainingRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/demo/': {
-      id: '/demo/'
-      path: '/'
-      fullPath: '/demo/'
-      preLoaderRoute: typeof DemoIndexRouteImport
-      parentRoute: typeof DemoRoute
-    }
-    '/demo/akte': {
-      id: '/demo/akte'
-      path: '/akte'
-      fullPath: '/demo/akte'
-      preLoaderRoute: typeof DemoAkteRouteImport
-      parentRoute: typeof DemoRoute
-    }
-    '/demo/analyse': {
-      id: '/demo/analyse'
-      path: '/analyse'
-      fullPath: '/demo/analyse'
-      preLoaderRoute: typeof DemoAnalyseRouteImport
-      parentRoute: typeof DemoRoute
-    }
-    '/demo/anrufe': {
-      id: '/demo/anrufe'
-      path: '/anrufe'
-      fullPath: '/demo/anrufe'
-      preLoaderRoute: typeof DemoAnrufeRouteImport
-      parentRoute: typeof DemoRoute
-    }
-    '/demo/kalender': {
-      id: '/demo/kalender'
-      path: '/kalender'
-      fullPath: '/demo/kalender'
-      preLoaderRoute: typeof DemoKalenderRouteImport
-      parentRoute: typeof DemoRoute
-    }
-    '/demo/nachrichten': {
-      id: '/demo/nachrichten'
-      path: '/nachrichten'
-      fullPath: '/demo/nachrichten'
-      preLoaderRoute: typeof DemoNachrichtenRouteImport
-      parentRoute: typeof DemoRoute
-    }
-    '/demo/notfall': {
-      id: '/demo/notfall'
-      path: '/notfall'
-      fullPath: '/demo/notfall'
-      preLoaderRoute: typeof DemoNotfallRouteImport
-      parentRoute: typeof DemoRoute
-    }
-    '/film-audio/$slug': {
-      id: '/film-audio/$slug'
-      path: '/film-audio/$slug'
-      fullPath: '/film-audio/$slug'
-      preLoaderRoute: typeof FilmAudioSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/leitung/$slug': {
-      id: '/leitung/$slug'
-      path: '/leitung/$slug'
-      fullPath: '/leitung/$slug'
-      preLoaderRoute: typeof LeitungSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/live-demo/close': {
-      id: '/api/live-demo/close'
-      path: '/api/live-demo/close'
-      fullPath: '/api/live-demo/close'
-      preLoaderRoute: typeof ApiLiveDemoCloseRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/live-demo/create': {
-      id: '/api/live-demo/create'
-      path: '/api/live-demo/create'
-      fullPath: '/api/live-demo/create'
-      preLoaderRoute: typeof ApiLiveDemoCreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/live-demo/status': {
-      id: '/api/live-demo/status'
-      path: '/api/live-demo/status'
-      fullPath: '/api/live-demo/status'
-      preLoaderRoute: typeof ApiLiveDemoStatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/live/create': {
-      id: '/api/live/create'
-      path: '/api/live/create'
-      fullPath: '/api/live/create'
-      preLoaderRoute: typeof ApiLiveCreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/live/status': {
-      id: '/api/live/status'
-      path: '/api/live/status'
-      fullPath: '/api/live/status'
-      preLoaderRoute: typeof ApiLiveStatusRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/stimme/hoeren': {
-      id: '/api/stimme/hoeren'
-      path: '/api/stimme/hoeren'
-      fullPath: '/api/stimme/hoeren'
-      preLoaderRoute: typeof ApiStimmeHoerenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/stimme/sprechen': {
-      id: '/api/stimme/sprechen'
-      path: '/api/stimme/sprechen'
-      fullPath: '/api/stimme/sprechen'
-      preLoaderRoute: typeof ApiStimmeSprechenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/telefon/antwort': {
-      id: '/api/telefon/antwort'
-      path: '/api/telefon/antwort'
-      fullPath: '/api/telefon/antwort'
-      preLoaderRoute: typeof ApiTelefonAntwortRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
-interface AppRouteChildren {
-  AppAkteRoute: typeof AppAkteRoute
-  AppAnrufeRoute: typeof AppAnrufeRoute
-  AppAuswertungRoute: typeof AppAuswertungRoute
-  AppEinrichtungRoute: typeof AppEinrichtungRoute
-  AppEinstellungenRoute: typeof AppEinstellungenRoute
-  AppKalenderRoute: typeof AppKalenderRoute
-  AppNachrichtenRoute: typeof AppNachrichtenRoute
-  AppNotfallRoute: typeof AppNotfallRoute
-  AppRueckrufeRoute: typeof AppRueckrufeRoute
-  AppStatusRoute: typeof AppStatusRoute
-  AppTrainingRoute: typeof AppTrainingRoute
-  AppIndexRoute: typeof AppIndexRoute
-}
-
-const AppRouteChildren: AppRouteChildren = {
-  AppAkteRoute: AppAkteRoute,
-  AppAnrufeRoute: AppAnrufeRoute,
-  AppAuswertungRoute: AppAuswertungRoute,
-  AppEinrichtungRoute: AppEinrichtungRoute,
-  AppEinstellungenRoute: AppEinstellungenRoute,
-  AppKalenderRoute: AppKalenderRoute,
-  AppNachrichtenRoute: AppNachrichtenRoute,
-  AppNotfallRoute: AppNotfallRoute,
-  AppRueckrufeRoute: AppRueckrufeRoute,
-  AppStatusRoute: AppStatusRoute,
-  AppTrainingRoute: AppTrainingRoute,
-  AppIndexRoute: AppIndexRoute,
-}
-
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
-
-interface DemoRouteChildren {
-  DemoAkteRoute: typeof DemoAkteRoute
-  DemoAnalyseRoute: typeof DemoAnalyseRoute
-  DemoAnrufeRoute: typeof DemoAnrufeRoute
-  DemoKalenderRoute: typeof DemoKalenderRoute
-  DemoNachrichtenRoute: typeof DemoNachrichtenRoute
-  DemoNotfallRoute: typeof DemoNotfallRoute
-  DemoIndexRoute: typeof DemoIndexRoute
-}
-
-const DemoRouteChildren: DemoRouteChildren = {
-  DemoAkteRoute: DemoAkteRoute,
-  DemoAnalyseRoute: DemoAnalyseRoute,
-  DemoAnrufeRoute: DemoAnrufeRoute,
-  DemoKalenderRoute: DemoKalenderRoute,
-  DemoNachrichtenRoute: DemoNachrichtenRoute,
-  DemoNotfallRoute: DemoNotfallRoute,
-  DemoIndexRoute: DemoIndexRoute,
-}
-
-const DemoRouteWithChildren = DemoRoute._addFileChildren(DemoRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AppRoute: AppRouteWithChildren,
-  AvvRoute: AvvRoute,
   BearbeitungRoute: BearbeitungRoute,
   DatenschutzRoute: DatenschutzRoute,
-  DemoRoute: DemoRouteWithChildren,
-  HolenWartenRoute: HolenWartenRoute,
   ImpressumRoute: ImpressumRoute,
-  LoginRoute: LoginRoute,
-  PreiseRoute: PreiseRoute,
-  RegistrierenRoute: RegistrierenRoute,
-  SprechenRoute: SprechenRoute,
-  WerkzeugeRoute: WerkzeugeRoute,
   ApiBeschwerdenRoute: ApiBeschwerdenRoute,
-  ApiPmsSyncRoute: ApiPmsSyncRoute,
-  ApiTafelBackupRoute: ApiTafelBackupRoute,
-  ApiTafelHolenRoute: ApiTafelHolenRoute,
-  FilmAudioSlugRoute: FilmAudioSlugRoute,
-  LeitungSlugRoute: LeitungSlugRoute,
-  ApiLiveDemoCloseRoute: ApiLiveDemoCloseRoute,
-  ApiLiveDemoCreateRoute: ApiLiveDemoCreateRoute,
-  ApiLiveDemoStatusRoute: ApiLiveDemoStatusRoute,
-  ApiLiveCreateRoute: ApiLiveCreateRoute,
-  ApiLiveStatusRoute: ApiLiveStatusRoute,
-  ApiStimmeHoerenRoute: ApiStimmeHoerenRoute,
-  ApiStimmeSprechenRoute: ApiStimmeSprechenRoute,
-  ApiTelefonAntwortRoute: ApiTelefonAntwortRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
