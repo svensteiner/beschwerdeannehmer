@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import type { ComplaintPriority } from "./validation";
 
 export type ComplaintStatus = "neu" | "in_pruefung" | "beantwortet" | "geschlossen";
+export type ComplaintHistoryEntry = { at: string; status: ComplaintStatus; response?: string };
 export type Complaint = {
   reference: string;
   createdAt: string;
@@ -16,6 +17,7 @@ export type Complaint = {
   priority: ComplaintPriority;
   status: ComplaintStatus;
   response?: string;
+  history: ComplaintHistoryEntry[];
 };
 
 function retentionDays() {
@@ -47,7 +49,7 @@ export async function listComplaints(): Promise<Complaint[]> {
 export async function saveComplaint(input: Omit<Complaint, "status">): Promise<Complaint> {
   const cutoff = Date.now() - retentionDays() * 24 * 60 * 60 * 1000;
   const current = (await listComplaints()).filter((item) => Date.parse(item.createdAt) >= cutoff);
-  const complaint: Complaint = { ...input, status: "neu" };
+  const complaint: Complaint = { ...input, status: "neu", history: [{ at: input.createdAt, status: "neu" }] };
   await persist([complaint, ...current]);
   return complaint;
 }
@@ -64,7 +66,9 @@ export async function updateComplaintStatus(reference: string, status: Complaint
   const current = await listComplaints();
   const index = current.findIndex((item) => item.reference === reference);
   if (index < 0) return null;
-  current[index] = { ...current[index], status, ...(response === undefined ? {} : { response }) };
+  const changedAt = new Date().toISOString();
+  const history = Array.isArray(current[index].history) ? current[index].history : [{ at: current[index].createdAt, status: "neu" as const }];
+  current[index] = { ...current[index], status, ...(response === undefined ? {} : { response }), history: [...history, { at: changedAt, status, ...(response === undefined ? {} : { response }) }] };
   await persist(current);
   return current[index];
 }
