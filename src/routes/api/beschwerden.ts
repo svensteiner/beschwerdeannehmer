@@ -10,7 +10,9 @@ export const Route = createFileRoute("/api/beschwerden")({
         const expected = process.env.GARAGEN_OPERATOR_KEY;
         if (!expected || request.headers.get("x-garagen-operator") !== expected) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
         await purgeExpiredComplaints();
-        return Response.json({ ok: true, complaints: await listComplaints() }, { headers: { "Cache-Control": "no-store" } });
+        const priorityWeight = { sicherheit: 0, dringend: 1, normal: 2 } as const;
+        const complaints = (await listComplaints()).sort((a, b) => (priorityWeight[a.priority] - priorityWeight[b.priority]) || (Date.parse(b.createdAt) - Date.parse(a.createdAt)));
+        return Response.json({ ok: true, complaints }, { headers: { "Cache-Control": "no-store" } });
       },
       POST: async ({ request }) => {
         if (!allowComplaintRequest(request)) return Response.json({ ok: false, error: "Zu viele Einsendungen. Bitte später erneut versuchen." }, { status: 429, headers: { "Retry-After": "600" } });
