@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { listComplaints, saveComplaint, updateComplaintStatus, type ComplaintStatus } from "@/lib/beschwerden/store.server";
 import { validateComplaint } from "@/lib/beschwerden/validation";
+import { allowComplaintRequest } from "@/lib/beschwerden/rate-limit.server";
 
 export const Route = createFileRoute("/api/beschwerden")({
   server: {
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/api/beschwerden")({
         return Response.json({ ok: true, complaints: await listComplaints() }, { headers: { "Cache-Control": "no-store" } });
       },
       POST: async ({ request }) => {
+        if (!allowComplaintRequest(request)) return Response.json({ ok: false, error: "Zu viele Einsendungen. Bitte später erneut versuchen." }, { status: 429, headers: { "Retry-After": "600" } });
         const body = await request.json().catch(() => null);
         const validation = validateComplaint(body);
         if (!validation.ok) return Response.json(validation, { status: 400 });
