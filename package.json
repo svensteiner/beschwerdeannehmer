@@ -38,7 +38,7 @@
     "audit:postgres-hoer": "tsx scripts/postgres-hoer-parallel-audit.ts",
     "audit:postgres-facts": "tsx scripts/postgres-practice-facts-parallel-audit.ts",
     "audit:postgres-appointments": "tsx scripts/postgres-appointment-slot-parallel-audit.ts",
-    "test": "node scripts/run-tests.mjs",
+    "test": "node --import tsx --test src/lib/beschwerden/*.test.ts",
     "verstehen:log": "node scripts/verstehen-log.mjs",
     "lint": "eslint .",
     "audit:dependencies": "npm audit --omit=dev",
