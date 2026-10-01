@@ -10,6 +10,8 @@ export type Complaint = {
   description: string;
   name: string;
   email: string;
+  occurredAt: string;
+  contactPhone: string;
   status: ComplaintStatus;
   response?: string;
 };
