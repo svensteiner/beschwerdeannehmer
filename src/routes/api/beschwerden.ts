@@ -24,7 +24,13 @@ export const Route = createFileRoute("/api/beschwerden")({
         const validation = validateComplaint(body);
         if (!validation.ok) return Response.json(validation, { status: 400 });
         const { location, category, description, name, email, occurredAt, contactPhone, priority } = validation.value;
-        const reference = `GW-${new Date().toISOString().slice(0, 10).replaceAll("-", "")}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+        const existing = new Set((await listComplaints()).map((item) => item.reference));
+        let reference = "";
+        for (let attempt = 0; attempt < 5; attempt += 1) {
+          const candidate = `GW-${new Date().toISOString().slice(0, 10).replaceAll("-", "")}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+          if (!existing.has(candidate)) { reference = candidate; break; }
+        }
+        if (!reference) return Response.json({ ok: false, error: "Keine eindeutige Vorgangsnummer verfügbar." }, { status: 503 });
         await saveComplaint({ reference, createdAt: new Date().toISOString(), location, category, description, name, email, occurredAt, contactPhone, priority });
         return Response.json({ ok: true, reference }, { status: 201, headers: { "Cache-Control": "no-store" } });
       },
