@@ -16,7 +16,9 @@ export const Route = createFileRoute("/api/beschwerden")({
         if (!allowComplaintRequest(request)) return Response.json({ ok: false, error: "Zu viele Einsendungen. Bitte später erneut versuchen." }, { status: 429, headers: { "Retry-After": "600" } });
         const declaredLength = Number(request.headers.get("content-length") ?? "0");
         if (Number.isFinite(declaredLength) && declaredLength > 64 * 1024) return Response.json({ ok: false, error: "Die Anfrage ist zu groß." }, { status: 413 });
-        const body = await request.json().catch(() => null);
+        const rawBody = await request.text().catch(() => "");
+        if (new TextEncoder().encode(rawBody).byteLength > 64 * 1024) return Response.json({ ok: false, error: "Die Anfrage ist zu groß." }, { status: 413 });
+        const body = (() => { try { return JSON.parse(rawBody); } catch { return null; } })();
         const validation = validateComplaint(body);
         if (!validation.ok) return Response.json(validation, { status: 400 });
         const { location, category, description, name, email, occurredAt, contactPhone, priority } = validation.value;
