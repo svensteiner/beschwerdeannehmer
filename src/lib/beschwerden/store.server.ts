@@ -34,8 +34,15 @@ let writeQueue: Promise<void> = Promise.resolve();
 async function persist(items: Complaint[]) {
   const target = filePath();
   await mkdir(dirname(target), { recursive: true });
-  writeQueue = writeQueue.catch(() => undefined).then(() => writeFile(target, JSON.stringify(items, null, 2), "utf8"));
-  await writeQueue;
+  await writeFile(target, JSON.stringify(items, null, 2), "utf8");
+}
+
+async function enqueueMutation<T>(mutation: () => Promise<T>): Promise<T> {
+  let result!: T;
+  const operation = writeQueue.catch(() => undefined).then(async () => { result = await mutation(); });
+  writeQueue = operation.then(() => undefined, () => undefined);
+  await operation;
+  return result;
 }
 
 export async function listComplaints(): Promise<Complaint[]> {
@@ -47,36 +54,44 @@ export async function listComplaints(): Promise<Complaint[]> {
 }
 
 export async function saveComplaint(input: Omit<Complaint, "status" | "history">): Promise<Complaint> {
-  const cutoff = Date.now() - retentionDays() * 24 * 60 * 60 * 1000;
-  const current = (await listComplaints()).filter((item) => Date.parse(item.createdAt) >= cutoff);
-  const complaint: Complaint = { ...input, status: "neu", history: [{ at: input.createdAt, status: "neu" }] };
-  await persist([complaint, ...current]);
-  return complaint;
+  return enqueueMutation(async () => {
+    const cutoff = Date.now() - retentionDays() * 24 * 60 * 60 * 1000;
+    const current = (await listComplaints()).filter((item) => Date.parse(item.createdAt) >= cutoff);
+    const complaint: Complaint = { ...input, status: "neu", history: [{ at: input.createdAt, status: "neu" }] };
+    await persist([complaint, ...current]);
+    return complaint;
+  });
 }
 
 export async function purgeExpiredComplaints(now = Date.now()) {
-  const cutoff = now - retentionDays() * 24 * 60 * 60 * 1000;
-  const current = await listComplaints();
-  const remaining = current.filter((item) => Date.parse(item.createdAt) >= cutoff);
-  if (remaining.length !== current.length) await persist(remaining);
-  return current.length - remaining.length;
+  return enqueueMutation(async () => {
+    const cutoff = now - retentionDays() * 24 * 60 * 60 * 1000;
+    const current = await listComplaints();
+    const remaining = current.filter((item) => Date.parse(item.createdAt) >= cutoff);
+    if (remaining.length !== current.length) await persist(remaining);
+    return current.length - remaining.length;
+  });
 }
 
 export async function updateComplaintStatus(reference: string, status: ComplaintStatus, response?: string) {
-  const current = await listComplaints();
-  const index = current.findIndex((item) => item.reference === reference);
-  if (index < 0) return null;
-  const changedAt = new Date().toISOString();
-  const history = Array.isArray(current[index].history) ? current[index].history : [{ at: current[index].createdAt, status: "neu" as const }];
-  current[index] = { ...current[index], status, ...(response === undefined ? {} : { response }), history: [...history, { at: changedAt, status, ...(response === undefined ? {} : { response }) }] };
-  await persist(current);
-  return current[index];
+  return enqueueMutation(async () => {
+    const current = await listComplaints();
+    const index = current.findIndex((item) => item.reference === reference);
+    if (index < 0) return null;
+    const changedAt = new Date().toISOString();
+    const history = Array.isArray(current[index].history) ? current[index].history : [{ at: current[index].createdAt, status: "neu" as const }];
+    current[index] = { ...current[index], status, ...(response === undefined ? {} : { response }), history: [...history, { at: changedAt, status, ...(response === undefined ? {} : { response }) }] };
+    await persist(current);
+    return current[index];
+  });
 }
 
 export async function deleteComplaint(reference: string) {
-  const current = await listComplaints();
-  const remaining = current.filter((item) => item.reference !== reference);
-  if (remaining.length === current.length) return false;
-  await persist(remaining);
-  return true;
+  return enqueueMutation(async () => {
+    const current = await listComplaints();
+    const remaining = current.filter((item) => item.reference !== reference);
+    if (remaining.length === current.length) return false;
+    await persist(remaining);
+    return true;
+  });
 }
