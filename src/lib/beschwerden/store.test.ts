@@ -1,0 +1,21 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { listComplaints, saveComplaint, updateComplaintStatus } from "./store.server";
+
+test("Beschwerde-Speicher: speichert neu und liest nach einem erneuten Laden", async () => {
+    const root = await mkdtemp(join(tmpdir(), "garagen-")); process.env.GARAGEN_DATA_DIR = root;
+    await saveComplaint({ reference: "GW-TEST-1", createdAt: "2026-10-01T00:00:00.000Z", location: "Testgarage", category: "Sonstiges", description: "Eine ausreichend lange synthetische Beschwerde.", name: "Test", email: "test@example.invalid" });
+    assert.equal((await listComplaints())[0].status, "neu");
+    delete process.env.GARAGEN_DATA_DIR; await rm(root, { recursive: true, force: true });
+});
+
+test("Beschwerde-Speicher: ändert den Status kontrolliert", async () => {
+    const root = await mkdtemp(join(tmpdir(), "garagen-")); process.env.GARAGEN_DATA_DIR = root;
+    await saveComplaint({ reference: "GW-TEST-2", createdAt: "2026-10-01T00:00:00.000Z", location: "Testgarage", category: "Abrechnung", description: "Eine ausreichend lange synthetische Beschwerde.", name: "Test", email: "test@example.invalid" });
+    assert.equal((await updateComplaintStatus("GW-TEST-2", "in_pruefung"))?.status, "in_pruefung");
+    assert.equal(await updateComplaintStatus("GW-NICHT", "geschlossen"), null);
+    delete process.env.GARAGEN_DATA_DIR; await rm(root, { recursive: true, force: true });
+});
