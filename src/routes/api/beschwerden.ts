@@ -3,13 +3,13 @@ import { deleteComplaint, listComplaints, purgeExpiredComplaints, saveComplaint,
 import { validateComplaint } from "@/lib/beschwerden/validation";
 import { allowComplaintRequest } from "@/lib/beschwerden/rate-limit.server";
 import { sortComplaintsForInbox } from "@/lib/beschwerden/inbox";
+import { hasOperatorKey } from "@/lib/beschwerden/operator-auth.server";
 
 export const Route = createFileRoute("/api/beschwerden")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const expected = process.env.GARAGEN_OPERATOR_KEY;
-        if (!expected || request.headers.get("x-garagen-operator") !== expected) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
+        if (!hasOperatorKey(request.headers.get("x-garagen-operator"))) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
         await purgeExpiredComplaints();
         const complaints = sortComplaintsForInbox(await listComplaints());
         return Response.json({ ok: true, complaints }, { headers: { "Cache-Control": "no-store" } });
@@ -29,8 +29,7 @@ export const Route = createFileRoute("/api/beschwerden")({
         return Response.json({ ok: true, reference }, { status: 201, headers: { "Cache-Control": "no-store" } });
       },
       PATCH: async ({ request }) => {
-        const expected = process.env.GARAGEN_OPERATOR_KEY;
-        if (!expected || request.headers.get("x-garagen-operator") !== expected) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
+        if (!hasOperatorKey(request.headers.get("x-garagen-operator"))) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
         const body = await request.json().catch(() => null) as { reference?: unknown; status?: unknown; response?: unknown } | null;
         const status = String(body?.status ?? "") as ComplaintStatus;
         const response = body?.response === undefined ? undefined : String(body.response).trim();
@@ -39,8 +38,7 @@ export const Route = createFileRoute("/api/beschwerden")({
         return complaint ? Response.json({ ok: true, complaint }) : Response.json({ ok: false, error: "Vorgang nicht gefunden." }, { status: 404 });
       },
       DELETE: async ({ request }) => {
-        const expected = process.env.GARAGEN_OPERATOR_KEY;
-        if (!expected || request.headers.get("x-garagen-operator") !== expected) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
+        if (!hasOperatorKey(request.headers.get("x-garagen-operator"))) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
         const body = await request.json().catch(() => null) as { reference?: unknown } | null;
         if (!body?.reference) return Response.json({ ok: false, error: "Vorgangsnummer fehlt." }, { status: 400 });
         return (await deleteComplaint(String(body.reference))) ? Response.json({ ok: true }) : Response.json({ ok: false, error: "Vorgang nicht gefunden." }, { status: 404 });
