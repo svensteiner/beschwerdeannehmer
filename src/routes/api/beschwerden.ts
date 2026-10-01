@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { deleteComplaint, listComplaints, saveComplaint, updateComplaintStatus, type ComplaintStatus } from "@/lib/beschwerden/store.server";
+import { deleteComplaint, listComplaints, purgeExpiredComplaints, saveComplaint, updateComplaintStatus, type ComplaintStatus } from "@/lib/beschwerden/store.server";
 import { validateComplaint } from "@/lib/beschwerden/validation";
 import { allowComplaintRequest } from "@/lib/beschwerden/rate-limit.server";
 
@@ -9,6 +9,7 @@ export const Route = createFileRoute("/api/beschwerden")({
       GET: async ({ request }) => {
         const expected = process.env.GARAGEN_OPERATOR_KEY;
         if (!expected || request.headers.get("x-garagen-operator") !== expected) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
+        await purgeExpiredComplaints();
         return Response.json({ ok: true, complaints: await listComplaints() }, { headers: { "Cache-Control": "no-store" } });
       },
       POST: async ({ request }) => {
