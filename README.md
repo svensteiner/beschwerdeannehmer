@@ -9,6 +9,7 @@ Abgeleitet aus Silvia: eine klare, sichere Annahme und Bearbeitung von Beschwerd
 - clientseitige Pflichtfeld- und Mindestlängenprüfung
 - keine Zahlungsdaten oder Passwörter im Formular
 - Erfolgsmeldung nach dem Absenden
+- Betreiberliste mit Sicherheits-/Dringlichkeitspriorisierung und Bearbeitungsverlauf
 
 ## Lokal starten
 
@@ -27,6 +28,8 @@ Die Anwendung läuft danach lokal. Vor einer öffentlichen Freigabe müssen Betr
 
 Die Vorgänge liegen standardmäßig im lokalen Ordner `.garagen-data`. Dieser Ordner gehört nicht ins Git-Repository.
 Die Standard-Aufbewahrung beträgt 180 Tage und kann mit `GARAGEN_RETENTION_DAYS` (1–3650 Tage) angepasst werden.
+
+Die öffentliche Anwendung enthält nur das Beschwerdeformular, den geschützten Betreiberbereich und die rechtlichen Informationsseiten. Alte Silvia-Routen und Sprach-/Praxis-APIs sind nicht Bestandteil dieses Projekts.
 
 ## Sicherheitsgrenze
 
