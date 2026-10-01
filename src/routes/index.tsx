@@ -10,16 +10,25 @@ function ComplaintHome() {
   const [reference, setReference] = useState("");
   const [error, setError] = useState("");
   const [description, setDescription] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
     setError("");
-    const form = new FormData(event.currentTarget);
-    const response = await fetch("/api/beschwerden", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(form)) });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) { setError(String(result.error ?? "Die Beschwerde konnte nicht angenommen werden.")); return; }
-    setReference(String(result.reference ?? ""));
-    setSent(true);
+    try {
+      const form = new FormData(event.currentTarget);
+      const response = await fetch("/api/beschwerden", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(form)) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) { setError(String(result.error ?? "Die Beschwerde konnte nicht angenommen werden.")); return; }
+      setReference(String(result.reference ?? ""));
+      setSent(true);
+    } catch {
+      setError("Die Verbindung war nicht verfügbar. Bitte versuchen Sie es erneut.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -53,7 +62,7 @@ function ComplaintHome() {
             <div style={styles.grid}><label>Name *<input name="name" required /></label><label>E-Mail *<input name="email" type="email" required /></label></div>
             <label style={styles.check}><input name="consent" value="yes" type="checkbox" required /> Ich stimme der Bearbeitung dieser Beschwerde zur Klärung des Vorgangs zu.</label>
             {error && <div role="alert" style={styles.error}>{error}</div>}
-            <button type="submit" style={styles.primary}>Beschwerde absenden</button>
+            <button type="submit" disabled={submitting} style={{ ...styles.primary, ...(submitting ? styles.disabled : {}) }}>{submitting ? "Wird übermittelt …" : "Beschwerde absenden"}</button>
           </form>
         )}
       </section>
@@ -79,5 +88,6 @@ const styles: Record<string, CSSProperties> = {
   check: { display: "flex", gap: 10, alignItems: "flex-start", fontSize: 14, color: "#53615c" },
   success: { marginTop: 28, padding: 20, background: "#e4f1e8", borderRadius: 14, lineHeight: 1.6 },
   error: { padding: 14, background: "#fbe8e5", color: "#8b2d21", borderRadius: 10 },
+  disabled: { opacity: 0.65, cursor: "wait" },
   footer: { padding: "28px 24px", textAlign: "center", color: "#68736e", fontSize: 13, borderTop: "1px solid #d9d4ca" },
 };
