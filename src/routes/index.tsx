@@ -54,12 +54,12 @@ function ComplaintHome() {
         ) : (
           <form onSubmit={submit} style={styles.form}>
             <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-10000px", opacity: 0 }} />
-            <label>Garage / Standort *<input name="location" required placeholder="z. B. Garage Hauptbahnhof" /></label>
+            <label>Garage / Standort *<input name="location" required maxLength={160} placeholder="z. B. Garage Hauptbahnhof" /></label>
             <label>Worum geht es? *<select name="category" required defaultValue=""><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkplatz oder Schranke</option><option>Abrechnung</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
             <label>Dringlichkeit<select name="priority" defaultValue="normal"><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
-            <div style={styles.grid}><label>Wann war der Vorfall?<input name="occurredAt" type="datetime-local" /></label><label>Telefon für Rückfragen<input name="contactPhone" type="tel" autoComplete="tel" /></label></div>
-            <label>Ihre Schilderung *<textarea name="description" required minLength={20} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /></label>
-            <div style={styles.grid}><label>Name *<input name="name" required /></label><label>E-Mail *<input name="email" type="email" required /></label></div>
+            <div style={styles.grid}><label>Wann war der Vorfall?<input name="occurredAt" type="datetime-local" /></label><label>Telefon für Rückfragen<input name="contactPhone" type="tel" maxLength={30} autoComplete="tel" /></label></div>
+            <label>Ihre Schilderung *<textarea name="description" required minLength={20} maxLength={5000} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /></label>
+            <div style={styles.grid}><label>Name *<input name="name" required maxLength={120} /></label><label>E-Mail *<input name="email" type="email" required maxLength={254} /></label></div>
             <label style={styles.check}><input name="consent" value="yes" type="checkbox" required /> Ich stimme der Bearbeitung dieser Beschwerde zur Klärung des Vorgangs zu.</label>
             {error && <div role="alert" style={styles.error}>{error}</div>}
             <button type="submit" disabled={submitting} style={{ ...styles.primary, ...(submitting ? styles.disabled : {}) }}>{submitting ? "Wird übermittelt …" : "Beschwerde absenden"}</button>
