@@ -14,6 +14,7 @@ import { Route as BearbeitungRouteImport } from './routes/bearbeitung'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as ApiBeschwerdenRouteImport } from './routes/api/beschwerden'
+import { Route as ApiGesundheitRouteImport } from './routes/api/gesundheit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const ApiBeschwerdenRoute = ApiBeschwerdenRouteImport.update({
   path: '/api/beschwerden',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGesundheitRoute = ApiGesundheitRouteImport.update({
+  id: '/api/gesundheit',
+  path: '/api/gesundheit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
+  '/api/gesundheit': typeof ApiGesundheitRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
+  '/api/gesundheit': typeof ApiGesundheitRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,25 @@ export interface FileRoutesById {
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
+  '/api/gesundheit': typeof ApiGesundheitRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/bearbeitung' | '/datenschutz' | '/impressum' | '/api/beschwerden'
+    | '/'
+    | '/bearbeitung'
+    | '/datenschutz'
+    | '/impressum'
+    | '/api/beschwerden'
+    | '/api/gesundheit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bearbeitung' | '/datenschutz' | '/impressum' | '/api/beschwerden'
+  to:
+    | '/'
+    | '/bearbeitung'
+    | '/datenschutz'
+    | '/impressum'
+    | '/api/beschwerden'
+    | '/api/gesundheit'
   id:
     | '__root__'
     | '/'
@@ -76,6 +96,7 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/impressum'
     | '/api/beschwerden'
+    | '/api/gesundheit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -84,6 +105,7 @@ export interface RootRouteChildren {
   DatenschutzRoute: typeof DatenschutzRoute
   ImpressumRoute: typeof ImpressumRoute
   ApiBeschwerdenRoute: typeof ApiBeschwerdenRoute
+  ApiGesundheitRoute: typeof ApiGesundheitRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -123,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBeschwerdenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/gesundheit': {
+      id: '/api/gesundheit'
+      path: '/api/gesundheit'
+      fullPath: '/api/gesundheit'
+      preLoaderRoute: typeof ApiGesundheitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -132,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   DatenschutzRoute: DatenschutzRoute,
   ImpressumRoute: ImpressumRoute,
   ApiBeschwerdenRoute: ApiBeschwerdenRoute,
+  ApiGesundheitRoute: ApiGesundheitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
