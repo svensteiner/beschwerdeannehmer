@@ -26,6 +26,7 @@ Die Anwendung läuft danach lokal. Vor einer öffentlichen Freigabe müssen Betr
 3. Schlüssel nur im Betreiber-Browser eingeben; er wird nicht gespeichert.
 
 Die Vorgänge liegen standardmäßig im lokalen Ordner `.garagen-data`. Dieser Ordner gehört nicht ins Git-Repository.
+Die Standard-Aufbewahrung beträgt 180 Tage und kann mit `GARAGEN_RETENTION_DAYS` (1–3650 Tage) angepasst werden.
 
 ## Sicherheitsgrenze
 

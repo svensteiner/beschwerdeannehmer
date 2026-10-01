@@ -16,6 +16,11 @@ export type Complaint = {
   response?: string;
 };
 
+function retentionDays() {
+  const configured = Number(process.env.GARAGEN_RETENTION_DAYS ?? "180");
+  return Number.isFinite(configured) && configured >= 1 && configured <= 3650 ? configured : 180;
+}
+
 function filePath() {
   return join(process.env.GARAGEN_DATA_DIR || join(process.cwd(), ".garagen-data"), "beschwerden.json");
 }
@@ -38,10 +43,19 @@ export async function listComplaints(): Promise<Complaint[]> {
 }
 
 export async function saveComplaint(input: Omit<Complaint, "status">): Promise<Complaint> {
-  const current = await listComplaints();
+  const cutoff = Date.now() - retentionDays() * 24 * 60 * 60 * 1000;
+  const current = (await listComplaints()).filter((item) => Date.parse(item.createdAt) >= cutoff);
   const complaint: Complaint = { ...input, status: "neu" };
   await persist([complaint, ...current]);
   return complaint;
+}
+
+export async function purgeExpiredComplaints(now = Date.now()) {
+  const cutoff = now - retentionDays() * 24 * 60 * 60 * 1000;
+  const current = await listComplaints();
+  const remaining = current.filter((item) => Date.parse(item.createdAt) >= cutoff);
+  if (remaining.length !== current.length) await persist(remaining);
+  return current.length - remaining.length;
 }
 
 export async function updateComplaintStatus(reference: string, status: ComplaintStatus, response?: string) {
