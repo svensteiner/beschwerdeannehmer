@@ -57,7 +57,7 @@ function ComplaintHome() {
           </form>
         )}
       </section>
-      <footer style={styles.footer}>GARAGENWÄCHTER · Beschwerdemanagement für Garagenbetreiber · <a href="/datenschutz">Datenschutz</a></footer>
+      <footer style={styles.footer}>GARAGENWÄCHTER · Beschwerdemanagement für Garagenbetreiber · <a href="/datenschutz">Datenschutz</a> · <a href="/impressum">Impressum</a></footer>
     </main>
   );
 }
