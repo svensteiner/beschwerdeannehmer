@@ -20,7 +20,6 @@ npm run dev
 
 Die Anwendung läuft danach lokal. Vor einer öffentlichen Freigabe müssen Betreiberangaben, E-Mail-Versand und Aufbewahrungsfristen noch festgelegt werden.
 Für den Produktionsstart wird `npm start` verwendet; die Betreiber-Konfiguration liegt in einer lokalen `.env`-Datei.
-`VITE_OPENAI_API_KEY` wird für diese beschwerdebezogene Anwendung nicht benötigt.
 Nach einem Update genügt `git pull` und anschließend ein Neustart mit `npm start`.
 
 ## Betreiberbereich
