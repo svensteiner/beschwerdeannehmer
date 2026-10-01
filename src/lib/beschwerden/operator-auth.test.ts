@@ -3,9 +3,11 @@ import assert from "node:assert/strict";
 import { hasOperatorKey } from "./operator-auth.server";
 
 test("Betreiber-Schlüssel akzeptiert nur exakte Übereinstimmung", () => {
-  assert.equal(hasOperatorKey("geheim", "geheim"), true);
-  assert.equal(hasOperatorKey("Geheim", "geheim"), false);
-  assert.equal(hasOperatorKey("geheim-extra", "geheim"), false);
-  assert.equal(hasOperatorKey(null, "geheim"), false);
+  const key = "geheim-operator-schluessel";
+  assert.equal(hasOperatorKey(key, key), true);
+  assert.equal(hasOperatorKey("Geheim-operator-schluessel", key), false);
+  assert.equal(hasOperatorKey(`${key}-extra`, key), false);
+  assert.equal(hasOperatorKey(null, key), false);
+  assert.equal(hasOperatorKey("kurz", "kurz"), false);
   assert.equal(hasOperatorKey("geheim", ""), false);
 });
