@@ -58,7 +58,7 @@ function ComplaintHome() {
             <label>Worum geht es? *<select name="category" required defaultValue=""><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkplatz oder Schranke</option><option>Abrechnung</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
             <label>Dringlichkeit<select name="priority" defaultValue="normal"><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
             <div style={styles.grid}><label>Wann war der Vorfall?<input name="occurredAt" type="datetime-local" /></label><label>Telefon für Rückfragen<input name="contactPhone" type="tel" maxLength={30} autoComplete="tel" /></label></div>
-            <label>Ihre Schilderung *<textarea name="description" required minLength={20} maxLength={5000} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /></label>
+            <label>Ihre Schilderung *<textarea name="description" required minLength={20} maxLength={5000} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /><small style={styles.counter}>{description.length}/5000 Zeichen</small></label>
             <div style={styles.grid}><label>Name *<input name="name" required maxLength={120} /></label><label>E-Mail *<input name="email" type="email" required maxLength={254} /></label></div>
             <label style={styles.check}><input name="consent" value="yes" type="checkbox" required /> Ich stimme der Bearbeitung dieser Beschwerde zur Klärung des Vorgangs zu.</label>
             {error && <div role="alert" style={styles.error}>{error}</div>}
@@ -89,5 +89,6 @@ const styles: Record<string, CSSProperties> = {
   success: { marginTop: 28, padding: 20, background: "#e4f1e8", borderRadius: 14, lineHeight: 1.6 },
   error: { padding: 14, background: "#fbe8e5", color: "#8b2d21", borderRadius: 10 },
   disabled: { opacity: 0.65, cursor: "wait" },
+  counter: { display: "block", marginTop: 4, color: "#68736e", textAlign: "right" },
   footer: { padding: "28px 24px", textAlign: "center", color: "#68736e", fontSize: 13, borderTop: "1px solid #d9d4ca" },
 };
