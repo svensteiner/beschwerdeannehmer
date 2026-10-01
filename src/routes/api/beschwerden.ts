@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { listComplaints, saveComplaint, updateComplaintStatus, type ComplaintStatus } from "@/lib/beschwerden/store.server";
+import { deleteComplaint, listComplaints, saveComplaint, updateComplaintStatus, type ComplaintStatus } from "@/lib/beschwerden/store.server";
 import { validateComplaint } from "@/lib/beschwerden/validation";
 import { allowComplaintRequest } from "@/lib/beschwerden/rate-limit.server";
 
@@ -32,6 +32,13 @@ export const Route = createFileRoute("/api/beschwerden")({
         if (!body?.reference || !["neu", "in_pruefung", "beantwortet", "geschlossen"].includes(status) || (response !== undefined && response.length > 5000)) return Response.json({ ok: false, error: "Ungültiger Status oder Antworttext." }, { status: 400 });
         const complaint = await updateComplaintStatus(String(body.reference), status, response);
         return complaint ? Response.json({ ok: true, complaint }) : Response.json({ ok: false, error: "Vorgang nicht gefunden." }, { status: 404 });
+      },
+      DELETE: async ({ request }) => {
+        const expected = process.env.GARAGEN_OPERATOR_KEY;
+        if (!expected || request.headers.get("x-garagen-operator") !== expected) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
+        const body = await request.json().catch(() => null) as { reference?: unknown } | null;
+        if (!body?.reference) return Response.json({ ok: false, error: "Vorgangsnummer fehlt." }, { status: 400 });
+        return (await deleteComplaint(String(body.reference))) ? Response.json({ ok: true }) : Response.json({ ok: false, error: "Vorgang nicht gefunden." }, { status: 404 });
       },
     },
   },

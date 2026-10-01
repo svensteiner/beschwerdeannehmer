@@ -66,3 +66,11 @@ export async function updateComplaintStatus(reference: string, status: Complaint
   await persist(current);
   return current[index];
 }
+
+export async function deleteComplaint(reference: string) {
+  const current = await listComplaints();
+  const remaining = current.filter((item) => item.reference !== reference);
+  if (remaining.length === current.length) return false;
+  await persist(remaining);
+  return true;
+}
