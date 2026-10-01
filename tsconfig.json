@@ -32,5 +32,14 @@
   "include": [
     "src",
     "server"
+  ],
+  "exclude": [
+    "src/components/app",
+    "src/components/demo",
+    "src/components/sprechen",
+    "src/components/desk",
+    "src/components/landing",
+    "src/components/layout",
+    "src/components/killers.tsx"
   ]
 }
