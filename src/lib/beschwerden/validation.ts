@@ -7,6 +7,7 @@ const limits = { location: 160, description: 5000, name: 120, email: 254 } as co
 export function validateComplaint(value: unknown): { ok: true; value: ComplaintInput } | { ok: false; error: string } {
   if (!value || typeof value !== "object") return { ok: false, error: "Ungültige Eingabe." };
   const input = value as Record<string, unknown>;
+  if (String(input.website ?? "").trim()) return { ok: false, error: "Ungültige Eingabe." };
   const result = { location: String(input.location ?? "").trim(), category: String(input.category ?? "").trim(), description: String(input.description ?? "").trim(), name: String(input.name ?? "").trim(), email: String(input.email ?? "").trim() };
   if (input.consent !== "yes" && input.consent !== true) return { ok: false, error: "Bitte der Bearbeitung zustimmen." };
   if (!result.location || result.location.length > limits.location) return { ok: false, error: "Bitte den Standort korrekt angeben." };

@@ -44,6 +44,7 @@ function ComplaintHome() {
           <div style={styles.success} role="status"><strong>Danke, Ihre Beschwerde ist eingegangen.</strong><br />Ihre Vorgangsnummer: <b>{reference}</b><br />Sie erhalten zusätzlich eine Bestätigung per E-Mail.</div>
         ) : (
           <form onSubmit={submit} style={styles.form}>
+            <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-10000px", opacity: 0 }} />
             <label>Garage / Standort *<input name="location" required placeholder="z. B. Garage Hauptbahnhof" /></label>
             <label>Worum geht es? *<select name="category" required defaultValue=""><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkplatz oder Schranke</option><option>Abrechnung</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
             <label>Ihre Schilderung *<textarea name="description" required minLength={20} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /></label>
