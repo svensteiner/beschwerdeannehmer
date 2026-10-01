@@ -17,7 +17,15 @@ npm install
 npm run dev
 ```
 
-Die Anwendung läuft danach lokal. Vor einer öffentlichen Freigabe fehlen noch der serverseitige Eingang mit Vorgangsnummer, Rollen für Betreiber/Mitarbeiter, E-Mail-Benachrichtigung und Datenschutz-/Aufbewahrungskonfiguration.
+Die Anwendung läuft danach lokal. Vor einer öffentlichen Freigabe müssen Betreiberangaben, E-Mail-Versand und Aufbewahrungsfristen noch festgelegt werden.
+
+## Betreiberbereich
+
+1. `.env.garage.example` nach `.env` übernehmen und einen langen eigenen `GARAGEN_OPERATOR_KEY` setzen.
+2. Anwendung starten und `/bearbeitung` öffnen.
+3. Schlüssel nur im Betreiber-Browser eingeben; er wird nicht gespeichert.
+
+Die Vorgänge liegen standardmäßig im lokalen Ordner `.garagen-data`. Dieser Ordner gehört nicht ins Git-Repository.
 
 ## Sicherheitsgrenze
 

@@ -6,6 +6,8 @@ dist
 .tanstack
 *.local
 .env
+.env.garage
+.garagen-data
 .silvia-data
 .claude/
 .silvia-data.bak-*/
