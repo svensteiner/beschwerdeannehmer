@@ -13,6 +13,8 @@ export const Route = createFileRoute("/api/beschwerden")({
       },
       POST: async ({ request }) => {
         if (!allowComplaintRequest(request)) return Response.json({ ok: false, error: "Zu viele Einsendungen. Bitte später erneut versuchen." }, { status: 429, headers: { "Retry-After": "600" } });
+        const declaredLength = Number(request.headers.get("content-length") ?? "0");
+        if (Number.isFinite(declaredLength) && declaredLength > 64 * 1024) return Response.json({ ok: false, error: "Die Anfrage ist zu groß." }, { status: 413 });
         const body = await request.json().catch(() => null);
         const validation = validateComplaint(body);
         if (!validation.ok) return Response.json(validation, { status: 400 });
