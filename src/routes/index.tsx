@@ -41,7 +41,7 @@ function ComplaintHome() {
           <p style={styles.muted}>Pflichtfelder sind mit * markiert. Bitte keine Zahlungsdaten oder Passwörter eintragen.</p>
         </div>
         {sent ? (
-          <div style={styles.success} role="status"><strong>Danke, Ihre Beschwerde ist eingegangen.</strong><br />Ihre Vorgangsnummer: <b>{reference}</b><br />Sie erhalten zusätzlich eine Bestätigung per E-Mail.</div>
+          <div style={styles.success} role="status"><strong>Danke, Ihre Beschwerde ist eingegangen.</strong><br />Ihre Vorgangsnummer: <b>{reference}</b><br />Bitte bewahren Sie diese Nummer für Rückfragen auf.</div>
         ) : (
           <form onSubmit={submit} style={styles.form}>
             <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-10000px", opacity: 0 }} />

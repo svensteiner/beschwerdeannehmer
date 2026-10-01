@@ -46,7 +46,7 @@ export async function listComplaints(): Promise<Complaint[]> {
   } catch { return []; }
 }
 
-export async function saveComplaint(input: Omit<Complaint, "status">): Promise<Complaint> {
+export async function saveComplaint(input: Omit<Complaint, "status" | "history">): Promise<Complaint> {
   const cutoff = Date.now() - retentionDays() * 24 * 60 * 60 * 1000;
   const current = (await listComplaints()).filter((item) => Date.parse(item.createdAt) >= cutoff);
   const complaint: Complaint = { ...input, status: "neu", history: [{ at: input.createdAt, status: "neu" }] };

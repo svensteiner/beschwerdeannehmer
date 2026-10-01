@@ -12,12 +12,12 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
+      { title: "Garagenwächter – Beschwerde melden" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Silvia – KI-Rezeption für österreichische Tierarztpraxen" },
       {
         name: "description",
         content:
-          "Silvia kennt ihre Katze wie ihre Westentasche. Und sie ist aus Österreich. KI-Rezeption für Ordinationen.",
+          "Garagenwächter nimmt Beschwerden von Garagenkunden strukturiert und nachvollziehbar entgegen.",
       },
       { name: "theme-color", content: "#1F4A3A" },
     ],
