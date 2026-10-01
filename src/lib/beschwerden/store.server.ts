@@ -11,6 +11,7 @@ export type Complaint = {
   name: string;
   email: string;
   status: ComplaintStatus;
+  response?: string;
 };
 
 function filePath() {
@@ -36,11 +37,11 @@ export async function saveComplaint(input: Omit<Complaint, "status">): Promise<C
   return complaint;
 }
 
-export async function updateComplaintStatus(reference: string, status: ComplaintStatus) {
+export async function updateComplaintStatus(reference: string, status: ComplaintStatus, response?: string) {
   const current = await listComplaints();
   const index = current.findIndex((item) => item.reference === reference);
   if (index < 0) return null;
-  current[index] = { ...current[index], status };
+  current[index] = { ...current[index], status, ...(response === undefined ? {} : { response }) };
   const target = filePath();
   await mkdir(dirname(target), { recursive: true });
   await writeFile(target, JSON.stringify(current, null, 2), "utf8");

@@ -22,10 +22,11 @@ export const Route = createFileRoute("/api/beschwerden")({
       PATCH: async ({ request }) => {
         const expected = process.env.GARAGEN_OPERATOR_KEY;
         if (!expected || request.headers.get("x-garagen-operator") !== expected) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
-        const body = await request.json().catch(() => null) as { reference?: unknown; status?: unknown } | null;
+        const body = await request.json().catch(() => null) as { reference?: unknown; status?: unknown; response?: unknown } | null;
         const status = String(body?.status ?? "") as ComplaintStatus;
-        if (!body?.reference || !["neu", "in_pruefung", "beantwortet", "geschlossen"].includes(status)) return Response.json({ ok: false, error: "Ungültiger Status." }, { status: 400 });
-        const complaint = await updateComplaintStatus(String(body.reference), status);
+        const response = body?.response === undefined ? undefined : String(body.response).trim();
+        if (!body?.reference || !["neu", "in_pruefung", "beantwortet", "geschlossen"].includes(status) || (response !== undefined && response.length > 5000)) return Response.json({ ok: false, error: "Ungültiger Status oder Antworttext." }, { status: 400 });
+        const complaint = await updateComplaintStatus(String(body.reference), status, response);
         return complaint ? Response.json({ ok: true, complaint }) : Response.json({ ok: false, error: "Vorgang nicht gefunden." }, { status: 404 });
       },
     },
