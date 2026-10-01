@@ -21,6 +21,7 @@ import { Route as PreiseRouteImport } from './routes/preise'
 import { Route as RegistrierenRouteImport } from './routes/registrieren'
 import { Route as SprechenRouteImport } from './routes/sprechen'
 import { Route as WerkzeugeRouteImport } from './routes/werkzeuge'
+import { Route as ApiBeschwerdenRouteImport } from './routes/api/beschwerden'
 import { Route as ApiPmsSyncRouteImport } from './routes/api/pms-sync'
 import { Route as ApiTafelBackupRouteImport } from './routes/api/tafel-backup'
 import { Route as ApiTafelHolenRouteImport } from './routes/api/tafel-holen'
@@ -112,6 +113,11 @@ const SprechenRoute = SprechenRouteImport.update({
 const WerkzeugeRoute = WerkzeugeRouteImport.update({
   id: '/werkzeuge',
   path: '/werkzeuge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBeschwerdenRoute = ApiBeschwerdenRouteImport.update({
+  id: '/api/beschwerden',
+  path: '/api/beschwerden',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPmsSyncRoute = ApiPmsSyncRouteImport.update({
@@ -288,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/registrieren': typeof RegistrierenRoute
   '/sprechen': typeof SprechenRoute
   '/werkzeuge': typeof WerkzeugeRoute
+  '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/pms-sync': typeof ApiPmsSyncRoute
   '/api/tafel-backup': typeof ApiTafelBackupRoute
   '/api/tafel-holen': typeof ApiTafelHolenRoute
@@ -332,6 +339,7 @@ export interface FileRoutesByTo {
   '/registrieren': typeof RegistrierenRoute
   '/sprechen': typeof SprechenRoute
   '/werkzeuge': typeof WerkzeugeRoute
+  '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/pms-sync': typeof ApiPmsSyncRoute
   '/api/tafel-backup': typeof ApiTafelBackupRoute
   '/api/tafel-holen': typeof ApiTafelHolenRoute
@@ -379,6 +387,7 @@ export interface FileRoutesById {
   '/registrieren': typeof RegistrierenRoute
   '/sprechen': typeof SprechenRoute
   '/werkzeuge': typeof WerkzeugeRoute
+  '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/pms-sync': typeof ApiPmsSyncRoute
   '/api/tafel-backup': typeof ApiTafelBackupRoute
   '/api/tafel-holen': typeof ApiTafelHolenRoute
@@ -427,6 +436,7 @@ export interface FileRouteTypes {
     | '/registrieren'
     | '/sprechen'
     | '/werkzeuge'
+    | '/api/beschwerden'
     | '/api/pms-sync'
     | '/api/tafel-backup'
     | '/api/tafel-holen'
@@ -471,6 +481,7 @@ export interface FileRouteTypes {
     | '/registrieren'
     | '/sprechen'
     | '/werkzeuge'
+    | '/api/beschwerden'
     | '/api/pms-sync'
     | '/api/tafel-backup'
     | '/api/tafel-holen'
@@ -517,6 +528,7 @@ export interface FileRouteTypes {
     | '/registrieren'
     | '/sprechen'
     | '/werkzeuge'
+    | '/api/beschwerden'
     | '/api/pms-sync'
     | '/api/tafel-backup'
     | '/api/tafel-holen'
@@ -564,6 +576,7 @@ export interface RootRouteChildren {
   RegistrierenRoute: typeof RegistrierenRoute
   SprechenRoute: typeof SprechenRoute
   WerkzeugeRoute: typeof WerkzeugeRoute
+  ApiBeschwerdenRoute: typeof ApiBeschwerdenRoute
   ApiPmsSyncRoute: typeof ApiPmsSyncRoute
   ApiTafelBackupRoute: typeof ApiTafelBackupRoute
   ApiTafelHolenRoute: typeof ApiTafelHolenRoute
@@ -663,6 +676,13 @@ declare module '@tanstack/react-router' {
       path: '/werkzeuge'
       fullPath: '/werkzeuge'
       preLoaderRoute: typeof WerkzeugeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/beschwerden': {
+      id: '/api/beschwerden'
+      path: '/api/beschwerden'
+      fullPath: '/api/beschwerden'
+      preLoaderRoute: typeof ApiBeschwerdenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/pms-sync': {
@@ -959,6 +979,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegistrierenRoute: RegistrierenRoute,
   SprechenRoute: SprechenRoute,
   WerkzeugeRoute: WerkzeugeRoute,
+  ApiBeschwerdenRoute: ApiBeschwerdenRoute,
   ApiPmsSyncRoute: ApiPmsSyncRoute,
   ApiTafelBackupRoute: ApiTafelBackupRoute,
   ApiTafelHolenRoute: ApiTafelHolenRoute,

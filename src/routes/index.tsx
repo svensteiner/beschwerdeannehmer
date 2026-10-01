@@ -7,10 +7,18 @@ export const Route = createFileRoute("/")({
 
 function ComplaintHome() {
   const [sent, setSent] = useState(false);
+  const [reference, setReference] = useState("");
+  const [error, setError] = useState("");
   const [description, setDescription] = useState("");
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setError("");
+    const form = new FormData(event.currentTarget);
+    const response = await fetch("/api/beschwerden", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(form)) });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) { setError(String(result.error ?? "Die Beschwerde konnte nicht angenommen werden.")); return; }
+    setReference(String(result.reference ?? ""));
     setSent(true);
   }
 
@@ -33,7 +41,7 @@ function ComplaintHome() {
           <p style={styles.muted}>Pflichtfelder sind mit * markiert. Bitte keine Zahlungsdaten oder Passwörter eintragen.</p>
         </div>
         {sent ? (
-          <div style={styles.success} role="status"><strong>Danke, Ihre Beschwerde ist eingegangen.</strong><br />Sie erhalten eine Bestätigung und eine Vorgangsnummer per E-Mail.</div>
+          <div style={styles.success} role="status"><strong>Danke, Ihre Beschwerde ist eingegangen.</strong><br />Ihre Vorgangsnummer: <b>{reference}</b><br />Sie erhalten zusätzlich eine Bestätigung per E-Mail.</div>
         ) : (
           <form onSubmit={submit} style={styles.form}>
             <label>Garage / Standort *<input name="location" required placeholder="z. B. Garage Hauptbahnhof" /></label>
@@ -41,6 +49,7 @@ function ComplaintHome() {
             <label>Ihre Schilderung *<textarea name="description" required minLength={20} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /></label>
             <div style={styles.grid}><label>Name *<input name="name" required /></label><label>E-Mail *<input name="email" type="email" required /></label></div>
             <label style={styles.check}><input type="checkbox" required /> Ich stimme der Bearbeitung dieser Beschwerde zur Klärung des Vorgangs zu.</label>
+            {error && <div role="alert" style={styles.error}>{error}</div>}
             <button type="submit" style={styles.primary}>Beschwerde absenden</button>
           </form>
         )}
@@ -66,5 +75,6 @@ const styles: Record<string, CSSProperties> = {
   grid: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 18 },
   check: { display: "flex", gap: 10, alignItems: "flex-start", fontSize: 14, color: "#53615c" },
   success: { marginTop: 28, padding: 20, background: "#e4f1e8", borderRadius: 14, lineHeight: 1.6 },
+  error: { padding: 14, background: "#fbe8e5", color: "#8b2d21", borderRadius: 10 },
   footer: { padding: "28px 24px", textAlign: "center", color: "#68736e", fontSize: 13, borderTop: "1px solid #d9d4ca" },
 };
