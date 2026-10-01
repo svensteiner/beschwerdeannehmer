@@ -1,49 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteShell } from "@/components/layout/site-footer";
-import { COMPANY } from "@/lib/alma/data";
-import { loadTafelAnzeigeFlag } from "@/lib/practice/holen-login-fn";
-import {
-  DATENSCHUTZ_WA,
-  DESK_DATENSCHUTZ_ID,
-  DESK_DATENSCHUTZ_STORE_ID,
-  datenschutzStore,
-} from "@/lib/practice/desk-legal";
 
-export const Route = createFileRoute("/datenschutz")({
-  loader: async () => ({ anzeige: await loadTafelAnzeigeFlag() }),
-  component: DatenschutzPage,
-});
+export const Route = createFileRoute("/datenschutz")({ component: PrivacyPage });
 
-function DatenschutzPage() {
-  const { anzeige } = Route.useLoaderData();
-  return (
-    <SiteShell anzeige={anzeige}>
-      <main id={DESK_DATENSCHUTZ_ID} className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-        <h1 className="font-display text-4xl font-semibold">Datenschutz</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          DSGVO und österreichisches Datenschutzgesetz (DSG).
-        </p>
-        <div className="mt-8 space-y-6 text-sm leading-relaxed text-muted-foreground">
-          <p>
-            Verantwortliche Stelle ist die {COMPANY.name}, {COMPANY.street}, {COMPANY.zip}{" "}
-            {COMPANY.city}, {COMPANY.email}.
-          </p>
-          <p>
-            Silvia verarbeitet Gesprächs- und Chatprotokolle im Auftrag der jeweiligen Ordination
-            (Art. 28 DSGVO). Rechtsgrundlage gegenüber Endkundinnen ist der Vertrag mit der
-            Ordination (Art. 6 Abs. 1 lit. b) sowie berechtigte Interessen an Erreichbarkeit und
-            Dokumentation (lit. f). Gesundheitsdaten im engeren Sinn werden nicht diagnostisch
-            ausgewertet.
-          </p>
-          <p>{DATENSCHUTZ_WA}</p>
-          <p>
-            Sie haben Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und
-            Widerspruch. Beschwerde: Österreichische Datenschutzbehörde, Barichgasse 40–42, 1030
-            Wien.
-          </p>
-          <p id={DESK_DATENSCHUTZ_STORE_ID}>{datenschutzStore(anzeige)}</p>
-        </div>
-      </main>
-    </SiteShell>
-  );
+function PrivacyPage() {
+  return <main className="mx-auto max-w-2xl px-6 py-16"><a href="/">← Zurück</a><h1 className="mt-10 text-4xl font-semibold">Datenschutz</h1><p className="mt-2 text-sm text-muted-foreground">Informationen zur Beschwerdeannahme.</p><div className="mt-8 space-y-5 text-sm leading-relaxed"><p>Verantwortlich ist der jeweilige Garagenbetreiber. Die Kontaktdaten werden auf der Betreiber-Website ergänzt.</p><p>Wir verarbeiten nur die Angaben, die Sie im Beschwerdeformular selbst eintragen: Standort, Kategorie, Schilderung, Name und E-Mail-Adresse. Die Daten dienen ausschließlich der Prüfung und Beantwortung Ihres Vorgangs.</p><p>Die Daten werden lokal im Betreiber-System gespeichert. Eine Weitergabe an Werbeplattformen oder externe KI-Dienste findet nicht statt.</p><p>Sie können Auskunft, Berichtigung oder Löschung Ihrer Angaben verlangen. Schreiben Sie dafür an die im Betreiber-Impressum genannte Kontaktadresse und nennen Sie Ihre Vorgangsnummer.</p><p className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-900">Vor dem öffentlichen Betrieb müssen Betreibername, Kontaktadresse, Aufbewahrungsfrist und die zuständige Datenschutzinformation ergänzt werden.</p></div></main>;
 }
