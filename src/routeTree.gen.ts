@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AvvRouteImport } from './routes/avv'
+import { Route as BearbeitungRouteImport } from './routes/bearbeitung'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as HolenWartenRouteImport } from './routes/holen-warten'
@@ -68,6 +69,11 @@ const AppRoute = AppRouteImport.update({
 const AvvRoute = AvvRouteImport.update({
   id: '/avv',
   path: '/avv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BearbeitungRoute = BearbeitungRouteImport.update({
+  id: '/bearbeitung',
+  path: '/bearbeitung',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DatenschutzRoute = DatenschutzRouteImport.update({
@@ -285,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/avv': typeof AvvRoute
+  '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/demo': typeof DemoRouteWithChildren
   '/holen-warten': typeof HolenWartenRoute
@@ -331,6 +338,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/avv': typeof AvvRoute
+  '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/holen-warten': typeof HolenWartenRoute
   '/impressum': typeof ImpressumRoute
@@ -378,6 +386,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/avv': typeof AvvRoute
+  '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/demo': typeof DemoRouteWithChildren
   '/holen-warten': typeof HolenWartenRoute
@@ -427,6 +436,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/avv'
+    | '/bearbeitung'
     | '/datenschutz'
     | '/demo'
     | '/holen-warten'
@@ -473,6 +483,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/avv'
+    | '/bearbeitung'
     | '/datenschutz'
     | '/holen-warten'
     | '/impressum'
@@ -519,6 +530,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/avv'
+    | '/bearbeitung'
     | '/datenschutz'
     | '/demo'
     | '/holen-warten'
@@ -567,6 +579,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AvvRoute: typeof AvvRoute
+  BearbeitungRoute: typeof BearbeitungRoute
   DatenschutzRoute: typeof DatenschutzRoute
   DemoRoute: typeof DemoRouteWithChildren
   HolenWartenRoute: typeof HolenWartenRoute
@@ -613,6 +626,13 @@ declare module '@tanstack/react-router' {
       path: '/avv'
       fullPath: '/avv'
       preLoaderRoute: typeof AvvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bearbeitung': {
+      id: '/bearbeitung'
+      path: '/bearbeitung'
+      fullPath: '/bearbeitung'
+      preLoaderRoute: typeof BearbeitungRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/datenschutz': {
@@ -970,6 +990,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AvvRoute: AvvRoute,
+  BearbeitungRoute: BearbeitungRoute,
   DatenschutzRoute: DatenschutzRoute,
   DemoRoute: DemoRouteWithChildren,
   HolenWartenRoute: HolenWartenRoute,

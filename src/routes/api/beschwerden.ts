@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { saveComplaint, updateComplaintStatus, type ComplaintStatus } from "@/lib/beschwerden/store.server";
+import { listComplaints, saveComplaint, updateComplaintStatus, type ComplaintStatus } from "@/lib/beschwerden/store.server";
 
 const categories = new Set([
   "Ein-/Ausfahrt",
@@ -12,6 +12,11 @@ const categories = new Set([
 export const Route = createFileRoute("/api/beschwerden")({
   server: {
     handlers: {
+      GET: async ({ request }) => {
+        const expected = process.env.GARAGEN_OPERATOR_KEY;
+        if (!expected || request.headers.get("x-garagen-operator") !== expected) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
+        return Response.json({ ok: true, complaints: await listComplaints() }, { headers: { "Cache-Control": "no-store" } });
+      },
       POST: async ({ request }) => {
         const body = await request.json().catch(() => null) as Record<string, unknown> | null;
         const location = String(body?.location ?? "").trim();
