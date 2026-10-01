@@ -20,6 +20,15 @@ function filePath() {
   return join(process.env.GARAGEN_DATA_DIR || join(process.cwd(), ".garagen-data"), "beschwerden.json");
 }
 
+let writeQueue: Promise<void> = Promise.resolve();
+
+async function persist(items: Complaint[]) {
+  const target = filePath();
+  await mkdir(dirname(target), { recursive: true });
+  writeQueue = writeQueue.catch(() => undefined).then(() => writeFile(target, JSON.stringify(items, null, 2), "utf8"));
+  await writeQueue;
+}
+
 export async function listComplaints(): Promise<Complaint[]> {
   try {
     const raw = await readFile(filePath(), "utf8");
@@ -31,9 +40,7 @@ export async function listComplaints(): Promise<Complaint[]> {
 export async function saveComplaint(input: Omit<Complaint, "status">): Promise<Complaint> {
   const current = await listComplaints();
   const complaint: Complaint = { ...input, status: "neu" };
-  const target = filePath();
-  await mkdir(dirname(target), { recursive: true });
-  await writeFile(target, JSON.stringify([complaint, ...current], null, 2), "utf8");
+  await persist([complaint, ...current]);
   return complaint;
 }
 
@@ -42,8 +49,6 @@ export async function updateComplaintStatus(reference: string, status: Complaint
   const index = current.findIndex((item) => item.reference === reference);
   if (index < 0) return null;
   current[index] = { ...current[index], status, ...(response === undefined ? {} : { response }) };
-  const target = filePath();
-  await mkdir(dirname(target), { recursive: true });
-  await writeFile(target, JSON.stringify(current, null, 2), "utf8");
+  await persist(current);
   return current[index];
 }
