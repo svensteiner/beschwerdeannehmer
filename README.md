@@ -33,6 +33,21 @@ Die Standard-Aufbewahrung beträgt 180 Tage und kann mit `GARAGEN_RETENTION_DAYS
 
 Die öffentliche Anwendung enthält nur das Beschwerdeformular, den geschützten Betreiberbereich und die rechtlichen Informationsseiten. Alte Silvia-Routen und Sprach-/Praxis-APIs sind nicht Bestandteil dieses Projekts.
 
+## Telefon-Demo und Gateway
+
+Die Homepage enthält eine lokale Chat-Vorführung. Für echte Anrufe liegt das
+übernommene, getrennte Gateway unter `phone-gateway/` (SIP = Telefonie über
+das Netzwerk). Es nutzt die lokalen Whisper-/Piper-Dienste aus
+`C:\silvia-voice` und darf nur mit einem ausdrücklich eingerichteten privaten
+SIP-Ziel gestartet werden. Zugangsdaten kommen ausschließlich in die lokale
+`.env` des Gateways, niemals ins Repository.
+
+Das Gateway spricht mit `POST /api/telefon/antwort` über Loopback. Dafür müssen
+`SILVIA_API_URL=http://127.0.0.1:8091/api/telefon/antwort` und derselbe starke
+`GARAGEN_PHONE_TOKEN` im Betreiber-Server und im Gateway gesetzt werden.
+Ohne diese Werte bleibt Telefonie sicher deaktiviert; der Mock-Test bleibt
+offline möglich.
+
 ## Sicherheitsgrenze
 
 Dieses Repository enthält keine echten Beschwerden, Zugangsdaten, `.env`-Dateien oder Produktionsdaten.

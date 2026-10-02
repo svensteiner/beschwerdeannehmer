@@ -11,6 +11,30 @@ function ComplaintHome() {
   const [error, setError] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [chatInput, setChatInput] = useState("");
+  const [chatMessages, setChatMessages] = useState([
+    { from: "bot", text: "Grüß Gott. Ich nehme Ihr Anliegen für die Garage auf. Was ist passiert?" },
+  ]);
+
+  function answerChat(text: string) {
+    const value = text.trim();
+    if (!value) return;
+    const lower = value.toLocaleLowerCase("de-AT");
+    const reply = lower.includes("schranke") || lower.includes("einfahrt")
+      ? "Danke. Ich notiere: Zufahrt oder Schranke. An welchem Standort und ungefähr zu welcher Zeit war das?"
+      : lower.includes("abrechnung") || lower.includes("zahlung")
+        ? "Verstanden. Ich notiere ein Anliegen zur Abrechnung. Bitte halten Sie keine Zahlungsdaten im Chat fest; das Team prüft den Vorgang separat."
+        : lower.includes("sicher") || lower.includes("gefahr")
+          ? "Das klingt sicherheitsrelevant. Ich markiere es für eine rasche Prüfung durch den Betreiber. Bitte nennen Sie noch den Standort."
+          : "Danke, ich habe das aufgenommen. Für die Vorführung würde ich jetzt Standort, Zeitpunkt und Rückrufmöglichkeit abfragen.";
+    setChatMessages((current) => [...current, { from: "user", text: value }, { from: "bot", text: reply }]);
+    setChatInput("");
+  }
+
+  function handleChatSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    answerChat(chatInput);
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,6 +66,30 @@ function ComplaintHome() {
         <h1>Ihre Beschwerde wird<br /><em>ernst genommen.</em></h1>
         <p style={styles.lead}>Schildern Sie uns kurz, was passiert ist. Wir prüfen den Vorgang und melden uns mit einer nachvollziehbaren Antwort.</p>
         <a href="#formular" style={styles.primary}>Beschwerde starten ↓</a>
+      </section>
+      <section id="telefon-demo" style={styles.chatCard}>
+        <div>
+          <p style={styles.eyebrow}>TELEFON-DEMO · LOKAL</p>
+          <h2>So nimmt der Betreiber-Bot ein Anliegen auf.</h2>
+          <p style={styles.muted}>Eine kurze, vorbereitete Vorführung für Interessenten. Sie nutzt keine echte Telefonleitung, keine externe KI und speichert nichts.</p>
+        </div>
+        <div style={styles.chatWindow} aria-live="polite">
+          {chatMessages.map((message, index) => (
+            <div key={`${message.from}-${index}`} style={{ ...styles.chatBubble, ...(message.from === "user" ? styles.chatUser : styles.chatBot) }}>
+              <small>{message.from === "user" ? "Sie" : "Betreiber-Bot"}</small>
+              <div>{message.text}</div>
+            </div>
+          ))}
+        </div>
+        <div style={styles.quickReplies}>
+          {['Die Schranke hat nicht geöffnet.', 'Es geht um die Abrechnung.', 'Es gibt eine Sicherheitsgefahr.'].map((prompt) => (
+            <button key={prompt} type="button" style={styles.quickButton} onClick={() => answerChat(prompt)}>{prompt}</button>
+          ))}
+        </div>
+        <form onSubmit={handleChatSubmit} style={styles.chatForm}>
+          <input value={chatInput} onChange={(event) => setChatInput(event.target.value)} placeholder="Beispielanliegen eingeben …" aria-label="Beispielanliegen" />
+          <button type="submit" style={styles.primary}>Senden</button>
+        </form>
       </section>
       <section id="formular" style={styles.card}>
         <div>
@@ -81,6 +129,14 @@ const styles: Record<string, CSSProperties> = {
   lead: { maxWidth: 600, fontSize: 20, lineHeight: 1.55, color: "#53615c" },
   primary: { display: "inline-block", background: "#1c5b4d", color: "white", border: 0, borderRadius: 999, padding: "14px 24px", fontWeight: 800, textDecoration: "none", cursor: "pointer", fontSize: 16 },
   card: { maxWidth: 900, margin: "0 auto 80px", background: "#fffdf9", border: "1px solid #d9d4ca", borderRadius: 24, padding: "clamp(24px, 5vw, 56px)", boxShadow: "0 14px 40px #243a3212" },
+  chatCard: { maxWidth: 900, margin: "0 auto 40px", background: "#edf5f0", border: "1px solid #c6ddd0", borderRadius: 24, padding: "clamp(24px, 5vw, 56px)" },
+  chatWindow: { display: "grid", gap: 12, marginTop: 28, padding: 18, background: "#fffdf9", borderRadius: 16, border: "1px solid #d9d4ca", minHeight: 150 },
+  chatBubble: { maxWidth: "80%", padding: "12px 14px", borderRadius: 14, lineHeight: 1.45 },
+  chatBot: { justifySelf: "start", background: "#e4f1e8" },
+  chatUser: { justifySelf: "end", background: "#dbe9e4" },
+  quickReplies: { display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 },
+  quickButton: { border: "1px solid #9dbbad", background: "transparent", color: "#1c5b4d", borderRadius: 999, padding: "8px 12px", cursor: "pointer" },
+  chatForm: { display: "flex", gap: 10, marginTop: 18 },
   muted: { color: "#68736e" },
   form: { display: "grid", gap: 18, marginTop: 32 },
   formLabel: { fontWeight: 700 },

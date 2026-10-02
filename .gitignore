@@ -26,3 +26,5 @@ playwright-report
 test-results
 .env.bak*
 .lan-server.log
+phone-gateway/**/__pycache__/
+*.pyc

@@ -15,6 +15,7 @@ import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as ApiBeschwerdenRouteImport } from './routes/api/beschwerden'
 import { Route as ApiGesundheitRouteImport } from './routes/api/gesundheit'
+import { Route as ApiTelefonAntwortRouteImport } from './routes/api/telefon/antwort'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const ApiGesundheitRoute = ApiGesundheitRouteImport.update({
   path: '/api/gesundheit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTelefonAntwortRoute = ApiTelefonAntwortRouteImport.update({
+  id: '/api/telefon/antwort',
+  path: '/api/telefon/antwort',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/impressum': typeof ImpressumRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/gesundheit': typeof ApiGesundheitRoute
+  '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/impressum': typeof ImpressumRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/gesundheit': typeof ApiGesundheitRoute
+  '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/impressum': typeof ImpressumRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/gesundheit': typeof ApiGesundheitRoute
+  '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/api/beschwerden'
     | '/api/gesundheit'
+    | '/api/telefon/antwort'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/api/beschwerden'
     | '/api/gesundheit'
+    | '/api/telefon/antwort'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/api/beschwerden'
     | '/api/gesundheit'
+    | '/api/telefon/antwort'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   ImpressumRoute: typeof ImpressumRoute
   ApiBeschwerdenRoute: typeof ApiBeschwerdenRoute
   ApiGesundheitRoute: typeof ApiGesundheitRoute
+  ApiTelefonAntwortRoute: typeof ApiTelefonAntwortRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGesundheitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/telefon/antwort': {
+      id: '/api/telefon/antwort'
+      path: '/api/telefon/antwort'
+      fullPath: '/api/telefon/antwort'
+      preLoaderRoute: typeof ApiTelefonAntwortRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   ImpressumRoute: ImpressumRoute,
   ApiBeschwerdenRoute: ApiBeschwerdenRoute,
   ApiGesundheitRoute: ApiGesundheitRoute,
+  ApiTelefonAntwortRoute: ApiTelefonAntwortRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
