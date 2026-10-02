@@ -13,9 +13,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BearbeitungRouteImport } from './routes/bearbeitung'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ImpressumRouteImport } from './routes/impressum'
+import { Route as TelefonDemoRouteImport } from './routes/telefon-demo'
 import { Route as ApiBeschwerdenRouteImport } from './routes/api/beschwerden'
 import { Route as ApiGesundheitRouteImport } from './routes/api/gesundheit'
 import { Route as ApiTelefonAntwortRouteImport } from './routes/api/telefon/antwort'
+import { Route as ApiTelefonChatRouteImport } from './routes/api/telefon/chat'
+import { Route as ApiTelefonSprechenRouteImport } from './routes/api/telefon/sprechen'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -37,6 +40,11 @@ const ImpressumRoute = ImpressumRouteImport.update({
   path: '/impressum',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TelefonDemoRoute = TelefonDemoRouteImport.update({
+  id: '/telefon-demo',
+  path: '/telefon-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiBeschwerdenRoute = ApiBeschwerdenRouteImport.update({
   id: '/api/beschwerden',
   path: '/api/beschwerden',
@@ -52,24 +60,40 @@ const ApiTelefonAntwortRoute = ApiTelefonAntwortRouteImport.update({
   path: '/api/telefon/antwort',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTelefonChatRoute = ApiTelefonChatRouteImport.update({
+  id: '/api/telefon/chat',
+  path: '/api/telefon/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTelefonSprechenRoute = ApiTelefonSprechenRouteImport.update({
+  id: '/api/telefon/sprechen',
+  path: '/api/telefon/sprechen',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
+  '/telefon-demo': typeof TelefonDemoRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/gesundheit': typeof ApiGesundheitRoute
   '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
+  '/api/telefon/chat': typeof ApiTelefonChatRoute
+  '/api/telefon/sprechen': typeof ApiTelefonSprechenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
+  '/telefon-demo': typeof TelefonDemoRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/gesundheit': typeof ApiGesundheitRoute
   '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
+  '/api/telefon/chat': typeof ApiTelefonChatRoute
+  '/api/telefon/sprechen': typeof ApiTelefonSprechenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,9 +101,12 @@ export interface FileRoutesById {
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
+  '/telefon-demo': typeof TelefonDemoRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/gesundheit': typeof ApiGesundheitRoute
   '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
+  '/api/telefon/chat': typeof ApiTelefonChatRoute
+  '/api/telefon/sprechen': typeof ApiTelefonSprechenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,27 +115,36 @@ export interface FileRouteTypes {
     | '/bearbeitung'
     | '/datenschutz'
     | '/impressum'
+    | '/telefon-demo'
     | '/api/beschwerden'
     | '/api/gesundheit'
     | '/api/telefon/antwort'
+    | '/api/telefon/chat'
+    | '/api/telefon/sprechen'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/bearbeitung'
     | '/datenschutz'
     | '/impressum'
+    | '/telefon-demo'
     | '/api/beschwerden'
     | '/api/gesundheit'
     | '/api/telefon/antwort'
+    | '/api/telefon/chat'
+    | '/api/telefon/sprechen'
   id:
     | '__root__'
     | '/'
     | '/bearbeitung'
     | '/datenschutz'
     | '/impressum'
+    | '/telefon-demo'
     | '/api/beschwerden'
     | '/api/gesundheit'
     | '/api/telefon/antwort'
+    | '/api/telefon/chat'
+    | '/api/telefon/sprechen'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -116,9 +152,12 @@ export interface RootRouteChildren {
   BearbeitungRoute: typeof BearbeitungRoute
   DatenschutzRoute: typeof DatenschutzRoute
   ImpressumRoute: typeof ImpressumRoute
+  TelefonDemoRoute: typeof TelefonDemoRoute
   ApiBeschwerdenRoute: typeof ApiBeschwerdenRoute
   ApiGesundheitRoute: typeof ApiGesundheitRoute
   ApiTelefonAntwortRoute: typeof ApiTelefonAntwortRoute
+  ApiTelefonChatRoute: typeof ApiTelefonChatRoute
+  ApiTelefonSprechenRoute: typeof ApiTelefonSprechenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -151,6 +190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ImpressumRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/telefon-demo': {
+      id: '/telefon-demo'
+      path: '/telefon-demo'
+      fullPath: '/telefon-demo'
+      preLoaderRoute: typeof TelefonDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/beschwerden': {
       id: '/api/beschwerden'
       path: '/api/beschwerden'
@@ -172,6 +218,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTelefonAntwortRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/telefon/chat': {
+      id: '/api/telefon/chat'
+      path: '/api/telefon/chat'
+      fullPath: '/api/telefon/chat'
+      preLoaderRoute: typeof ApiTelefonChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/telefon/sprechen': {
+      id: '/api/telefon/sprechen'
+      path: '/api/telefon/sprechen'
+      fullPath: '/api/telefon/sprechen'
+      preLoaderRoute: typeof ApiTelefonSprechenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -180,9 +240,12 @@ const rootRouteChildren: RootRouteChildren = {
   BearbeitungRoute: BearbeitungRoute,
   DatenschutzRoute: DatenschutzRoute,
   ImpressumRoute: ImpressumRoute,
+  TelefonDemoRoute: TelefonDemoRoute,
   ApiBeschwerdenRoute: ApiBeschwerdenRoute,
   ApiGesundheitRoute: ApiGesundheitRoute,
   ApiTelefonAntwortRoute: ApiTelefonAntwortRoute,
+  ApiTelefonChatRoute: ApiTelefonChatRoute,
+  ApiTelefonSprechenRoute: ApiTelefonSprechenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

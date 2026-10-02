@@ -71,6 +71,7 @@ function ComplaintHome() {
         <p style={styles.lead}>Ob Schranke, Parkticket, Abrechnung oder E-Laden: Der digitale Kundenservice nimmt Ihr Anliegen für den richtigen Standort strukturiert auf.</p>
         <p style={styles.demoNote}>Pilotoberfläche für eine gemeinsame Vorführung – nicht die offizielle Website von Best in Parking.</p>
         <a href="#formular" style={styles.primary}>Beschwerde starten ↓</a>
+        <a href="/telefon-demo" style={{ ...styles.secondary, marginLeft: 12 }}>Mit dem Bot sprechen →</a>
       </section>
       <section id="telefon-demo" style={styles.chatCard}>
         <div>
