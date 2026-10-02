@@ -24,6 +24,10 @@ function ComplaintHome() {
       ? "Danke. Ich notiere: Zufahrt oder Schranke. An welchem Standort und ungefähr zu welcher Zeit war das?"
       : lower.includes("abrechnung") || lower.includes("zahlung")
         ? "Verstanden. Ich notiere ein Anliegen zur Abrechnung. Bitte halten Sie keine Zahlungsdaten im Chat fest; das Team prüft den Vorgang separat."
+        : lower.includes("ticket")
+          ? "Danke. Ich notiere ein Problem mit dem Parkticket. Bitte nennen Sie noch Garage oder Standort und die ungefähre Uhrzeit."
+          : lower.includes("laden") || lower.includes("e-lad")
+            ? "Danke. Ich notiere ein Anliegen zum E-Laden. Bitte nennen Sie noch den Standort und, falls sichtbar, die Nummer der Ladesäule."
         : lower.includes("sicher") || lower.includes("gefahr")
           ? "Das klingt sicherheitsrelevant. Ich markiere es für eine rasche Prüfung durch den Betreiber. Bitte nennen Sie noch den Standort."
           : "Danke, ich habe das aufgenommen. Für die Vorführung würde ich jetzt Standort, Zeitpunkt und Rückrufmöglichkeit abfragen.";
@@ -58,20 +62,21 @@ function ComplaintHome() {
   return (
     <main style={styles.page}>
       <header style={styles.header}>
-        <div style={styles.logo}>GARAGEN<span>WÄCHTER</span></div>
+        <div style={styles.logo}>BEST IN PARKING <span>· KUNDENSERVICE-DEMO</span></div>
         <a href="#formular" style={styles.headerLink}>Beschwerde melden</a>
       </header>
       <section style={styles.hero}>
-        <p style={styles.eyebrow}>FAIR. KLAR. NACHVOLLZIEHBAR.</p>
-        <h1>Ihre Beschwerde wird<br /><em>ernst genommen.</em></h1>
-        <p style={styles.lead}>Schildern Sie uns kurz, was passiert ist. Wir prüfen den Vorgang und melden uns mit einer nachvollziehbaren Antwort.</p>
+        <p style={styles.eyebrow}>PARKEN · LADEN · SERVICE</p>
+        <h1>Ihr Anliegen wird<br /><em>rasch aufgenommen.</em></h1>
+        <p style={styles.lead}>Ob Schranke, Parkticket, Abrechnung oder E-Laden: Der digitale Kundenservice nimmt Ihr Anliegen für den richtigen Standort strukturiert auf.</p>
+        <p style={styles.demoNote}>Pilotoberfläche für eine gemeinsame Vorführung – nicht die offizielle Website von Best in Parking.</p>
         <a href="#formular" style={styles.primary}>Beschwerde starten ↓</a>
       </section>
       <section id="telefon-demo" style={styles.chatCard}>
         <div>
-          <p style={styles.eyebrow}>TELEFON-DEMO · LOKAL</p>
-          <h2>So nimmt der Betreiber-Bot ein Anliegen auf.</h2>
-          <p style={styles.muted}>Eine kurze, vorbereitete Vorführung für Interessenten. Sie nutzt keine echte Telefonleitung, keine externe KI und speichert nichts.</p>
+          <p style={styles.eyebrow}>KUNDENSERVICE-DEMO · LOKAL</p>
+          <h2>So nimmt der Service-Bot ein Anliegen auf.</h2>
+          <p style={styles.muted}>Eine kurze, vorbereitete Vorführung für Parkgaragen und Ladepunkte. Sie nutzt keine echte Telefonleitung, keine externe KI und speichert nichts.</p>
         </div>
         <div style={styles.chatWindow} aria-live="polite">
           {chatMessages.map((message, index) => (
@@ -82,7 +87,7 @@ function ComplaintHome() {
           ))}
         </div>
         <div style={styles.quickReplies}>
-          {['Die Schranke hat nicht geöffnet.', 'Es geht um die Abrechnung.', 'Es gibt eine Sicherheitsgefahr.'].map((prompt) => (
+          {['Die Schranke hat nicht geöffnet.', 'Mein Parkticket wurde nicht erkannt.', 'Ich habe ein Problem beim E-Laden.'].map((prompt) => (
             <button key={prompt} type="button" style={styles.quickButton} onClick={() => answerChat(prompt)}>{prompt}</button>
           ))}
         </div>
@@ -103,7 +108,7 @@ function ComplaintHome() {
           <form onSubmit={submit} style={styles.form}>
             <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-10000px", opacity: 0 }} />
             <label>Garage / Standort *<input name="location" required maxLength={160} placeholder="z. B. Garage Hauptbahnhof" /></label>
-            <label>Worum geht es? *<select name="category" required defaultValue=""><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkplatz oder Schranke</option><option>Abrechnung</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
+            <label>Worum geht es? *<select name="category" required defaultValue=""><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkticket oder Schranke</option><option>Parkgebühr oder Abrechnung</option><option>E-Laden</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
             <label>Dringlichkeit<select name="priority" defaultValue="normal"><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
             <div style={styles.grid}><label>Wann war der Vorfall?<input name="occurredAt" type="datetime-local" /></label><label>Telefon für Rückfragen<input name="contactPhone" type="tel" maxLength={30} autoComplete="tel" /></label></div>
             <label>Ihre Schilderung *<textarea name="description" required minLength={20} maxLength={5000} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /><small style={styles.counter}>{description.length}/5000 Zeichen</small></label>
@@ -114,7 +119,7 @@ function ComplaintHome() {
           </form>
         )}
       </section>
-      <footer style={styles.footer}>GARAGENWÄCHTER · Beschwerdemanagement für Garagenbetreiber · <a href="/datenschutz">Datenschutz</a> · <a href="/impressum">Impressum</a></footer>
+      <footer style={styles.footer}>BEST IN PARKING · KUNDENSERVICE-DEMO · <a href="/datenschutz">Datenschutz</a> · <a href="/impressum">Impressum</a></footer>
     </main>
   );
 }
@@ -127,6 +132,7 @@ const styles: Record<string, CSSProperties> = {
   hero: { maxWidth: 900, margin: "0 auto", padding: "clamp(72px, 12vw, 150px) 24px 100px" },
   eyebrow: { color: "#b45b35", letterSpacing: "0.16em", fontWeight: 800, fontSize: 12 },
   lead: { maxWidth: 600, fontSize: 20, lineHeight: 1.55, color: "#53615c" },
+  demoNote: { maxWidth: 620, color: "#68736e", fontSize: 13, lineHeight: 1.5 },
   primary: { display: "inline-block", background: "#1c5b4d", color: "white", border: 0, borderRadius: 999, padding: "14px 24px", fontWeight: 800, textDecoration: "none", cursor: "pointer", fontSize: 16 },
   card: { maxWidth: 900, margin: "0 auto 80px", background: "#fffdf9", border: "1px solid #d9d4ca", borderRadius: 24, padding: "clamp(24px, 5vw, 56px)", boxShadow: "0 14px 40px #243a3212" },
   chatCard: { maxWidth: 900, margin: "0 auto 40px", background: "#edf5f0", border: "1px solid #c6ddd0", borderRadius: 24, padding: "clamp(24px, 5vw, 56px)" },

@@ -1,4 +1,4 @@
-export const COMPLAINT_CATEGORIES = ["Ein-/Ausfahrt", "Parkplatz oder Schranke", "Abrechnung", "Sauberkeit oder Sicherheit", "Sonstiges"] as const;
+export const COMPLAINT_CATEGORIES = ["Ein-/Ausfahrt", "Parkticket oder Schranke", "Parkgebühr oder Abrechnung", "E-Laden", "Sauberkeit oder Sicherheit", "Sonstiges", "Parkplatz oder Schranke", "Abrechnung"] as const;
 export type ComplaintPriority = "normal" | "dringend" | "sicherheit";
 export type ComplaintInput = { location: string; category: string; description: string; name: string; email: string; occurredAt: string; contactPhone: string; priority: ComplaintPriority; consent: true };
 

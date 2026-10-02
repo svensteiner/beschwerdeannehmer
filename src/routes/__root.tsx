@@ -9,12 +9,12 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { title: "Garagenwächter – Beschwerde melden" },
+      { title: "Best-in-Parking-Kundenservice – Demo" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
         name: "description",
         content:
-          "Garagenwächter nimmt Beschwerden von Garagenkunden strukturiert und nachvollziehbar entgegen.",
+          "Pilotoberfläche für den Kundenservice von Parkgaragen: Anliegen zu Standort, Einfahrt, Ticket, Abrechnung und E-Laden strukturiert aufnehmen.",
       },
       { name: "theme-color", content: "#1F4A3A" },
     ],
