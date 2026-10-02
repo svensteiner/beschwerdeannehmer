@@ -1,0 +1,8 @@
+# Alle Wheels liegen zusaetzlich unter C:\silvia-offline\wheels (Offline-Installation):
+#   python -m pip install --no-index --find-links C:\silvia-offline\wheels -r requirements.txt
+pyVoIP==1.6.8
+audioop-lts==0.2.2
+requests==2.34.2
+python-dotenv==1.2.3
+soundfile==0.14.0
+pytest
