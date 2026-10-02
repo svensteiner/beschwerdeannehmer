@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { timingSafeEqual } from "node:crypto";
+import { listComplaints, saveComplaint } from "@/lib/beschwerden/store.server";
 
 const MAX_BODY_BYTES = 64 * 1024;
 
@@ -42,7 +43,22 @@ export const Route = createFileRoute("/api/telefon/antwort")({
         const lastUser = [...messages].reverse().find((message) => typeof message === "object" && message !== null && (message as { role?: unknown }).role === "user");
         const text = lastUser && typeof (lastUser as { content?: unknown }).content === "string" ? (lastUser as { content: string }).content.slice(0, 5000) : "";
         const result = replyFor(text);
-        return Response.json({ ok: true, reply: result.reply, source: "local", provider: "garage-local", endCall: result.endCall }, { headers: { "Cache-Control": "no-store" } });
+        const callId = typeof (body as { callId?: unknown }).callId === "string" ? (body as { callId: string }).callId.slice(0, 120) : "";
+        const ended = (body as { ended?: unknown }).ended === true;
+        let savedReference: string | undefined;
+        if (ended && callId && text) {
+          const existing = (await listComplaints()).find((item) => item.description.startsWith(`Telefonanruf ${callId}:`));
+          if (existing) savedReference = existing.reference;
+          else {
+            const now = new Date().toISOString();
+            const reference = `GW-TEL-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+            const caller = typeof (body as { from?: unknown }).from === "string" ? (body as { from: string }).from.slice(0, 30) : "";
+            const transcript = messages.filter((message) => typeof message === "object" && message !== null && typeof (message as { role?: unknown }).role === "string" && typeof (message as { content?: unknown }).content === "string").map((message) => `${(message as { role: string }).role === "user" ? "Anrufer" : "Bot"}: ${(message as { content: string }).content.slice(0, 1000)}`).join("\n");
+            await saveComplaint({ reference, createdAt: now, location: "Telefonisch – Standort noch zu klären", category: "Sonstiges", description: `Telefonanruf ${callId}:\n${transcript}`.slice(0, 5000), name: "Telefonisch", email: "", occurredAt: now, contactPhone: caller, priority: /sicher|gefahr|unfall|defekt/i.test(transcript) ? "sicherheit" : "normal" });
+            savedReference = reference;
+          }
+        }
+        return Response.json({ ok: true, reply: result.reply, source: "local", provider: "garage-local", endCall: result.endCall, ...(savedReference ? { savedReference } : {}) }, { headers: { "Cache-Control": "no-store" } });
       },
     },
   },
