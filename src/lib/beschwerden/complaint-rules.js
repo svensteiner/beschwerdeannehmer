@@ -45,7 +45,7 @@ export function answerWithLocalRules(text, protocol) {
   const lower = text.toLocaleLowerCase("de-AT");
   const next = { ...protocol };
   if (!next.category) {
-    if (/ticket|schranke|einfahrt|ausfahrt/.test(lower)) next.category = /ticket/.test(lower) ? "Parkticket oder Schranke" : "Ein-/Ausfahrt";
+    if (/ticket|parkdickhead|schranke|einfahrt|ausfahrt/.test(lower)) next.category = /ticket|parkdickhead/.test(lower) ? "Parkticket oder Schranke" : "Ein-/Ausfahrt";
     else if (/laden|e-lad/.test(lower)) next.category = "E-Laden";
     else if (/abrechnung|zahlung|rechnung/.test(lower)) next.category = "Parkgebühr oder Abrechnung";
     else if (/sicher|gefahr|unfall|defekt/.test(lower)) next.category = "Sauberkeit oder Sicherheit";

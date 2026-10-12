@@ -13,10 +13,14 @@ function TelefonDemoPage() {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [voiceReady, setVoiceReady] = useState<boolean | null>(null);
+  const [liveState, setLiveState] = useState<"idle" | "connecting" | "live">("idle");
   const [protocol, setProtocol] = useState<Protocol>({ location: "", category: "", priority: "normal", occurredAt: "", summary: "", callback: "" });
   const recorder = useRef<MediaRecorder | null>(null);
   const stream = useRef<MediaStream | null>(null);
   const chunks = useRef<Blob[]>([]);
+  const liveConnection = useRef<RTCPeerConnection | null>(null);
+  const liveStream = useRef<MediaStream | null>(null);
+  const liveAudio = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -24,7 +28,7 @@ function TelefonDemoPage() {
       .then((response) => response.json())
       .then((result: { voice?: { ready?: boolean } }) => { if (active) setVoiceReady(result.voice?.ready === true); })
       .catch(() => { if (active) setVoiceReady(false); });
-    return () => { active = false; stream.current?.getTracks().forEach((track) => track.stop()); };
+    return () => { active = false; stream.current?.getTracks().forEach((track) => track.stop()); liveStream.current?.getTracks().forEach((track) => track.stop()); liveConnection.current?.close(); };
   }, []);
 
   async function sendAudio(blob: Blob) {
@@ -74,6 +78,59 @@ function TelefonDemoPage() {
     setRecording(false);
   }
 
+  function stopLive() {
+    liveStream.current?.getTracks().forEach((track) => track.stop());
+    liveStream.current = null;
+    liveConnection.current?.close();
+    liveConnection.current = null;
+    liveAudio.current?.pause();
+    liveAudio.current = null;
+    setLiveState("idle");
+  }
+
+  async function startLive() {
+    setError("");
+    setLiveState("connecting");
+    try {
+      const tokenResponse = await fetch("/api/telefon/live-token", { method: "POST" });
+      const tokenResult = await tokenResponse.json() as { ok?: boolean; token?: string; error?: string };
+      if (!tokenResponse.ok || !tokenResult.ok || !tokenResult.token) throw new Error(tokenResult.error ?? "OpenAI-Live konnte nicht gestartet werden.");
+
+      const peer = new RTCPeerConnection();
+      liveConnection.current = peer;
+      const channel = peer.createDataChannel("oai-events");
+      channel.onmessage = (event) => {
+        try {
+          const message = JSON.parse(String(event.data)) as { type?: string; transcript?: string; error?: { message?: string } };
+          if (message.type === "conversation.item.input_audio_transcription.completed" && message.transcript) setMessages((current) => [...current, { role: "user", text: message.transcript! }]);
+          if (message.type === "response.output_audio_transcript.done" && message.transcript) setMessages((current) => [...current, { role: "bot", text: message.transcript! }]);
+          if (message.type === "error") setError(message.error?.message ?? "OpenAI-Live konnte das Gespräch nicht fortsetzen.");
+        } catch { /* Ein unbekanntes Live-Ereignis wird für die Anzeige nicht benötigt. */ }
+      };
+      peer.ontrack = (event) => {
+        const audio = new Audio();
+        audio.autoplay = true;
+        audio.srcObject = event.streams[0];
+        liveAudio.current = audio;
+        void audio.play().catch(() => undefined);
+      };
+      peer.onconnectionstatechange = () => { if (["failed", "closed", "disconnected"].includes(peer.connectionState)) setLiveState("idle"); };
+
+      const microphone = await navigator.mediaDevices.getUserMedia({ audio: true });
+      liveStream.current = microphone;
+      microphone.getTracks().forEach((track) => peer.addTrack(track, microphone));
+      const offer = await peer.createOffer();
+      await peer.setLocalDescription(offer);
+      const answerResponse = await fetch("https://api.openai.com/v1/realtime/calls", { method: "POST", headers: { Authorization: `Bearer ${tokenResult.token}`, "Content-Type": "application/sdp" }, body: offer.sdp });
+      if (!answerResponse.ok) throw new Error("OpenAI-Live konnte die Audioverbindung nicht aufbauen.");
+      await peer.setRemoteDescription({ type: "answer", sdp: await answerResponse.text() });
+      setLiveState("live");
+    } catch (caught) {
+      stopLive();
+      setError(caught instanceof Error ? caught.message : "OpenAI-Live konnte nicht gestartet werden.");
+    }
+  }
+
   function transferToForm() {
     sessionStorage.setItem("garagen-complaint-draft", JSON.stringify({
       location: protocol.location,
@@ -114,9 +171,11 @@ function TelefonDemoPage() {
           {messages.map((message, index) => <div key={`${message.role}-${index}`} className={`max-w-[85%] rounded-2xl px-4 py-3 ${message.role === "bot" ? "bg-green-100" : "ml-auto bg-secondary"}`}><div className="mb-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">{message.role === "bot" ? "Kundenservice-Bot" : "Sie"}</div>{message.text}</div>)}
         </div>
         <div className="mt-8 flex flex-wrap items-center gap-3">
-          <button type="button" onClick={() => recording ? stop() : void start()} disabled={busy} className={`rounded-full px-6 py-3 font-bold text-white ${recording ? "bg-red-700" : "bg-primary"}`}>{recording ? "Aufnahme beenden" : "Mikrofon starten"}</button>
-          <span className="text-sm text-muted-foreground">{busy ? "Lokale Stimme verarbeitet …" : recording ? "Sie können jetzt sprechen." : voiceReady === null ? "Lokale Stimme wird geprüft …" : voiceReady ? "Lokale Stimme bereit. Keine externe KI aktiv." : "Lokale Stimme ist noch nicht gestartet. Text funktioniert weiterhin."}</span>
+          <button type="button" onClick={() => recording ? stop() : void start()} disabled={busy || liveState !== "idle"} className={`rounded-full px-6 py-3 font-bold text-white ${recording ? "bg-red-700" : "bg-primary"}`}>{recording ? "Aufnahme beenden" : "Lokales Mikrofon"}</button>
+          <button type="button" onClick={() => liveState === "live" ? stopLive() : void startLive()} disabled={busy || liveState === "connecting"} className={`rounded-full px-6 py-3 font-bold text-white ${liveState === "live" ? "bg-red-700" : "bg-orange-700"}`}>{liveState === "connecting" ? "OpenAI-Live verbindet …" : liveState === "live" ? "Live-Gespräch beenden" : "OpenAI-Live starten"}</button>
+          <span className="text-sm text-muted-foreground">{liveState === "live" ? "Live-Gespräch aktiv: sprechen Sie ganz natürlich oder unterbrechen Sie die Antwort." : busy ? "Lokale Stimme verarbeitet …" : recording ? "Sie können jetzt sprechen." : voiceReady === null ? "Lokale Stimme wird geprüft …" : voiceReady ? "Lokale Stimme bereit. Keine externe KI aktiv." : "Lokale Stimme ist noch nicht gestartet. Text funktioniert weiterhin."}</span>
         </div>
+        <p className="mt-3 text-xs text-muted-foreground">OpenAI-Live ist optional. Mit dem Start stimmen Sie zu, dass das Gesprächsaudio für diese Sitzung an OpenAI übertragen wird.</p>
         <form onSubmit={sendText} className="mt-6 flex gap-3"><input value={text} onChange={(event) => setText(event.target.value)} placeholder="Text-Fallback für die Vorführung …" className="min-w-0 flex-1 rounded-xl border border-input bg-background px-4 py-3" aria-label="Text-Fallback" /><button className="rounded-xl bg-secondary px-4 py-3 font-bold" type="submit">Senden</button></form>
         {error && <p role="alert" className="mt-4 rounded-xl bg-red-100 p-3 text-sm text-red-900">{error}</p>}
       </section>

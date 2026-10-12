@@ -46,3 +46,15 @@ test("lokale Regeln erkennen eine dringende Ausfahrt", async () => {
     else process.env.GARAGEN_LLM_BASE_URL = previous;
   }
 });
+
+test("lokale Regeln fangen einen bekannten Sprach-Erkennungsfehler beim Parkticket ab", async () => {
+  const previous = process.env.GARAGEN_LLM_BASE_URL;
+  delete process.env.GARAGEN_LLM_BASE_URL;
+  try {
+    const result = await answerComplaint("Parkdickhead wird nicht erkannt.", [], emptyComplaintProtocol);
+    assert.equal(result.protocol.category, "Parkticket oder Schranke");
+  } finally {
+    if (previous === undefined) delete process.env.GARAGEN_LLM_BASE_URL;
+    else process.env.GARAGEN_LLM_BASE_URL = previous;
+  }
+});
