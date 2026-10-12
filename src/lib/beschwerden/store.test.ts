@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { deleteComplaint, listComplaints, purgeExpiredComplaints, saveComplaint, updateComplaintStatus } from "./store.server";
+import { deleteComplaint, listComplaints, purgeExpiredComplaints, saveComplaint, updateComplaint, updateComplaintStatus } from "./store.server";
 
 test("Beschwerde-Speicher: speichert neu und liest nach einem erneuten Laden", async () => {
     const root = await mkdtemp(join(tmpdir(), "garagen-")); process.env.GARAGEN_DATA_DIR = root;
@@ -52,6 +52,20 @@ test("Beschwerde-Speicher: löscht einen Vorgang gezielt", async () => {
     await saveComplaint({ reference: "GW-TEST-6", createdAt: "2026-10-01T00:00:00.000Z", location: "Testgarage", category: "Sonstiges", description: "Eine ausreichend lange synthetische Beschwerde.", name: "Test", email: "test@example.invalid", occurredAt: "", contactPhone: "", priority: "normal" });
     assert.equal(await deleteComplaint("GW-TEST-6"), true);
     assert.equal((await listComplaints()).length, 0);
+    delete process.env.GARAGEN_DATA_DIR; await rm(root, { recursive: true, force: true });
+});
+
+test("Beschwerde-Speicher trennt interne Notiz von Kundenantwort und Status", async () => {
+    const root = await mkdtemp(join(tmpdir(), "garagen-")); process.env.GARAGEN_DATA_DIR = root;
+    const base = { createdAt: "2026-10-01T00:00:00.000Z", location: "Testgarage", category: "Sonstiges", description: "Eine ausreichend lange synthetische Beschwerde.", name: "Test", email: "test@example.invalid", occurredAt: "", contactPhone: "", priority: "normal" as const };
+    await saveComplaint({ ...base, reference: "GW-DETAIL-1" });
+    const noted = await updateComplaint("GW-DETAIL-1", { internalNote: "Technik informiert." });
+    assert.equal(noted?.status, "neu");
+    assert.equal(noted?.internalNote, "Technik informiert.");
+    const answered = await updateComplaint("GW-DETAIL-1", { response: "Wir prüfen den Vorgang.", status: "beantwortet", priority: "dringend" });
+    assert.equal(answered?.status, "beantwortet");
+    assert.equal(answered?.priority, "dringend");
+    assert.equal(answered?.history.at(-1)?.internalNote, undefined);
     delete process.env.GARAGEN_DATA_DIR; await rm(root, { recursive: true, force: true });
 });
 

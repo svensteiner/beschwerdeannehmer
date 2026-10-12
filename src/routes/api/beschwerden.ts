@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { deleteComplaint, listComplaints, purgeExpiredComplaints, saveComplaint, updateComplaintStatus, type ComplaintStatus } from "@/lib/beschwerden/store.server";
+import { deleteComplaint, listComplaints, purgeExpiredComplaints, saveComplaint, updateComplaint, updateComplaintStatus, type ComplaintStatus } from "@/lib/beschwerden/store.server";
 import { validateComplaint } from "@/lib/beschwerden/validation";
 import { allowComplaintRequest } from "@/lib/beschwerden/rate-limit.server";
 import { sortComplaintsForInbox } from "@/lib/beschwerden/inbox";
@@ -37,11 +37,15 @@ export const Route = createFileRoute("/api/beschwerden")({
       },
       PATCH: async ({ request }) => {
         if (!hasOperatorKey(request.headers.get("x-garagen-operator"))) return Response.json({ ok: false, error: "Nicht autorisiert." }, { status: 401 });
-        const body = await request.json().catch(() => null) as { reference?: unknown; status?: unknown; response?: unknown } | null;
-        const status = String(body?.status ?? "") as ComplaintStatus;
+        const body = await request.json().catch(() => null) as { reference?: unknown; status?: unknown; response?: unknown; internalNote?: unknown; location?: unknown; category?: unknown; priority?: unknown } | null;
+        const status = body?.status === undefined ? undefined : String(body.status) as ComplaintStatus;
         const response = body?.response === undefined ? undefined : String(body.response).trim();
-        if (!body?.reference || !["neu", "in_pruefung", "beantwortet", "geschlossen"].includes(status) || (response !== undefined && response.length > 5000)) return Response.json({ ok: false, error: "Ungültiger Status oder Antworttext." }, { status: 400 });
-        const complaint = await updateComplaintStatus(String(body.reference), status, response);
+        const internalNote = body?.internalNote === undefined ? undefined : String(body.internalNote).trim();
+        const location = body?.location === undefined ? undefined : String(body.location).trim();
+        const category = body?.category === undefined ? undefined : String(body.category).trim();
+        const priority = body?.priority === undefined ? undefined : String(body.priority) as "normal" | "dringend" | "sicherheit";
+        if (!body?.reference || (status !== undefined && !["neu", "in_pruefung", "beantwortet", "geschlossen"].includes(status)) || (response !== undefined && response.length > 5000) || (internalNote !== undefined && internalNote.length > 5000) || (location !== undefined && (!location || location.length > 160)) || (category !== undefined && !["Ein-/Ausfahrt", "Parkticket oder Schranke", "Parkgebühr oder Abrechnung", "E-Laden", "Sauberkeit oder Sicherheit", "Sonstiges"].includes(category)) || (priority !== undefined && !["normal", "dringend", "sicherheit"].includes(priority))) return Response.json({ ok: false, error: "Ungültige Änderung." }, { status: 400 });
+        const complaint = await updateComplaint(String(body.reference), { status, response, internalNote, location, category, priority });
         return complaint ? Response.json({ ok: true, complaint }) : Response.json({ ok: false, error: "Vorgang nicht gefunden." }, { status: 404 });
       },
       DELETE: async ({ request }) => {

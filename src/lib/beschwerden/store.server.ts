@@ -5,7 +5,7 @@ import type { ComplaintPriority } from "./validation";
 import { demoComplaints } from "./demo-complaints.js";
 
 export type ComplaintStatus = "neu" | "in_pruefung" | "beantwortet" | "geschlossen";
-export type ComplaintHistoryEntry = { at: string; status: ComplaintStatus; response?: string };
+export type ComplaintHistoryEntry = { at: string; status: ComplaintStatus; response?: string; internalNote?: string };
 export type Complaint = {
   reference: string;
   createdAt: string;
@@ -19,6 +19,7 @@ export type Complaint = {
   priority: ComplaintPriority;
   status: ComplaintStatus;
   response?: string;
+  internalNote?: string;
   history: ComplaintHistoryEntry[];
 };
 
@@ -108,6 +109,22 @@ export async function updateComplaintStatus(reference: string, status: Complaint
     const changedAt = new Date().toISOString();
     const history = Array.isArray(current[index].history) ? current[index].history : [{ at: current[index].createdAt, status: "neu" as const }];
     current[index] = { ...current[index], status, ...(response === undefined ? {} : { response }), history: [...history, { at: changedAt, status, ...(response === undefined ? {} : { response }) }] };
+    await persist(current);
+    return current[index];
+  });
+}
+
+export async function updateComplaint(reference: string, changes: { status?: ComplaintStatus; response?: string; internalNote?: string; location?: string; category?: string; priority?: ComplaintPriority }) {
+  return enqueueMutation(async () => {
+    const current = await listComplaints();
+    const index = current.findIndex((item) => item.reference === reference);
+    if (index < 0) return null;
+    const previous = current[index];
+    const status = changes.status ?? previous.status;
+    const changedAt = new Date().toISOString();
+    const history = Array.isArray(previous.history) ? previous.history : [{ at: previous.createdAt, status: "neu" as const }];
+    const entry = { at: changedAt, status, ...(changes.response !== undefined ? { response: changes.response } : {}), ...(changes.internalNote !== undefined ? { internalNote: changes.internalNote } : {}) };
+    current[index] = { ...previous, ...changes, status, history: [...history, entry] };
     await persist(current);
     return current[index];
   });
