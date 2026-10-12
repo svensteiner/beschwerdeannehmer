@@ -34,3 +34,15 @@ test("lokale Regeln fragen genau die nächste fehlende Angabe ab", async () => {
     else process.env.GARAGEN_LLM_BASE_URL = previous;
   }
 });
+
+test("lokale Regeln erkennen eine dringende Ausfahrt", async () => {
+  const previous = process.env.GARAGEN_LLM_BASE_URL;
+  delete process.env.GARAGEN_LLM_BASE_URL;
+  try {
+    const result = await answerComplaint("Die Schranke öffnet nicht. Ich komme nicht hinaus und brauche dringend Hilfe.", [], emptyComplaintProtocol);
+    assert.equal(result.protocol.priority, "dringend");
+  } finally {
+    if (previous === undefined) delete process.env.GARAGEN_LLM_BASE_URL;
+    else process.env.GARAGEN_LLM_BASE_URL = previous;
+  }
+});

@@ -51,6 +51,7 @@ export function answerWithLocalRules(text, protocol) {
     else if (/sicher|gefahr|unfall|defekt/.test(lower)) next.category = "Sauberkeit oder Sicherheit";
   }
   if (/sicher|gefahr|unfall|defekt/.test(lower)) next.priority = "sicherheit";
+  else if (/dringend|sofort|eilt|komme nicht (?:hinaus|rein)/.test(lower)) next.priority = "dringend";
   if (!next.location) next.location = locationFrom(text);
   if (!next.occurredAt) next.occurredAt = occurredAtFrom(text);
   if (!next.callback) next.callback = callbackFrom(text);
