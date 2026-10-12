@@ -18,6 +18,7 @@ import { Route as ApiBeschwerdenRouteImport } from './routes/api/beschwerden'
 import { Route as ApiGesundheitRouteImport } from './routes/api/gesundheit'
 import { Route as ApiTelefonAntwortRouteImport } from './routes/api/telefon/antwort'
 import { Route as ApiTelefonChatRouteImport } from './routes/api/telefon/chat'
+import { Route as ApiTelefonLiveTokenRouteImport } from './routes/api/telefon/live-token'
 import { Route as ApiTelefonSprechenRouteImport } from './routes/api/telefon/sprechen'
 
 const IndexRoute = IndexRouteImport.update({
@@ -65,6 +66,11 @@ const ApiTelefonChatRoute = ApiTelefonChatRouteImport.update({
   path: '/api/telefon/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTelefonLiveTokenRoute = ApiTelefonLiveTokenRouteImport.update({
+  id: '/api/telefon/live-token',
+  path: '/api/telefon/live-token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTelefonSprechenRoute = ApiTelefonSprechenRouteImport.update({
   id: '/api/telefon/sprechen',
   path: '/api/telefon/sprechen',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/api/gesundheit': typeof ApiGesundheitRoute
   '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
   '/api/telefon/chat': typeof ApiTelefonChatRoute
+  '/api/telefon/live-token': typeof ApiTelefonLiveTokenRoute
   '/api/telefon/sprechen': typeof ApiTelefonSprechenRoute
 }
 export interface FileRoutesByTo {
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/api/gesundheit': typeof ApiGesundheitRoute
   '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
   '/api/telefon/chat': typeof ApiTelefonChatRoute
+  '/api/telefon/live-token': typeof ApiTelefonLiveTokenRoute
   '/api/telefon/sprechen': typeof ApiTelefonSprechenRoute
 }
 export interface FileRoutesById {
@@ -106,6 +114,7 @@ export interface FileRoutesById {
   '/api/gesundheit': typeof ApiGesundheitRoute
   '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
   '/api/telefon/chat': typeof ApiTelefonChatRoute
+  '/api/telefon/live-token': typeof ApiTelefonLiveTokenRoute
   '/api/telefon/sprechen': typeof ApiTelefonSprechenRoute
 }
 export interface FileRouteTypes {
@@ -120,6 +129,7 @@ export interface FileRouteTypes {
     | '/api/gesundheit'
     | '/api/telefon/antwort'
     | '/api/telefon/chat'
+    | '/api/telefon/live-token'
     | '/api/telefon/sprechen'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/api/gesundheit'
     | '/api/telefon/antwort'
     | '/api/telefon/chat'
+    | '/api/telefon/live-token'
     | '/api/telefon/sprechen'
   id:
     | '__root__'
@@ -144,6 +155,7 @@ export interface FileRouteTypes {
     | '/api/gesundheit'
     | '/api/telefon/antwort'
     | '/api/telefon/chat'
+    | '/api/telefon/live-token'
     | '/api/telefon/sprechen'
   fileRoutesById: FileRoutesById
 }
@@ -157,6 +169,7 @@ export interface RootRouteChildren {
   ApiGesundheitRoute: typeof ApiGesundheitRoute
   ApiTelefonAntwortRoute: typeof ApiTelefonAntwortRoute
   ApiTelefonChatRoute: typeof ApiTelefonChatRoute
+  ApiTelefonLiveTokenRoute: typeof ApiTelefonLiveTokenRoute
   ApiTelefonSprechenRoute: typeof ApiTelefonSprechenRoute
 }
 
@@ -225,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTelefonChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/telefon/live-token': {
+      id: '/api/telefon/live-token'
+      path: '/api/telefon/live-token'
+      fullPath: '/api/telefon/live-token'
+      preLoaderRoute: typeof ApiTelefonLiveTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/telefon/sprechen': {
       id: '/api/telefon/sprechen'
       path: '/api/telefon/sprechen'
@@ -245,6 +265,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGesundheitRoute: ApiGesundheitRoute,
   ApiTelefonAntwortRoute: ApiTelefonAntwortRoute,
   ApiTelefonChatRoute: ApiTelefonChatRoute,
+  ApiTelefonLiveTokenRoute: ApiTelefonLiveTokenRoute,
   ApiTelefonSprechenRoute: ApiTelefonSprechenRoute,
 }
 export const routeTree = rootRouteImport
