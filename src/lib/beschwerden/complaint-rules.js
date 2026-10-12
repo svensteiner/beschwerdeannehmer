@@ -37,7 +37,7 @@ function nextQuestion(protocol) {
   if (!protocol.location) return "Welche Garage oder welcher Standort ist betroffen?";
   if (!protocol.occurredAt) return "Wann war der Vorfall ungefähr?";
   if (!protocol.callback) return "Unter welcher Telefonnummer dürfen wir Sie bei Rückfragen erreichen?";
-  return "Danke, das Protokoll ist vollständig. Der Betreiber kann den Vorgang jetzt prüfen.";
+  return "Das Protokoll ist vollständig. Der Betreiber prüft den Vorgang.";
 }
 
 /** @param {string} text @param {ComplaintProtocol} protocol */

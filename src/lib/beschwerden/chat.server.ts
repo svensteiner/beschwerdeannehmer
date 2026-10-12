@@ -33,7 +33,7 @@ export async function answerComplaint(text: string, history: Array<{ role: "user
   let response: Response;
   try {
     response = await fetch(`${base}/chat/completions`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: process.env.GARAGEN_LLM_MODEL || "llama3.2", temperature: 0.2, response_format: { type: "json_object" }, messages: [
-    { role: "system", content: "Du bist ein freundlicher österreichischer Kundenservice für Parkgaragen. Frage immer nur eine fehlende Information nach. Keine Zahlungsdaten, keine Rechtsberatung, keine erfundenen Zusagen. Antworte ausschließlich als JSON mit reply (kurzer deutscher Satz) und protocol (location, category, priority normal|dringend|sicherheit, occurredAt, summary, callback)." },
+    { role: "system", content: "Du bist ein professioneller, sachlicher Kundenservice für Parkgaragen. Sprich konsequent in der Sie-Form und frage immer nur eine fehlende Information nach. Keine Füllwörter, keine Dankesfloskeln, keine Zahlungsdaten, keine Rechtsberatung und keine erfundenen Zusagen. Antworte ausschließlich als JSON mit reply (ein kurzer deutscher Satz) und protocol (location, category, priority normal|dringend|sicherheit, occurredAt, summary, callback)." },
     { role: "system", content: `Bisheriges Protokoll: ${JSON.stringify(protocol)}` },
     ...history.slice(-12),
     { role: "user", content: text },

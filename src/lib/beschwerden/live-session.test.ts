@@ -11,7 +11,8 @@ test("Live-Sitzung ist deutschsprachig ausgerichtet, unterbrechbar und ohne Zuga
   assert.equal(config.audio.input.transcription.language, "de");
   assert.match(config.audio.input.transcription.prompt, /Parkticket/i);
   assert.match(config.instructions, /österreichisches Hochdeutsch/i);
-  assert.match(config.instructions, /ohne dramatisch/i);
+  assert.match(config.instructions, /sachliche/i);
+  assert.match(config.instructions, /Sie-Form/i);
   assert.doesNotMatch(JSON.stringify(config), /api[_-]?key|sk-/i);
 });
 

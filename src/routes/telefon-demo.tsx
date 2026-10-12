@@ -7,7 +7,7 @@ type Message = { role: "user" | "bot"; text: string };
 type Protocol = { location: string; category: string; priority: string; occurredAt: string; summary: string; callback: string };
 
 function TelefonDemoPage() {
-  const [messages, setMessages] = useState<Message[]>([{ role: "bot", text: "Grüß Gott. Ich bin der Kundenservice-Bot. Was ist in der Parkgarage passiert?" }]);
+  const [messages, setMessages] = useState<Message[]>([{ role: "bot", text: "Guten Tag. Sie sprechen mit dem Kundenservice für Parkgaragen. Bitte schildern Sie Ihr Anliegen." }]);
   const [recording, setRecording] = useState(false);
   const [busy, setBusy] = useState(false);
   const [text, setText] = useState("");
@@ -200,7 +200,7 @@ function TelefonDemoPage() {
           <button type="button" onClick={() => liveState === "live" ? stopLive() : void startLive()} disabled={busy || liveState === "connecting"} className={`rounded-full px-6 py-3 font-bold text-white ${liveState === "live" ? "bg-red-700" : "bg-orange-700"}`}>{liveState === "connecting" ? "OpenAI-Live verbindet …" : liveState === "live" ? "Live-Gespräch beenden" : "OpenAI-Live starten"}</button>
           <span className="text-sm text-muted-foreground">{liveState === "live" ? "Live-Gespräch aktiv: sprechen Sie ganz natürlich oder unterbrechen Sie die Antwort." : busy ? "Lokale Stimme verarbeitet …" : recording ? "Sie können jetzt sprechen." : voiceReady === null ? "Lokale Stimme wird geprüft …" : voiceReady ? "Lokale Stimme bereit. Keine externe KI aktiv." : "Lokale Stimme ist noch nicht gestartet. Text funktioniert weiterhin."}</span>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">Stimmprofil: ruhig, klar und professionell. OpenAI-Live ist optional. Mit dem Start stimmen Sie zu, dass das Gesprächsaudio für diese Sitzung an OpenAI übertragen wird.</p>
+        <p className="mt-3 text-xs text-muted-foreground">Stimmprofil: sachlich, klar und professionell. OpenAI-Live ist optional. Mit dem Start stimmen Sie zu, dass das Gesprächsaudio für diese Sitzung an OpenAI übertragen wird.</p>
         <form onSubmit={sendText} className="mt-6 flex gap-3"><input value={text} onChange={(event) => setText(event.target.value)} placeholder="Text-Fallback für die Vorführung …" className="min-w-0 flex-1 rounded-xl border border-input bg-background px-4 py-3" aria-label="Text-Fallback" /><button className="rounded-xl bg-secondary px-4 py-3 font-bold" type="submit">Senden</button></form>
         {error && <p role="alert" className="mt-4 rounded-xl bg-red-100 p-3 text-sm text-red-900">{error}</p>}
       </section>
