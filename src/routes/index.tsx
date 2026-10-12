@@ -78,7 +78,10 @@ function ComplaintHome() {
     <main style={styles.page}>
       <header style={styles.header}>
         <div style={styles.logo}>BEST IN PARKING <span>· KUNDENSERVICE-DEMO</span></div>
-        <a href="#formular" style={styles.headerLink}>Beschwerde melden</a>
+        <nav style={styles.navigation} aria-label="Demo-Navigation">
+          <a href="#formular" style={styles.headerLink}>Beschwerde melden</a>
+          <a href="/bearbeitung" style={styles.headerLink}>Betreiberansicht</a>
+        </nav>
       </header>
       <section style={styles.hero}>
         <p style={styles.eyebrow}>PARKEN · LADEN · SERVICE</p>
@@ -145,6 +148,7 @@ const styles: Record<string, CSSProperties> = {
   page: { minHeight: "100vh", background: "#f4f1eb", color: "#1c2824", fontFamily: "system-ui, sans-serif" },
   header: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "24px clamp(20px, 6vw, 88px)", borderBottom: "1px solid #d9d4ca" },
   logo: { fontWeight: 800, letterSpacing: "0.12em", fontSize: 16 },
+  navigation: { display: "flex", alignItems: "center", gap: 18 },
   headerLink: { color: "#1c5b4d", fontWeight: 700, textDecoration: "none" },
   hero: { maxWidth: 900, margin: "0 auto", padding: "clamp(72px, 12vw, 150px) 24px 100px" },
   eyebrow: { color: "#b45b35", letterSpacing: "0.16em", fontWeight: 800, fontSize: 12 },
