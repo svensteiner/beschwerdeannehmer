@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { answerComplaint, emptyComplaintProtocol, type ComplaintProtocol } from "@/lib/beschwerden/chat.server";
-import { LOCAL_STT_URL, LOCAL_TTS_URL } from "@/lib/beschwerden/local-voice.server";
+import { LOCAL_STT_URL, LOCAL_TTS_URL, usableTranscript } from "@/lib/beschwerden/local-voice.server";
 import { allowPublicRequest, publicRateLimits } from "@/lib/beschwerden/rate-limit.server";
 
 const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
@@ -14,7 +14,7 @@ async function transcribe(file: File) {
   if (!response.ok) throw new Error("Whisper ist lokal nicht erreichbar.");
   const payload = await response.json() as { text?: unknown };
   const text = typeof payload.text === "string" ? payload.text.trim() : "";
-  if (!text) throw new Error("Es wurde keine Sprache erkannt.");
+  if (!usableTranscript(text)) throw new Error("Stimme nicht erkannt. Bitte wiederholen Sie den letzten Punkt.");
   return text;
 }
 

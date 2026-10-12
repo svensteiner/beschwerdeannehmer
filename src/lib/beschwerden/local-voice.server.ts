@@ -8,6 +8,14 @@ export type LocalVoiceHealth = {
   ready: boolean;
 };
 
+const phantomTranscript = /^(?:untertitel(?: im auftrag des zdf)?|musik|\[?stille\]?|thank you(?: for watching)?)\.?$/iu;
+
+/** Verhindert bekannte Stille-/Phantomtexte im Beschwerdeprotokoll. */
+export function usableTranscript(value: string) {
+  const text = value.trim().replace(/\s+/gu, " ");
+  return text.split(" ").filter(Boolean).length >= 2 && !phantomTranscript.test(text);
+}
+
 type Request = (input: string, init: RequestInit) => Promise<Response>;
 
 async function isAvailable(url: string, request: Request): Promise<boolean> {
