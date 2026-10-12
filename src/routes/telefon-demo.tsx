@@ -14,6 +14,11 @@ function TelefonDemoPage() {
   const [error, setError] = useState("");
   const [voiceReady, setVoiceReady] = useState<boolean | null>(null);
   const [liveState, setLiveState] = useState<"idle" | "connecting" | "live">("idle");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [submittingComplaint, setSubmittingComplaint] = useState(false);
+  const [complaintReference, setComplaintReference] = useState("");
   const [protocol, setProtocol] = useState<Protocol>({ location: "", category: "", priority: "normal", occurredAt: "", summary: "", callback: "" });
   const recorder = useRef<MediaRecorder | null>(null);
   const stream = useRef<MediaStream | null>(null);
@@ -168,6 +173,29 @@ function TelefonDemoPage() {
     window.location.assign("/#formular");
   }
 
+  const protocolReady = Boolean(protocol.location && protocol.category && protocol.summary.trim().length >= 20);
+
+  async function saveConversationComplaint(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!protocolReady || submittingComplaint) return;
+    setSubmittingComplaint(true);
+    setError("");
+    try {
+      const response = await fetch("/api/beschwerden", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ location: protocol.location, category: protocol.category, priority: protocol.priority, occurredAt: protocol.occurredAt, contactPhone: protocol.callback, description: protocol.summary, name: contactName, email: contactEmail, consent: consent ? "yes" : "" }),
+      });
+      const result = await response.json().catch(() => ({})) as { ok?: boolean; error?: string; reference?: string };
+      if (!response.ok || !result.ok || !result.reference) throw new Error(result.error ?? "Der Vorgang konnte nicht gespeichert werden.");
+      setComplaintReference(result.reference);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Der Vorgang konnte nicht gespeichert werden.");
+    } finally {
+      setSubmittingComplaint(false);
+    }
+  }
+
   async function sendText(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const value = text.trim();
@@ -205,7 +233,7 @@ function TelefonDemoPage() {
         {error && <p role="alert" className="mt-4 rounded-xl bg-red-100 p-3 text-sm text-red-900">{error}</p>}
       </section>
       <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-soft"><p className="text-xs font-bold tracking-[0.2em] text-orange-700">LIVE-PROTOKOLL</p><h2 className="mt-2 font-display text-2xl">Wird während des Gesprächs aufgebaut</h2><dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2"><div><dt className="font-bold text-muted-foreground">Standort</dt><dd>{protocol.location || "noch offen"}</dd></div><div><dt className="font-bold text-muted-foreground">Kategorie</dt><dd>{protocol.category || "noch offen"}</dd></div><div><dt className="font-bold text-muted-foreground">Dringlichkeit</dt><dd>{protocol.priority}</dd></div><div><dt className="font-bold text-muted-foreground">Zeitpunkt</dt><dd>{protocol.occurredAt || "noch offen"}</dd></div><div><dt className="font-bold text-muted-foreground">Rückrufnummer</dt><dd>{protocol.callback || "noch offen"}</dd></div><div className="sm:col-span-2"><dt className="font-bold text-muted-foreground">Zusammenfassung</dt><dd>{protocol.summary || "Noch keine Zusammenfassung."}</dd></div></dl></section>
-      <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-soft"><h2 className="font-display text-2xl">Angaben übernehmen</h2><p className="mt-2 text-sm text-muted-foreground">Die Gesprächsangaben werden erst mit Ihrer Einwilligung im Formular gespeichert. Bis dahin bleibt diese Vorführung lokal im Browser.</p><button type="button" onClick={transferToForm} className="mt-4 rounded-full bg-primary px-5 py-3 font-bold text-white">Ins Beschwerdeformular übernehmen</button></section>
+      <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-soft"><h2 className="font-display text-2xl">Beschwerde abschließen</h2>{complaintReference ? <div role="status" className="mt-4 rounded-xl bg-green-100 p-4 text-sm text-green-950"><b>Vorgang gespeichert.</b><br />Vorgangsnummer: {complaintReference}. Der Vorgang liegt nun auf der Betreiber-Tafel.</div> : protocolReady ? <form onSubmit={saveConversationComplaint} className="mt-4 grid gap-3 text-sm"><p className="text-muted-foreground">Bitte prüfen Sie das Live-Protokoll. Mit Ihrer Einwilligung wird es jetzt als Beschwerde gespeichert.</p><label className="grid gap-1 font-bold">Name<input required maxLength={120} value={contactName} onChange={(event) => setContactName(event.target.value)} className="rounded-xl border border-input bg-background px-3 py-2 font-normal" /></label><label className="grid gap-1 font-bold">E-Mail<input required type="email" maxLength={254} value={contactEmail} onChange={(event) => setContactEmail(event.target.value)} className="rounded-xl border border-input bg-background px-3 py-2 font-normal" /></label><label className="flex gap-2 leading-5"><input required checked={consent} onChange={(event) => setConsent(event.target.checked)} type="checkbox" />Ich stimme der Bearbeitung dieser Beschwerde zur Klärung des Vorgangs zu.</label><button disabled={submittingComplaint} className="mt-1 w-fit rounded-full bg-primary px-5 py-3 font-bold text-white disabled:opacity-60" type="submit">{submittingComplaint ? "Wird gespeichert …" : "Beschwerde verbindlich speichern"}</button></form> : <p className="mt-2 text-sm text-muted-foreground">Für das direkte Speichern brauchen wir noch Standort, Kategorie und eine ausreichende Schilderung. Sie können die Angaben auch im Formular prüfen und ergänzen.</p>}<button type="button" onClick={transferToForm} className="mt-4 rounded-full border border-primary px-5 py-3 font-bold text-primary">Ins Beschwerdeformular übernehmen</button></section>
       <p className="mt-6 text-sm text-muted-foreground">Demo-Modus: keine echte Telefonleitung und keine Weitergabe an Best in Parking.</p>
     </div>
   </main>;

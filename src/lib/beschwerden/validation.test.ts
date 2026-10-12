@@ -12,3 +12,4 @@ test("Beschwerde-Validierung verwirft ausgefülltes Honeypot-Feld", () => assert
 test("Beschwerde-Validierung akzeptiert übliches Telefonformat", () => assert.equal(validateComplaint({ ...valid, contactPhone: "+43 (1) 234-56" }).ok, true));
 test("Beschwerde-Validierung weist ungültige Telefonnummer ab", () => assert.equal(validateComplaint({ ...valid, contactPhone: "javascript:alert(1)" }).ok, false));
 test("Beschwerde-Validierung weist ungültigen Zeitpunkt ab", () => assert.equal(validateComplaint({ ...valid, occurredAt: "kein datum" }).ok, false));
+test("Beschwerde-Validierung akzeptiert einen im Gespräch genannten relativen Zeitpunkt", () => assert.equal(validateComplaint({ ...valid, occurredAt: "gestern" }).ok, true));

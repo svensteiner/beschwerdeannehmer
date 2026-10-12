@@ -4,6 +4,7 @@ export type ComplaintInput = { location: string; category: string; description: 
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/u;
 const phonePattern = /^[+()\d\s./-]*$/u;
+const relativeTimePattern = /^(heute|gestern|vorgestern|gegen\s+\d{1,2}(?::\d{2})?\s*(?:uhr)?)$/iu;
 const limits = { location: 160, description: 5000, name: 120, email: 254 } as const;
 
 export function validateComplaint(value: unknown): { ok: true; value: ComplaintInput } | { ok: false; error: string } {
@@ -18,7 +19,7 @@ export function validateComplaint(value: unknown): { ok: true; value: ComplaintI
   if (!result.name || result.name.length > limits.name) return { ok: false, error: "Bitte den Namen korrekt angeben." };
   if (result.email.length > limits.email || !emailPattern.test(result.email)) return { ok: false, error: "Bitte eine gültige E-Mail-Adresse angeben." };
   if (result.occurredAt.length > 40 || result.contactPhone.length > 30 || !phonePattern.test(result.contactPhone)) return { ok: false, error: "Zeitpunkt oder Telefonnummer ist ungültig." };
-  if (result.occurredAt && Number.isNaN(Date.parse(result.occurredAt))) return { ok: false, error: "Bitte einen gültigen Zeitpunkt angeben." };
+  if (result.occurredAt && !relativeTimePattern.test(result.occurredAt) && Number.isNaN(Date.parse(result.occurredAt))) return { ok: false, error: "Bitte einen gültigen Zeitpunkt angeben." };
   if (!["normal", "dringend", "sicherheit"].includes(result.priority)) return { ok: false, error: "Ungültige Dringlichkeitsstufe." };
   return { ok: true, value: { ...result, consent: true } };
 }
