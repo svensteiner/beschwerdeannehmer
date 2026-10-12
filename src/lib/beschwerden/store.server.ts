@@ -2,6 +2,7 @@ import { copyFile, mkdir, readFile, rename, rm, writeFile } from "node:fs/promis
 import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
 import type { ComplaintPriority } from "./validation";
+import { demoComplaints } from "./demo-complaints.js";
 
 export type ComplaintStatus = "neu" | "in_pruefung" | "beantwortet" | "geschlossen";
 export type ComplaintHistoryEntry = { at: string; status: ComplaintStatus; response?: string };
@@ -61,6 +62,8 @@ async function enqueueMutation<T>(mutation: () => Promise<T>): Promise<T> {
 }
 
 export async function listComplaints(): Promise<Complaint[]> {
+  const demo = demoComplaints();
+  if (demo.length) return demo as Complaint[];
   const target = filePath();
   try {
     return await readStoredComplaints(target);

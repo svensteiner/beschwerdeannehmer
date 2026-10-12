@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { answerComplaint, emptyComplaintProtocol, type ComplaintProtocol } from "@/lib/beschwerden/chat.server";
+import { allowPublicRequest, publicRateLimits } from "@/lib/beschwerden/rate-limit.server";
 
 export const Route = createFileRoute("/api/telefon/chat")({
   server: { handlers: { POST: async ({ request }) => {
+    if (!allowPublicRequest(request, publicRateLimits.telephoneChat)) return Response.json({ ok: false, error: "Zu viele Gesprächsnachrichten. Bitte kurz warten." }, { status: 429, headers: { "Retry-After": "600" } });
     const body = await request.json().catch(() => null) as { text?: unknown; history?: unknown; protocol?: unknown } | null;
     const text = typeof body?.text === "string" ? body.text.trim().slice(0, 2000) : "";
     if (!text) return Response.json({ ok: false, error: "Bitte etwas eingeben." }, { status: 400 });

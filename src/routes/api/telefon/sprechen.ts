@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { answerComplaint, emptyComplaintProtocol, type ComplaintProtocol } from "@/lib/beschwerden/chat.server";
 import { LOCAL_STT_URL, LOCAL_TTS_URL } from "@/lib/beschwerden/local-voice.server";
+import { allowPublicRequest, publicRateLimits } from "@/lib/beschwerden/rate-limit.server";
 
 const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
 
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/api/telefon/sprechen")({
     handlers: {
       POST: async ({ request }) => {
         try {
+          if (!allowPublicRequest(request, publicRateLimits.telephoneSpeech)) return Response.json({ ok: false, error: "Zu viele Sprachaufnahmen. Bitte kurz warten." }, { status: 429, headers: { "Retry-After": "600" } });
           const form = await request.formData();
           const file = form.get("audio");
           if (!(file instanceof File) || file.size === 0) return Response.json({ ok: false, error: "Audio fehlt." }, { status: 400 });

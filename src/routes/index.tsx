@@ -126,10 +126,10 @@ function ComplaintHome() {
         <div>
           <p style={styles.eyebrow}>SICHERES FORMULAR</p>
           <h2>Was ist passiert?</h2>
-          <p style={styles.muted}>Pflichtfelder sind mit * markiert. Bitte keine Zahlungsdaten oder Passwörter eintragen.</p>
+          <p style={styles.muted}>Pflichtfelder sind mit * markiert. Bitte keine Zahlungsdaten oder Passwörter eintragen. In einer öffentlichen Demo bitte ausschließlich erfundene Angaben verwenden.</p>
         </div>
         {sent ? (
-          <div style={styles.success} role="status"><strong>Danke, Ihre Beschwerde ist eingegangen.</strong><br />Ihre Vorgangsnummer: <b>{reference}</b><br />Bitte bewahren Sie diese Nummer für Rückfragen auf.</div>
+          <div style={styles.success} role="status"><strong>Ihre Beschwerde ist eingegangen.</strong><br />Ihre Vorgangsnummer: <b>{reference}</b><br />Der Betreiber prüft den Vorgang. Bitte bewahren Sie die Nummer für Rückfragen auf.</div>
         ) : (
           <form key={draft ? "transferred" : "fresh"} onSubmit={submit} style={styles.form}>
             <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-10000px", opacity: 0 }} />
@@ -140,7 +140,7 @@ function ComplaintHome() {
             {selectedPriority === "sicherheit" && <div role="alert" style={styles.safetyNotice}><b>Wichtig:</b> Dieses Formular alarmiert niemanden automatisch. Bei akuter Gefahr nutzen Sie 112, 122, 133 oder 144 beziehungsweise die Notruftaste oder Gegensprechanlage in der Garage.</div>}
             <div style={styles.grid}><label style={styles.label}>Wann war der Vorfall?<input style={styles.control} name="occurredAt" type="datetime-local" defaultValue={draft?.occurredAt ?? ""} /></label><label style={styles.label}>Telefon für Rückfragen<input style={styles.control} name="contactPhone" type="tel" maxLength={30} autoComplete="tel" defaultValue={draft?.contactPhone ?? ""} /></label></div>
             <label style={styles.label}>Ihre Schilderung *<textarea style={styles.textarea} name="description" required minLength={20} maxLength={5000} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /><small style={styles.counter}>{description.length}/5000 Zeichen</small></label>
-            <div style={styles.grid}><label style={styles.label}>Name *<input style={styles.control} name="name" required maxLength={120} /></label><label style={styles.label}>E-Mail *<input style={styles.control} name="email" type="email" required maxLength={254} /></label></div>
+            <div style={styles.grid}><label style={styles.label}>Name *<input style={styles.control} name="name" required maxLength={120} /></label><label style={styles.label}>E-Mail für Rückfragen<input style={styles.control} name="email" type="email" maxLength={254} /></label></div><small style={styles.muted}>Bitte geben Sie mindestens E-Mail-Adresse oder Telefonnummer an.</small>
             <label style={styles.check}><input name="consent" value="yes" type="checkbox" required /> Ich stimme der Bearbeitung dieser Beschwerde zur Klärung des Vorgangs zu.</label>
             {error && <div role="alert" style={styles.error}>{error}</div>}
             <button type="submit" disabled={submitting} style={{ ...styles.primary, ...(submitting ? styles.disabled : {}) }}>{submitting ? "Wird übermittelt …" : "Beschwerde absenden"}</button>

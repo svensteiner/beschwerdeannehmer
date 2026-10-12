@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { addTranscriptToProtocol, emptyComplaintProtocol, type ComplaintProtocol } from "@/lib/beschwerden/chat.server";
+import { allowPublicRequest, publicRateLimits } from "@/lib/beschwerden/rate-limit.server";
 
 const MAX_TRANSCRIPT_LENGTH = 2_000;
 
@@ -7,6 +8,7 @@ export const Route = createFileRoute("/api/telefon/protokoll")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        if (!allowPublicRequest(request, publicRateLimits.telephoneProtocol)) return Response.json({ ok: false, error: "Zu viele Gesprächsausschnitte. Bitte kurz warten." }, { status: 429, headers: { "Retry-After": "600" } });
         const body = await request.json().catch(() => null) as { text?: unknown; protocol?: unknown } | null;
         const text = typeof body?.text === "string" ? body.text.trim().slice(0, MAX_TRANSCRIPT_LENGTH) : "";
         if (!text) return Response.json({ ok: false, error: "Kein Gesprächsausschnitt vorhanden." }, { status: 400 });
