@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { addTranscriptToProtocol, answerComplaint, emptyComplaintProtocol } from "./chat.server";
+import { addTranscriptToProtocol, answerComplaint, emptyComplaintProtocol, safeModelProtocol } from "./chat.server";
 
 test("lokale Regeln füllen Standort, Kategorie, Zeitpunkt und Rückrufnummer", async () => {
   const previous = process.env.GARAGEN_LLM_BASE_URL;
@@ -65,4 +65,12 @@ test("Live-Transkript ergänzt das Protokoll ohne eine zweite Bot-Antwort", () =
   assert.equal(protocol.category, "Ein-/Ausfahrt");
   assert.equal(protocol.priority, "sicherheit");
   assert.match(protocol.summary, /Ausfahrt/i);
+});
+
+test("ein lokales Modell darf keine Beschwerdedaten erfinden oder überschreiben", () => {
+  const protocol = safeModelProtocol("Das Ticket wurde nicht erkannt.", { ...emptyComplaintProtocol, location: "Hauptbahnhof" }, { location: "Erfundener Ort", category: "Unbekannt", priority: "sicherheit", callback: "0664 999 99 99" });
+  assert.equal(protocol.location, "Hauptbahnhof");
+  assert.equal(protocol.category, "Parkticket oder Schranke");
+  assert.equal(protocol.priority, "normal");
+  assert.equal(protocol.callback, "");
 });
