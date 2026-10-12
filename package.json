@@ -18,7 +18,7 @@
     "db:migrate": "node scripts/migrate.mjs",
     "build:dev": "node scripts/with-app-env.mjs vite build --mode development",
     "preview": "node scripts/with-app-env.mjs vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.beschwerden.json",
     "check:auth": "node scripts/check-auth-invariant.mjs",
     "e2e:local": "playwright test --config=playwright.config.ts",
     "e2e:release-gate": "node scripts/isolated-home-audit.mjs release-gate",
