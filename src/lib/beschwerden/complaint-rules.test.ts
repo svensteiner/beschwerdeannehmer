@@ -32,3 +32,8 @@ test("eine Zeitangabe wird nicht als Standort gespeichert", () => {
   const result = updateComplaintProtocol("In der Früh bei der Einfahrt war die Schranke zu.", emptyProtocol);
   assert.equal(result.location, "");
 });
+
+test("ein Standort-Alias wird im Gespräch einheitlich gespeichert", () => {
+  const result = updateComplaintProtocol("In der Bahnhofgarage ist die Ausfahrt blockiert.", emptyProtocol);
+  assert.equal(result.location, "Hauptbahnhof");
+});

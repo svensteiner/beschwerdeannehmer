@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
+import { garageBrand } from "@/lib/beschwerden/branding.js";
 
 export const Route = createFileRoute("/")({
   component: ComplaintHome,
@@ -79,7 +80,7 @@ function ComplaintHome() {
   return (
     <main style={styles.page}>
       <header style={styles.header}>
-        <div style={styles.logo}>BEST IN PARKING <span>· KUNDENSERVICE-DEMO</span></div>
+        <div style={styles.logo}>{garageBrand.name} <span>· {garageBrand.demoLabel}</span></div>
         <nav style={styles.navigation} aria-label="Demo-Navigation">
           <a href="#formular" style={styles.headerLink}>Beschwerde melden</a>
           <a href="/tafel" style={styles.headerLink}>Beschwerde-Tafel</a>
@@ -90,7 +91,7 @@ function ComplaintHome() {
         <p style={styles.eyebrow}>PARKEN · LADEN · SERVICE</p>
         <h1>Ihr Anliegen wird<br /><em>rasch aufgenommen.</em></h1>
         <p style={styles.lead}>Ob Schranke, Parkticket, Abrechnung oder E-Laden: Der digitale Kundenservice nimmt Ihr Anliegen für den richtigen Standort strukturiert auf.</p>
-        <p style={styles.demoNote}>Pilotoberfläche für eine gemeinsame Vorführung – nicht die offizielle Website von Best in Parking.</p>
+        <p style={styles.demoNote}>Pilotoberfläche für eine gemeinsame Vorführung – {garageBrand.demoLabel}.</p>
         <a href="#formular" style={styles.primary}>Beschwerde starten ↓</a>
         <a href="/telefon-demo" style={{ ...styles.secondary, marginLeft: 12 }}>Mit dem Bot sprechen →</a>
       </section>
@@ -143,7 +144,7 @@ function ComplaintHome() {
           </form>
         )}
       </section>
-      <footer style={styles.footer}>BEST IN PARKING · KUNDENSERVICE-DEMO · <a href="/datenschutz">Datenschutz</a> · <a href="/impressum">Impressum</a></footer>
+      <footer style={styles.footer}>{garageBrand.name} · {garageBrand.demoLabel} · <a href="/datenschutz">Datenschutz</a> · <a href="/impressum">Impressum</a></footer>
     </main>
   );
 }

@@ -4,6 +4,8 @@
  * sich ohne Kenntnis der Server-Anbindung anpassen.
  */
 
+import { knownLocationFrom } from "./locations.js";
+
 /** @typedef {{ location: string, category: string, priority: string, occurredAt: string, summary: string, callback: string }} ComplaintProtocol */
 
 /** @param {string} value @param {number} limit */
@@ -13,6 +15,8 @@ function compact(value, limit) {
 
 /** @param {string} text */
 function locationFrom(text) {
+  const known = knownLocationFrom(text);
+  if (known) return known;
   const ending = "(?=\\s+(?:hat|um|nicht|ist|war|gegen|heute|gestern|die|der|das)\\b|[,.]|$)";
   const nearby = new RegExp(`\\b(?:in|bei)\\s+(?:(?:der|die|dem|den)\\s+)?(?:garage\\s+)?([A-ZÄÖÜ][\\wÄÖÜäöüß .-]{2,50}?)${ending}`, "iu");
   const named = new RegExp(`\\b(?:garage|standort)\\s+([A-ZÄÖÜ][\\wÄÖÜäöüß .-]{2,50}?)${ending}`, "iu");

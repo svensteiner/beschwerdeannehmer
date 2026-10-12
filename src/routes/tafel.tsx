@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, type CSSProperties } from "react";
 import { complaintBoardColumns, complaintsByStatus } from "@/lib/beschwerden/complaint-board.js";
 import { complaintHandoff } from "@/lib/beschwerden/complaint-workflow.js";
+import { garageBrand } from "@/lib/beschwerden/branding.js";
 
 export const Route = createFileRoute("/tafel")({ component: ComplaintBoard });
 
@@ -32,7 +33,7 @@ function ComplaintBoard() {
 
   const columns = complaintsByStatus(complaints) as Record<string, Complaint[]>;
   return <main style={styles.page}>
-    <header style={styles.header}><b>BEST IN PARKING · BETREIBERDEMO</b><nav style={styles.nav}><a href="/">Kundenansicht</a><a href="/bearbeitung">Detailbearbeitung</a></nav></header>
+    <header style={styles.header}><b>{garageBrand.name} · BETREIBERDEMO</b><nav style={styles.nav}><a href="/">Kundenansicht</a><a href="/bearbeitung">Detailbearbeitung</a></nav></header>
     <section style={styles.intro}><p style={styles.eyebrow}>BESCHWERDE-TAFEL · DEMO</p><h1>Alle Anliegen im Blick.</h1><p>Neue und dringende Vorgänge stehen sichtbar vorne. Ein Klick verschiebt den Vorgang in den nächsten Bearbeitungsschritt.</p><div style={styles.login}><input aria-label="Betreiber-Schlüssel" type="password" value={key} onChange={(event) => setKey(event.target.value)} placeholder="Betreiber-Schlüssel" style={styles.input} /><button type="button" onClick={() => void load()} style={styles.primary}>{loading ? "Lädt …" : "Tafel laden"}</button></div>{error && <p role="alert" style={styles.error}>{error}</p>}</section>
     <section aria-label="Beschwerde-Tafel" style={styles.board}>{complaintBoardColumns.map((column) => <div key={column.status} style={styles.column}><div style={styles.columnHeading}><h2>{column.title}</h2><span>{columns[column.status]?.length ?? 0}</span></div><div style={styles.cards}>{(columns[column.status] ?? []).map((complaint) => {
       const handoff = complaintHandoff(complaint);
