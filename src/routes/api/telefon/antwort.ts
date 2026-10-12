@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { timingSafeEqual } from "node:crypto";
 import { listComplaints, saveComplaint } from "@/lib/beschwerden/store.server";
+import { answerComplaint, emptyComplaintProtocol } from "@/lib/beschwerden/chat.server";
 
 const MAX_BODY_BYTES = 64 * 1024;
 
@@ -12,21 +13,14 @@ function validPhoneToken(value: string | null): boolean {
   return actual.length === wanted.length && timingSafeEqual(actual, wanted);
 }
 
-function replyFor(text: string): { reply: string; endCall: boolean } {
+async function replyFor(text: string): Promise<{ reply: string; endCall: boolean }> {
   const lower = text.trim().toLocaleLowerCase("de-AT");
+  const answered = await answerComplaint(text, [], emptyComplaintProtocol);
+  if (answered.protocol.priority === "sicherheit") return { reply: answered.reply, endCall: false };
   if (/auf wiederhören|auf wiedersehen|tschüss|danke,? das war/.test(lower)) {
     return { reply: "Danke für Ihren Anruf. Wir haben Ihr Anliegen aufgenommen und melden uns nachvollziehbar zurück. Auf Wiederhören.", endCall: true };
   }
-  if (/schranke|einfahrt|ausfahrt/.test(lower)) {
-    return { reply: "Ich notiere ein Anliegen zu Ein- oder Ausfahrt. Bitte nennen Sie mir noch den Garagenstandort und ungefähr die Uhrzeit.", endCall: false };
-  }
-  if (/abrechnung|zahlung|rechnung/.test(lower)) {
-    return { reply: "Ich notiere ein Anliegen zur Abrechnung. Bitte nennen Sie keine Zahlungsdaten am Telefon. Welcher Standort ist betroffen?", endCall: false };
-  }
-  if (/sicher|gefahr|unfall|defekt/.test(lower)) {
-    return { reply: "Das markiere ich als sicherheitsrelevant für eine rasche Prüfung. Bitte nennen Sie mir sofort den Standort. Bei akuter Gefahr rufen Sie zusätzlich den Notruf.", endCall: false };
-  }
-  return { reply: "Danke, ich habe das aufgenommen. Bitte nennen Sie mir noch den Standort und was genau passiert ist.", endCall: false };
+  return { reply: answered.reply, endCall: false };
 }
 
 export const Route = createFileRoute("/api/telefon/antwort")({
@@ -42,7 +36,7 @@ export const Route = createFileRoute("/api/telefon/antwort")({
         const messages = Array.isArray(body.messages) ? body.messages : [];
         const lastUser = [...messages].reverse().find((message) => typeof message === "object" && message !== null && (message as { role?: unknown }).role === "user");
         const text = lastUser && typeof (lastUser as { content?: unknown }).content === "string" ? (lastUser as { content: string }).content.slice(0, 5000) : "";
-        const result = replyFor(text);
+        const result = await replyFor(text);
         const callId = typeof (body as { callId?: unknown }).callId === "string" ? (body as { callId: string }).callId.slice(0, 120) : "";
         const ended = (body as { ended?: unknown }).ended === true;
         let savedReference: string | undefined;

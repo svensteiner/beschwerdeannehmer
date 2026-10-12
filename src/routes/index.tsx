@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 import { garageBrand } from "@/lib/beschwerden/branding.js";
+import { COMPLAINT_CATEGORIES } from "@/lib/beschwerden/validation";
 
 export const Route = createFileRoute("/")({
   component: ComplaintHome,
 });
 
 function ComplaintHome() {
+  type ChatProtocol = { location: string; category: string; priority: string; occurredAt: string; summary: string; callback: string };
   const [sent, setSent] = useState(false);
   const [reference, setReference] = useState("");
   const [error, setError] = useState("");
@@ -14,6 +16,8 @@ function ComplaintHome() {
   const [submitting, setSubmitting] = useState(false);
   const [selectedPriority, setSelectedPriority] = useState("normal");
   const [chatInput, setChatInput] = useState("");
+  const [chatBusy, setChatBusy] = useState(false);
+  const [chatProtocol, setChatProtocol] = useState<ChatProtocol>({ location: "", category: "", priority: "normal", occurredAt: "", summary: "", callback: "" });
   const [chatMessages, setChatMessages] = useState([
     { from: "bot", text: "Grüß Gott. Ich nehme Ihr Anliegen für die Garage auf. Was ist passiert?" },
   ]);
@@ -34,28 +38,27 @@ function ComplaintHome() {
     }
   }, []);
 
-  function answerChat(text: string) {
+  async function answerChat(text: string) {
     const value = text.trim();
-    if (!value) return;
-    const lower = value.toLocaleLowerCase("de-AT");
-    const reply = lower.includes("schranke") || lower.includes("einfahrt")
-      ? "Danke. Ich notiere: Zufahrt oder Schranke. An welchem Standort und ungefähr zu welcher Zeit war das?"
-      : lower.includes("abrechnung") || lower.includes("zahlung")
-        ? "Verstanden. Ich notiere ein Anliegen zur Abrechnung. Bitte halten Sie keine Zahlungsdaten im Chat fest; das Team prüft den Vorgang separat."
-        : lower.includes("ticket")
-          ? "Danke. Ich notiere ein Problem mit dem Parkticket. Bitte nennen Sie noch Garage oder Standort und die ungefähre Uhrzeit."
-          : lower.includes("laden") || lower.includes("e-lad")
-            ? "Danke. Ich notiere ein Anliegen zum E-Laden. Bitte nennen Sie noch den Standort und, falls sichtbar, die Nummer der Ladesäule."
-        : lower.includes("sicher") || lower.includes("gefahr")
-          ? "Das klingt sicherheitsrelevant. Ich markiere es für eine rasche Prüfung durch den Betreiber. Bitte nennen Sie noch den Standort."
-          : "Danke, ich habe das aufgenommen. Für die Vorführung würde ich jetzt Standort, Zeitpunkt und Rückrufmöglichkeit abfragen.";
-    setChatMessages((current) => [...current, { from: "user", text: value }, { from: "bot", text: reply }]);
+    if (!value || chatBusy) return;
     setChatInput("");
+    setChatBusy(true);
+    try {
+      const response = await fetch("/api/telefon/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: value, protocol: chatProtocol, history: chatMessages.map((message) => ({ role: message.from === "bot" ? "assistant" : "user", content: message.text })) }) });
+      const result = await response.json().catch(() => ({})) as { ok?: boolean; reply?: string; protocol?: ChatProtocol; error?: string };
+      if (!response.ok || !result.ok || !result.reply || !result.protocol) throw new Error(result.error ?? "Der Chat ist derzeit nicht verfügbar.");
+      setChatMessages((current) => [...current, { from: "user", text: value }, { from: "bot", text: result.reply! }]);
+      setChatProtocol(result.protocol);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Der Chat ist derzeit nicht verfügbar.");
+    } finally {
+      setChatBusy(false);
+    }
   }
 
   function handleChatSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    answerChat(chatInput);
+    void answerChat(chatInput);
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -111,12 +114,12 @@ function ComplaintHome() {
         </div>
         <div style={styles.quickReplies}>
           {['Die Schranke hat nicht geöffnet.', 'Mein Parkticket wurde nicht erkannt.', 'Ich habe ein Problem beim E-Laden.'].map((prompt) => (
-            <button key={prompt} type="button" style={styles.quickButton} onClick={() => answerChat(prompt)}>{prompt}</button>
+            <button key={prompt} type="button" disabled={chatBusy} style={styles.quickButton} onClick={() => void answerChat(prompt)}>{prompt}</button>
           ))}
         </div>
         <form onSubmit={handleChatSubmit} style={styles.chatForm}>
           <input style={styles.chatInput} value={chatInput} onChange={(event) => setChatInput(event.target.value)} placeholder="Beispielanliegen eingeben …" aria-label="Beispielanliegen" />
-          <button type="submit" style={styles.primary}>Senden</button>
+          <button type="submit" disabled={chatBusy} style={{ ...styles.primary, ...(chatBusy ? styles.disabled : {}) }}>{chatBusy ? "Prüft …" : "Senden"}</button>
         </form>
       </section>
       <section id="formular" style={styles.card}>
@@ -132,7 +135,7 @@ function ComplaintHome() {
             <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-10000px", opacity: 0 }} />
             {draft && <div role="status" style={styles.draftNotice}>Angaben aus der Gesprächs-Demo wurden übernommen. Bitte prüfen und ergänzen Sie sie.</div>}
             <label style={styles.label}>Garage / Standort *<input style={styles.control} name="location" required maxLength={160} defaultValue={draft?.location ?? ""} placeholder="z. B. Garage Hauptbahnhof" /></label>
-            <label style={styles.label}>Worum geht es? *<select style={styles.control} name="category" required defaultValue={draft?.category ?? ""}><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkticket oder Schranke</option><option>Parkgebühr oder Abrechnung</option><option>E-Laden</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
+            <label style={styles.label}>Worum geht es? *<select style={styles.control} name="category" required defaultValue={draft?.category ?? ""}><option value="" disabled>Bitte auswählen</option>{COMPLAINT_CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select></label>
             <label style={styles.label}>Dringlichkeit<select style={styles.control} name="priority" value={selectedPriority} onChange={(event) => setSelectedPriority(event.target.value)}><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
             {selectedPriority === "sicherheit" && <div role="alert" style={styles.safetyNotice}><b>Wichtig:</b> Dieses Formular alarmiert niemanden automatisch. Bei akuter Gefahr nutzen Sie 112, 122, 133 oder 144 beziehungsweise die Notruftaste oder Gegensprechanlage in der Garage.</div>}
             <div style={styles.grid}><label style={styles.label}>Wann war der Vorfall?<input style={styles.control} name="occurredAt" type="datetime-local" defaultValue={draft?.occurredAt ?? ""} /></label><label style={styles.label}>Telefon für Rückfragen<input style={styles.control} name="contactPhone" type="tel" maxLength={30} autoComplete="tel" defaultValue={draft?.contactPhone ?? ""} /></label></div>
