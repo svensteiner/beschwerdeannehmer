@@ -80,6 +80,7 @@ function ComplaintHome() {
         <div style={styles.logo}>BEST IN PARKING <span>· KUNDENSERVICE-DEMO</span></div>
         <nav style={styles.navigation} aria-label="Demo-Navigation">
           <a href="#formular" style={styles.headerLink}>Beschwerde melden</a>
+          <a href="/tafel" style={styles.headerLink}>Beschwerde-Tafel</a>
           <a href="/bearbeitung" style={styles.headerLink}>Betreiberansicht</a>
         </nav>
       </header>

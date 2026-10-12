@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BearbeitungRouteImport } from './routes/bearbeitung'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ImpressumRouteImport } from './routes/impressum'
+import { Route as TafelRouteImport } from './routes/tafel'
 import { Route as TelefonDemoRouteImport } from './routes/telefon-demo'
 import { Route as ApiBeschwerdenRouteImport } from './routes/api/beschwerden'
 import { Route as ApiGesundheitRouteImport } from './routes/api/gesundheit'
@@ -39,6 +40,11 @@ const DatenschutzRoute = DatenschutzRouteImport.update({
 const ImpressumRoute = ImpressumRouteImport.update({
   id: '/impressum',
   path: '/impressum',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TafelRoute = TafelRouteImport.update({
+  id: '/tafel',
+  path: '/tafel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TelefonDemoRoute = TelefonDemoRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
+  '/tafel': typeof TafelRoute
   '/telefon-demo': typeof TelefonDemoRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/gesundheit': typeof ApiGesundheitRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
+  '/tafel': typeof TafelRoute
   '/telefon-demo': typeof TelefonDemoRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/gesundheit': typeof ApiGesundheitRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
+  '/tafel': typeof TafelRoute
   '/telefon-demo': typeof TelefonDemoRoute
   '/api/beschwerden': typeof ApiBeschwerdenRoute
   '/api/gesundheit': typeof ApiGesundheitRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/bearbeitung'
     | '/datenschutz'
     | '/impressum'
+    | '/tafel'
     | '/telefon-demo'
     | '/api/beschwerden'
     | '/api/gesundheit'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/bearbeitung'
     | '/datenschutz'
     | '/impressum'
+    | '/tafel'
     | '/telefon-demo'
     | '/api/beschwerden'
     | '/api/gesundheit'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/bearbeitung'
     | '/datenschutz'
     | '/impressum'
+    | '/tafel'
     | '/telefon-demo'
     | '/api/beschwerden'
     | '/api/gesundheit'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   BearbeitungRoute: typeof BearbeitungRoute
   DatenschutzRoute: typeof DatenschutzRoute
   ImpressumRoute: typeof ImpressumRoute
+  TafelRoute: typeof TafelRoute
   TelefonDemoRoute: typeof TelefonDemoRoute
   ApiBeschwerdenRoute: typeof ApiBeschwerdenRoute
   ApiGesundheitRoute: typeof ApiGesundheitRoute
@@ -201,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/impressum'
       fullPath: '/impressum'
       preLoaderRoute: typeof ImpressumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tafel': {
+      id: '/tafel'
+      path: '/tafel'
+      fullPath: '/tafel'
+      preLoaderRoute: typeof TafelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/telefon-demo': {
@@ -260,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   BearbeitungRoute: BearbeitungRoute,
   DatenschutzRoute: DatenschutzRoute,
   ImpressumRoute: ImpressumRoute,
+  TafelRoute: TafelRoute,
   TelefonDemoRoute: TelefonDemoRoute,
   ApiBeschwerdenRoute: ApiBeschwerdenRoute,
   ApiGesundheitRoute: ApiGesundheitRoute,
