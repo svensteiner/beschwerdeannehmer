@@ -14,7 +14,14 @@ export function openAiLiveSession() {
       "Frage niemals nach Zahlungsdaten oder Passwörtern und mache keine rechtlichen Zusagen.",
     ].join(" "),
     audio: {
-      input: { turn_detection: { type: "semantic_vad", eagerness: "low", create_response: true, interrupt_response: true } },
+      input: {
+        transcription: {
+          model: "gpt-4o-mini-transcribe",
+          language: "de",
+          prompt: "Österreichischer Kundenservice für Parkgaragen. Begriffe: Parkticket, Schranke, Einfahrt, Ausfahrt, E-Laden, Parkgebühr, Garage, Standort.",
+        },
+        turn_detection: { type: "semantic_vad", eagerness: "low", create_response: true, interrupt_response: true },
+      },
       output: { voice: "marin" },
     },
   };

@@ -1,4 +1,4 @@
-import { answerWithLocalRules } from "./complaint-rules.js";
+import { answerWithLocalRules, updateComplaintProtocol } from "./complaint-rules.js";
 
 export type ComplaintProtocol = {
   location: string;
@@ -10,6 +10,14 @@ export type ComplaintProtocol = {
 };
 
 export const emptyComplaintProtocol: ComplaintProtocol = { location: "", category: "", priority: "normal", occurredAt: "", summary: "", callback: "" };
+
+/**
+ * Schreibt erkannte Gesprächsinhalte in das Protokoll, ohne eine zweite Bot-Antwort
+ * auszulösen. Das wird für die Live-Stimme verwendet.
+ */
+export function addTranscriptToProtocol(text: string, protocol: ComplaintProtocol): ComplaintProtocol {
+  return updateComplaintProtocol(text, protocol) as ComplaintProtocol;
+}
 
 function fallback(text: string, protocol: ComplaintProtocol): { reply: string; protocol: ComplaintProtocol } {
   return answerWithLocalRules(text, protocol) as { reply: string; protocol: ComplaintProtocol };

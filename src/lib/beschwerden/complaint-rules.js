@@ -41,7 +41,7 @@ function nextQuestion(protocol) {
 }
 
 /** @param {string} text @param {ComplaintProtocol} protocol */
-export function answerWithLocalRules(text, protocol) {
+export function updateComplaintProtocol(text, protocol) {
   const lower = text.toLocaleLowerCase("de-AT");
   const next = { ...protocol };
   if (!next.category) {
@@ -56,5 +56,11 @@ export function answerWithLocalRules(text, protocol) {
   if (!next.occurredAt) next.occurredAt = occurredAtFrom(text);
   if (!next.callback) next.callback = callbackFrom(text);
   next.summary = compact([next.summary, text].filter(Boolean).join(" "), 1000);
+  return next;
+}
+
+/** @param {string} text @param {ComplaintProtocol} protocol */
+export function answerWithLocalRules(text, protocol) {
+  const next = updateComplaintProtocol(text, protocol);
   return { reply: nextQuestion(next), protocol: next };
 }

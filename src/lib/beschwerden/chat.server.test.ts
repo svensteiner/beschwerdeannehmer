@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { answerComplaint, emptyComplaintProtocol } from "./chat.server";
+import { addTranscriptToProtocol, answerComplaint, emptyComplaintProtocol } from "./chat.server";
 
 test("lokale Regeln füllen Standort, Kategorie, Zeitpunkt und Rückrufnummer", async () => {
   const previous = process.env.GARAGEN_LLM_BASE_URL;
@@ -57,4 +57,12 @@ test("lokale Regeln fangen einen bekannten Sprach-Erkennungsfehler beim Parktick
     if (previous === undefined) delete process.env.GARAGEN_LLM_BASE_URL;
     else process.env.GARAGEN_LLM_BASE_URL = previous;
   }
+});
+
+test("Live-Transkript ergänzt das Protokoll ohne eine zweite Bot-Antwort", () => {
+  const protocol = addTranscriptToProtocol("In der Garage Hauptbahnhof ist die Ausfahrt blockiert. Ich komme nicht hinaus.", emptyComplaintProtocol);
+  assert.equal(protocol.location, "Hauptbahnhof");
+  assert.equal(protocol.category, "Ein-/Ausfahrt");
+  assert.equal(protocol.priority, "dringend");
+  assert.match(protocol.summary, /Ausfahrt/i);
 });

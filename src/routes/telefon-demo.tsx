@@ -21,6 +21,26 @@ function TelefonDemoPage() {
   const liveConnection = useRef<RTCPeerConnection | null>(null);
   const liveStream = useRef<MediaStream | null>(null);
   const liveAudio = useRef<HTMLAudioElement | null>(null);
+  const protocolRef = useRef(protocol);
+  const liveTranscriptIds = useRef(new Set<string>());
+  const liveProtocolQueue = useRef(Promise.resolve());
+
+  function applyProtocol(next: Protocol) {
+    protocolRef.current = next;
+    setProtocol(next);
+  }
+
+  function addLiveTranscript(text: string) {
+    liveProtocolQueue.current = liveProtocolQueue.current.catch(() => undefined).then(async () => {
+      const response = await fetch("/api/telefon/protokoll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text, protocol: protocolRef.current }),
+      });
+      const result = await response.json().catch(() => ({})) as { ok?: boolean; protocol?: Protocol };
+      if (response.ok && result.ok && result.protocol) applyProtocol(result.protocol);
+    });
+  }
 
   useEffect(() => {
     let active = true;
@@ -43,7 +63,7 @@ function TelefonDemoPage() {
       const result = await response.json() as { ok?: boolean; error?: string; text?: string; reply?: string; audio?: string; mime?: string; protocol?: Protocol };
       if (!response.ok || !result.ok || !result.text || !result.reply) throw new Error(result.error ?? "Die lokale Sprachstrecke ist nicht verfügbar.");
       setMessages((current) => [...current, { role: "user", text: result.text! }, { role: "bot", text: result.reply! }]);
-      if (result.protocol) setProtocol(result.protocol);
+      if (result.protocol) applyProtocol(result.protocol);
       if (result.audio) {
         const audio = new Audio(`data:${result.mime ?? "audio/wav"};base64,${result.audio}`);
         void audio.play().catch(() => undefined);
@@ -85,6 +105,8 @@ function TelefonDemoPage() {
     liveConnection.current = null;
     liveAudio.current?.pause();
     liveAudio.current = null;
+    liveTranscriptIds.current.clear();
+    liveProtocolQueue.current = Promise.resolve();
     setLiveState("idle");
   }
 
@@ -97,8 +119,15 @@ function TelefonDemoPage() {
       const channel = peer.createDataChannel("oai-events");
       channel.onmessage = (event) => {
         try {
-          const message = JSON.parse(String(event.data)) as { type?: string; transcript?: string; error?: { message?: string } };
-          if (message.type === "conversation.item.input_audio_transcription.completed" && message.transcript) setMessages((current) => [...current, { role: "user", text: message.transcript! }]);
+          const message = JSON.parse(String(event.data)) as { type?: string; item_id?: string; transcript?: string; error?: { message?: string } };
+          if (message.type === "conversation.item.input_audio_transcription.completed" && message.transcript) {
+            const id = message.item_id ?? message.transcript;
+            if (!liveTranscriptIds.current.has(id)) {
+              liveTranscriptIds.current.add(id);
+              setMessages((current) => [...current, { role: "user", text: message.transcript! }]);
+              void addLiveTranscript(message.transcript);
+            }
+          }
           if (message.type === "response.output_audio_transcript.done" && message.transcript) setMessages((current) => [...current, { role: "bot", text: message.transcript! }]);
           if (message.type === "error") setError(message.error?.message ?? "OpenAI-Live konnte das Gespräch nicht fortsetzen.");
         } catch { /* Ein unbekanntes Live-Ereignis wird für die Anzeige nicht benötigt. */ }
@@ -151,7 +180,7 @@ function TelefonDemoPage() {
       const result = await response.json() as { ok?: boolean; error?: string; reply?: string; protocol?: Protocol };
       if (!response.ok || !result.ok || !result.reply) throw new Error(result.error ?? "Lokales Antwortmodell nicht verfügbar.");
       setMessages((current) => [...current, { role: "user", text: value }, { role: "bot", text: result.reply! }]);
-      if (result.protocol) setProtocol(result.protocol);
+      if (result.protocol) applyProtocol(result.protocol);
     } catch (caught) { setError(caught instanceof Error ? caught.message : "Chat fehlgeschlagen."); }
     finally { setBusy(false); }
   }

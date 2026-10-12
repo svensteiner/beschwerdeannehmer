@@ -8,6 +8,8 @@ test("Live-Sitzung ist deutschsprachig ausgerichtet, unterbrechbar und ohne Zuga
   assert.equal(config.model, "gpt-realtime-2.1");
   assert.equal(config.audio.input.turn_detection.type, "semantic_vad");
   assert.equal(config.audio.input.turn_detection.eagerness, "low");
+  assert.equal(config.audio.input.transcription.language, "de");
+  assert.match(config.audio.input.transcription.prompt, /Parkticket/i);
   assert.match(config.instructions, /deutschsprachig/i);
   assert.doesNotMatch(JSON.stringify(config), /api[_-]?key|sk-/i);
 });
