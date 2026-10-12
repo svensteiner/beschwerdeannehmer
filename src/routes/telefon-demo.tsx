@@ -66,6 +66,18 @@ function TelefonDemoPage() {
     setRecording(false);
   }
 
+  function transferToForm() {
+    sessionStorage.setItem("garagen-complaint-draft", JSON.stringify({
+      location: protocol.location,
+      category: protocol.category,
+      priority: protocol.priority,
+      occurredAt: protocol.occurredAt,
+      contactPhone: protocol.callback,
+      description: protocol.summary,
+    }));
+    window.location.assign("/#formular");
+  }
+
   async function sendText(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const value = text.trim();
@@ -101,7 +113,8 @@ function TelefonDemoPage() {
         {error && <p role="alert" className="mt-4 rounded-xl bg-red-100 p-3 text-sm text-red-900">{error}</p>}
       </section>
       <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-soft"><p className="text-xs font-bold tracking-[0.2em] text-orange-700">LIVE-PROTOKOLL</p><h2 className="mt-2 font-display text-2xl">Wird während des Gesprächs aufgebaut</h2><dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2"><div><dt className="font-bold text-muted-foreground">Standort</dt><dd>{protocol.location || "noch offen"}</dd></div><div><dt className="font-bold text-muted-foreground">Kategorie</dt><dd>{protocol.category || "noch offen"}</dd></div><div><dt className="font-bold text-muted-foreground">Dringlichkeit</dt><dd>{protocol.priority}</dd></div><div><dt className="font-bold text-muted-foreground">Zeitpunkt</dt><dd>{protocol.occurredAt || "noch offen"}</dd></div><div><dt className="font-bold text-muted-foreground">Rückrufnummer</dt><dd>{protocol.callback || "noch offen"}</dd></div><div className="sm:col-span-2"><dt className="font-bold text-muted-foreground">Zusammenfassung</dt><dd>{protocol.summary || "Noch keine Zusammenfassung."}</dd></div></dl></section>
-      <p className="mt-6 text-sm text-muted-foreground">Demo-Modus: keine echte Telefonleitung, keine automatische Beschwerdeanlage und keine Weitergabe an Best in Parking.</p>
+      <section className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-soft"><h2 className="font-display text-2xl">Angaben übernehmen</h2><p className="mt-2 text-sm text-muted-foreground">Die Gesprächsangaben werden erst mit Ihrer Einwilligung im Formular gespeichert. Bis dahin bleibt diese Vorführung lokal im Browser.</p><button type="button" onClick={transferToForm} className="mt-4 rounded-full bg-primary px-5 py-3 font-bold text-white">Ins Beschwerdeformular übernehmen</button></section>
+      <p className="mt-6 text-sm text-muted-foreground">Demo-Modus: keine echte Telefonleitung und keine Weitergabe an Best in Parking.</p>
     </div>
   </main>;
 }

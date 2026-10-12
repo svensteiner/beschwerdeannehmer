@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 
 export const Route = createFileRoute("/")({
   component: ComplaintHome,
@@ -15,6 +15,21 @@ function ComplaintHome() {
   const [chatMessages, setChatMessages] = useState([
     { from: "bot", text: "Grüß Gott. Ich nehme Ihr Anliegen für die Garage auf. Was ist passiert?" },
   ]);
+  const [draft, setDraft] = useState<Record<string, string> | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("garagen-complaint-draft");
+      if (!raw) return;
+      const value = JSON.parse(raw) as Record<string, unknown>;
+      const next = Object.fromEntries(Object.entries(value).filter(([, item]) => typeof item === "string")) as Record<string, string>;
+      setDraft(next);
+      setDescription(next.description ?? "");
+      sessionStorage.removeItem("garagen-complaint-draft");
+    } catch {
+      sessionStorage.removeItem("garagen-complaint-draft");
+    }
+  }, []);
 
   function answerChat(text: string) {
     const value = text.trim();
@@ -106,12 +121,13 @@ function ComplaintHome() {
         {sent ? (
           <div style={styles.success} role="status"><strong>Danke, Ihre Beschwerde ist eingegangen.</strong><br />Ihre Vorgangsnummer: <b>{reference}</b><br />Bitte bewahren Sie diese Nummer für Rückfragen auf.</div>
         ) : (
-          <form onSubmit={submit} style={styles.form}>
+          <form key={draft ? "transferred" : "fresh"} onSubmit={submit} style={styles.form}>
             <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-10000px", opacity: 0 }} />
-            <label>Garage / Standort *<input name="location" required maxLength={160} placeholder="z. B. Garage Hauptbahnhof" /></label>
-            <label>Worum geht es? *<select name="category" required defaultValue=""><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkticket oder Schranke</option><option>Parkgebühr oder Abrechnung</option><option>E-Laden</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
-            <label>Dringlichkeit<select name="priority" defaultValue="normal"><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
-            <div style={styles.grid}><label>Wann war der Vorfall?<input name="occurredAt" type="datetime-local" /></label><label>Telefon für Rückfragen<input name="contactPhone" type="tel" maxLength={30} autoComplete="tel" /></label></div>
+            {draft && <div role="status" style={styles.draftNotice}>Angaben aus der Gesprächs-Demo wurden übernommen. Bitte prüfen und ergänzen Sie sie.</div>}
+            <label>Garage / Standort *<input name="location" required maxLength={160} defaultValue={draft?.location ?? ""} placeholder="z. B. Garage Hauptbahnhof" /></label>
+            <label>Worum geht es? *<select name="category" required defaultValue={draft?.category ?? ""}><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkticket oder Schranke</option><option>Parkgebühr oder Abrechnung</option><option>E-Laden</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
+            <label>Dringlichkeit<select name="priority" defaultValue={draft?.priority ?? "normal"}><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
+            <div style={styles.grid}><label>Wann war der Vorfall?<input name="occurredAt" type="datetime-local" defaultValue={draft?.occurredAt ?? ""} /></label><label>Telefon für Rückfragen<input name="contactPhone" type="tel" maxLength={30} autoComplete="tel" defaultValue={draft?.contactPhone ?? ""} /></label></div>
             <label>Ihre Schilderung *<textarea name="description" required minLength={20} maxLength={5000} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /><small style={styles.counter}>{description.length}/5000 Zeichen</small></label>
             <div style={styles.grid}><label>Name *<input name="name" required maxLength={120} /></label><label>E-Mail *<input name="email" type="email" required maxLength={254} /></label></div>
             <label style={styles.check}><input name="consent" value="yes" type="checkbox" required /> Ich stimme der Bearbeitung dieser Beschwerde zur Klärung des Vorgangs zu.</label>
@@ -151,6 +167,7 @@ const styles: Record<string, CSSProperties> = {
   check: { display: "flex", gap: 10, alignItems: "flex-start", fontSize: 14, color: "#53615c" },
   success: { marginTop: 28, padding: 20, background: "#e4f1e8", borderRadius: 14, lineHeight: 1.6 },
   error: { padding: 14, background: "#fbe8e5", color: "#8b2d21", borderRadius: 10 },
+  draftNotice: { padding: 14, background: "#e4f1e8", color: "#1c5b4d", borderRadius: 10 },
   disabled: { opacity: 0.65, cursor: "wait" },
   counter: { display: "block", marginTop: 4, color: "#68736e", textAlign: "right" },
   footer: { padding: "28px 24px", textAlign: "center", color: "#68736e", fontSize: 13, borderTop: "1px solid #d9d4ca" },
