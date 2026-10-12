@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { answerComplaint, emptyComplaintProtocol, type ComplaintProtocol } from "@/lib/beschwerden/chat.server";
+import { LOCAL_STT_URL, LOCAL_TTS_URL } from "@/lib/beschwerden/local-voice.server";
 
 const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
 
@@ -8,7 +9,7 @@ async function transcribe(file: File) {
   body.append("file", file, file.name || "sprechdemo.webm");
   body.append("language", "de");
   body.append("response_format", "json");
-  const response = await fetch("http://127.0.0.1:8178/v1/audio/transcriptions", { method: "POST", body });
+  const response = await fetch(LOCAL_STT_URL, { method: "POST", body });
   if (!response.ok) throw new Error("Whisper ist lokal nicht erreichbar.");
   const payload = await response.json() as { text?: unknown };
   const text = typeof payload.text === "string" ? payload.text.trim() : "";
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/api/telefon/sprechen")({
           const protocol = (() => { try { return { ...emptyComplaintProtocol, ...JSON.parse(String(form.get("protocol") ?? "{}")) } as ComplaintProtocol; } catch { return emptyComplaintProtocol; } })();
           const result = await answerComplaint(text, history, protocol);
           const reply = result.reply;
-          const tts = await fetch("http://127.0.0.1:8179/v1/audio/speech", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ input: reply, voice: "ara", response_format: "wav" }) });
+          const tts = await fetch(LOCAL_TTS_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ input: reply, voice: "ara", response_format: "wav" }) });
           if (!tts.ok) throw new Error("Piper ist lokal nicht erreichbar.");
           const audio = Buffer.from(await tts.arrayBuffer()).toString("base64");
           return Response.json({ ok: true, text, reply, protocol: result.protocol, audio, mime: "audio/wav", source: process.env.GARAGEN_LLM_BASE_URL ? "lokales Modell" : "lokale Regeln" }, { headers: { "Cache-Control": "no-store" } });

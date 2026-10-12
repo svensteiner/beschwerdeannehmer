@@ -12,12 +12,20 @@ function TelefonDemoPage() {
   const [busy, setBusy] = useState(false);
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+  const [voiceReady, setVoiceReady] = useState<boolean | null>(null);
   const [protocol, setProtocol] = useState<Protocol>({ location: "", category: "", priority: "normal", occurredAt: "", summary: "", callback: "" });
   const recorder = useRef<MediaRecorder | null>(null);
   const stream = useRef<MediaStream | null>(null);
   const chunks = useRef<Blob[]>([]);
 
-  useEffect(() => () => stream.current?.getTracks().forEach((track) => track.stop()), []);
+  useEffect(() => {
+    let active = true;
+    void fetch("/api/gesundheit")
+      .then((response) => response.json())
+      .then((result: { voice?: { ready?: boolean } }) => { if (active) setVoiceReady(result.voice?.ready === true); })
+      .catch(() => { if (active) setVoiceReady(false); });
+    return () => { active = false; stream.current?.getTracks().forEach((track) => track.stop()); };
+  }, []);
 
   async function sendAudio(blob: Blob) {
     setBusy(true);
@@ -107,7 +115,7 @@ function TelefonDemoPage() {
         </div>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <button type="button" onClick={() => recording ? stop() : void start()} disabled={busy} className={`rounded-full px-6 py-3 font-bold text-white ${recording ? "bg-red-700" : "bg-primary"}`}>{recording ? "Aufnahme beenden" : "Mikrofon starten"}</button>
-          <span className="text-sm text-muted-foreground">{busy ? "Lokale Stimme verarbeitet …" : recording ? "Sie können jetzt sprechen." : "Keine externe KI aktiv."}</span>
+          <span className="text-sm text-muted-foreground">{busy ? "Lokale Stimme verarbeitet …" : recording ? "Sie können jetzt sprechen." : voiceReady === null ? "Lokale Stimme wird geprüft …" : voiceReady ? "Lokale Stimme bereit. Keine externe KI aktiv." : "Lokale Stimme ist noch nicht gestartet. Text funktioniert weiterhin."}</span>
         </div>
         <form onSubmit={sendText} className="mt-6 flex gap-3"><input value={text} onChange={(event) => setText(event.target.value)} placeholder="Text-Fallback für die Vorführung …" className="min-w-0 flex-1 rounded-xl border border-input bg-background px-4 py-3" aria-label="Text-Fallback" /><button className="rounded-xl bg-secondary px-4 py-3 font-bold" type="submit">Senden</button></form>
         {error && <p role="alert" className="mt-4 rounded-xl bg-red-100 p-3 text-sm text-red-900">{error}</p>}
