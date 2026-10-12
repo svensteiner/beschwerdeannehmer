@@ -190,7 +190,7 @@ function TelefonDemoPage() {
       <a href="/" className="text-sm font-semibold text-primary">← Zurück zur Homepage</a>
       <p className="mt-12 text-xs font-bold tracking-[0.2em] text-orange-700">PC-SPRECHDEMO · LOKAL</p>
       <h1 className="mt-3 font-display text-5xl leading-tight">Sprechen Sie mit dem Kundenservice-Bot.</h1>
-      <p className="mt-5 max-w-2xl text-lg text-muted-foreground">Wie bei Silvia: Mikrofon drücken, Anliegen schildern, Antwort hören. Die Demo verarbeitet Audio ausschließlich über Whisper und Piper auf diesem Rechner und speichert keinen Gesprächsverlauf.</p>
+      <p className="mt-5 max-w-2xl text-lg text-muted-foreground">Mikrofon drücken, Anliegen schildern, Antwort hören. Die Demo verarbeitet Audio ausschließlich über Whisper und Piper auf diesem Rechner und speichert keinen Gesprächsverlauf.</p>
       <section className="mt-10 rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-9">
         <div className="space-y-3" aria-live="polite">
           {messages.map((message, index) => <div key={`${message.role}-${index}`} className={`max-w-[85%] rounded-2xl px-4 py-3 ${message.role === "bot" ? "bg-green-100" : "ml-auto bg-secondary"}`}><div className="mb-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">{message.role === "bot" ? "Kundenservice-Bot" : "Sie"}</div>{message.text}</div>)}
@@ -200,7 +200,7 @@ function TelefonDemoPage() {
           <button type="button" onClick={() => liveState === "live" ? stopLive() : void startLive()} disabled={busy || liveState === "connecting"} className={`rounded-full px-6 py-3 font-bold text-white ${liveState === "live" ? "bg-red-700" : "bg-orange-700"}`}>{liveState === "connecting" ? "OpenAI-Live verbindet …" : liveState === "live" ? "Live-Gespräch beenden" : "OpenAI-Live starten"}</button>
           <span className="text-sm text-muted-foreground">{liveState === "live" ? "Live-Gespräch aktiv: sprechen Sie ganz natürlich oder unterbrechen Sie die Antwort." : busy ? "Lokale Stimme verarbeitet …" : recording ? "Sie können jetzt sprechen." : voiceReady === null ? "Lokale Stimme wird geprüft …" : voiceReady ? "Lokale Stimme bereit. Keine externe KI aktiv." : "Lokale Stimme ist noch nicht gestartet. Text funktioniert weiterhin."}</span>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">OpenAI-Live ist optional. Mit dem Start stimmen Sie zu, dass das Gesprächsaudio für diese Sitzung an OpenAI übertragen wird.</p>
+        <p className="mt-3 text-xs text-muted-foreground">Stimmprofil: ruhig, klar und professionell. OpenAI-Live ist optional. Mit dem Start stimmen Sie zu, dass das Gesprächsaudio für diese Sitzung an OpenAI übertragen wird.</p>
         <form onSubmit={sendText} className="mt-6 flex gap-3"><input value={text} onChange={(event) => setText(event.target.value)} placeholder="Text-Fallback für die Vorführung …" className="min-w-0 flex-1 rounded-xl border border-input bg-background px-4 py-3" aria-label="Text-Fallback" /><button className="rounded-xl bg-secondary px-4 py-3 font-bold" type="submit">Senden</button></form>
         {error && <p role="alert" className="mt-4 rounded-xl bg-red-100 p-3 text-sm text-red-900">{error}</p>}
       </section>
