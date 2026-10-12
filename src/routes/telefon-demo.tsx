@@ -92,10 +92,6 @@ function TelefonDemoPage() {
     setError("");
     setLiveState("connecting");
     try {
-      const tokenResponse = await fetch("/api/telefon/live-token", { method: "POST" });
-      const tokenResult = await tokenResponse.json() as { ok?: boolean; token?: string; error?: string };
-      if (!tokenResponse.ok || !tokenResult.ok || !tokenResult.token) throw new Error(tokenResult.error ?? "OpenAI-Live konnte nicht gestartet werden.");
-
       const peer = new RTCPeerConnection();
       liveConnection.current = peer;
       const channel = peer.createDataChannel("oai-events");
@@ -121,8 +117,8 @@ function TelefonDemoPage() {
       microphone.getTracks().forEach((track) => peer.addTrack(track, microphone));
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
-      const answerResponse = await fetch("https://api.openai.com/v1/realtime/calls", { method: "POST", headers: { Authorization: `Bearer ${tokenResult.token}`, "Content-Type": "application/sdp" }, body: offer.sdp });
-      if (!answerResponse.ok) throw new Error("OpenAI-Live konnte die Audioverbindung nicht aufbauen.");
+      const answerResponse = await fetch("/api/telefon/live-connect", { method: "POST", headers: { "Content-Type": "application/sdp" }, body: offer.sdp });
+      if (!answerResponse.ok) { const body = await answerResponse.json().catch(() => ({})); throw new Error(String(body.error ?? "OpenAI-Live konnte die Audioverbindung nicht aufbauen.")); }
       await peer.setRemoteDescription({ type: "answer", sdp: await answerResponse.text() });
       setLiveState("live");
     } catch (caught) {
