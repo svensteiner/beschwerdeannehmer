@@ -10,6 +10,9 @@ export const demoLocations = [
   { name: "Stadtpark", aliases: ["Garage Stadtpark", "Parkgarage Stadtpark"] },
 ];
 
+/** Offizielle Namen für Eingabefelder und Auswertungen. */
+export const locationNames = demoLocations.map((location) => location.name);
+
 /** @param {string} value */
 function normalize(value) {
   return value

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
 import { garageBrand } from "@/lib/beschwerden/branding.js";
+import { locationNames } from "@/lib/beschwerden/locations.js";
 import { COMPLAINT_CATEGORIES } from "@/lib/beschwerden/validation";
 
 export const Route = createFileRoute("/")({
@@ -134,7 +135,7 @@ function ComplaintHome() {
           <form key={draft ? "transferred" : "fresh"} onSubmit={submit} style={styles.form}>
             <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-10000px", opacity: 0 }} />
             {draft && <div role="status" style={styles.draftNotice}>Angaben aus der Gesprächs-Demo wurden übernommen. Bitte prüfen und ergänzen Sie sie.</div>}
-            <label style={styles.label}>Garage / Standort *<input style={styles.control} name="location" required maxLength={160} defaultValue={draft?.location ?? ""} placeholder="z. B. Garage Hauptbahnhof" /></label>
+            <label style={styles.label}>Garage / Standort *<input style={styles.control} name="location" list="garage-standorte" required maxLength={160} defaultValue={draft?.location ?? ""} placeholder="z. B. Hauptbahnhof" /><datalist id="garage-standorte">{locationNames.map((location) => <option key={location} value={location} />)}</datalist></label>
             <label style={styles.label}>Worum geht es? *<select style={styles.control} name="category" required defaultValue={draft?.category ?? ""}><option value="" disabled>Bitte auswählen</option>{COMPLAINT_CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select></label>
             <label style={styles.label}>Dringlichkeit<select style={styles.control} name="priority" value={selectedPriority} onChange={(event) => setSelectedPriority(event.target.value)}><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
             {selectedPriority === "sicherheit" && <div role="alert" style={styles.safetyNotice}><b>Wichtig:</b> Dieses Formular alarmiert niemanden automatisch. Bei akuter Gefahr nutzen Sie 112, 122, 133 oder 144 beziehungsweise die Notruftaste oder Gegensprechanlage in der Garage.</div>}

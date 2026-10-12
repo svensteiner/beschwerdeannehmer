@@ -5,6 +5,7 @@ export type ComplaintProtocol = {
   category: string;
   priority: "normal" | "dringend" | "sicherheit";
   occurredAt: string;
+  occurredAtIso?: string;
   summary: string;
   callback: string;
 };

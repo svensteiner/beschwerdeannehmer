@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { knownLocationFrom } from "./locations.js";
+import { demoLocations, knownLocationFrom, locationNames } from "./locations.js";
+
+test("stellt die offiziellen Demo-Standorte zentral für Formulare bereit", () => {
+  assert.deepEqual(locationNames, demoLocations.map((location) => location.name));
+  assert.deepEqual(locationNames, ["Hauptbahnhof", "Stadtpark"]);
+});
 
 test("erkennt den offiziellen Demo-Standort im Satz", () => {
   assert.equal(knownLocationFrom("Die Schranke beim Hauptbahnhof ist geschlossen."), "Hauptbahnhof");

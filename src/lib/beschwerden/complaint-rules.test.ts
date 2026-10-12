@@ -21,6 +21,8 @@ test("ein technischer Defekt ist dringend, aber kein Sicherheitsfall", () => {
 test("Datumsangaben sind keine Rückrufnummer", () => {
   const result = updateComplaintProtocol("Die Schranke hat am 10.05.2026 nicht geöffnet.", emptyProtocol);
   assert.equal(result.callback, "");
+  assert.equal(result.occurredAt, "10.05.2026");
+  assert.equal(result.occurredAtIso, "2026-05-10");
 });
 
 test("nur eine Nummer mit mindestens acht Ziffern wird als Rückrufnummer übernommen", () => {

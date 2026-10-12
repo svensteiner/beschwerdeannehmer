@@ -5,8 +5,9 @@
  */
 
 import { knownLocationFrom } from "./locations.js";
+import { normalizeComplaintTime } from "./complaint-time.js";
 
-/** @typedef {{ location: string, category: string, priority: string, occurredAt: string, summary: string, callback: string }} ComplaintProtocol */
+/** @typedef {{ location: string, category: string, priority: string, occurredAt: string, occurredAtIso?: string, summary: string, callback: string }} ComplaintProtocol */
 
 /** @param {string} value @param {number} limit */
 function compact(value, limit) {
@@ -80,6 +81,12 @@ export function updateComplaintProtocol(text, protocol) {
   else if (/dringend|sofort|eilt|komme nicht (?:hinaus|rein)/.test(lower)) next.priority = "dringend";
   if (!next.location) next.location = locationFrom(text);
   if (!next.occurredAt) next.occurredAt = occurredAtFrom(text);
+  // Der Originalwortlaut bleibt für die Prüfung sichtbar; das ISO-Datum ist
+  // ausschließlich die einheitliche, maschinenlesbare Ergänzung.
+  if (!next.occurredAtIso) {
+    const normalizedTime = normalizeComplaintTime(text);
+    if (normalizedTime) next.occurredAtIso = normalizedTime.isoDate;
+  }
   if (!next.callback) next.callback = callbackFrom(text);
   next.summary = compact([next.summary, text].filter(Boolean).join(" "), 1000);
   return next;

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 export const Route = createFileRoute("/telefon-demo")({ component: TelefonDemoPage });
 
 type Message = { role: "user" | "bot"; text: string };
-type Protocol = { location: string; category: string; priority: string; occurredAt: string; summary: string; callback: string };
+type Protocol = { location: string; category: string; priority: string; occurredAt: string; occurredAtIso?: string; summary: string; callback: string };
 
 function TelefonDemoPage() {
   const [messages, setMessages] = useState<Message[]>([{ role: "bot", text: "Guten Tag. Sie sprechen mit dem Kundenservice für Parkgaragen. Bitte schildern Sie Ihr Anliegen." }]);
@@ -178,7 +178,7 @@ function TelefonDemoPage() {
       location: protocol.location,
       category: protocol.category,
       priority: protocol.priority,
-      occurredAt: protocol.occurredAt,
+      occurredAt: protocol.occurredAtIso || protocol.occurredAt,
       contactPhone: protocol.callback,
       description: protocol.summary,
     }));
@@ -196,7 +196,7 @@ function TelefonDemoPage() {
       const response = await fetch("/api/beschwerden", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ location: protocol.location, category: protocol.category, priority: protocol.priority, occurredAt: protocol.occurredAt, contactPhone: protocol.callback, description: protocol.summary, name: contactName, email: contactEmail, consent: consent ? "yes" : "" }),
+        body: JSON.stringify({ location: protocol.location, category: protocol.category, priority: protocol.priority, occurredAt: protocol.occurredAtIso || protocol.occurredAt, contactPhone: protocol.callback, description: protocol.summary, name: contactName, email: contactEmail, consent: consent ? "yes" : "" }),
       });
       const result = await response.json().catch(() => ({})) as { ok?: boolean; error?: string; reference?: string };
       if (!response.ok || !result.ok || !result.reference) throw new Error(result.error ?? "Der Vorgang konnte nicht gespeichert werden.");
