@@ -16,7 +16,11 @@ function locationFrom(text) {
   const ending = "(?=\\s+(?:hat|um|nicht|ist|war|gegen|heute|gestern|die|der|das)\\b|[,.]|$)";
   const nearby = new RegExp(`\\b(?:in|bei)\\s+(?:(?:der|die|dem|den)\\s+)?(?:garage\\s+)?([A-ZÄÖÜ][\\wÄÖÜäöüß .-]{2,50}?)${ending}`, "iu");
   const named = new RegExp(`\\b(?:garage|standort)\\s+([A-ZÄÖÜ][\\wÄÖÜäöüß .-]{2,50}?)${ending}`, "iu");
-  return nearby.exec(text)?.[1]?.trim() ?? named.exec(text)?.[1]?.trim() ?? "";
+  const candidate = nearby.exec(text)?.[1]?.trim() ?? named.exec(text)?.[1]?.trim() ?? "";
+  // Zeit- und Richtungsangaben sind keine Standorte. Ohne hinterlegte
+  // Standortliste lassen wir sie lieber offen, als einen falschen Ort zu speichern.
+  if (/\b(?:früh|morgen|mittag|abend|nacht|spät|heute|gestern|einfahrt|ausfahrt)\b/iu.test(candidate)) return "";
+  return candidate;
 }
 
 /** @param {string} text */
@@ -27,8 +31,25 @@ function occurredAtFrom(text) {
 
 /** @param {string} text */
 function callbackFrom(text) {
-  const phone = text.match(/(?:\+43|00\s*43|0)\s*(?:[\d\s()/.-]{6,})/u)?.[0];
-  return phone ? compact(phone, 30).replace(/[.,;:]+$/u, "") : "";
+  // Ein Datum wie 10.05.2026 darf nicht als Telefonnummer enden. Danach
+  // akzeptieren wir nur Nummern mit mindestens acht Ziffern.
+  const withoutDates = text.replace(/\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b/gu, " ");
+  const matches = withoutDates.matchAll(/(?:\+43|00\s*43|0)(?:[\s()/.-]*\d){7,}/gu);
+  for (const match of matches) {
+    const phone = compact(match[0], 30).replace(/[.,;:]+$/u, "");
+    if ((phone.match(/\d/g) ?? []).length >= 8) return phone;
+  }
+  return "";
+}
+
+const emergencyPattern = /\b(?:eingesperrt|eingeschlossen|komme\s+nicht\s+(?:raus|hinaus)|rauch|feuer|verletzt|unfall|person|gefahr)\b/iu;
+const safetyPattern = /\b(?:sicher(?:heit|heitsrelevant)?|gefahr)\b/iu;
+
+export const emergencyReply = "Dieser Dienst alarmiert niemanden. Bei Gefahr: 112 / 122 / 133 / 144 oder die Notruftaste bzw. Gegensprechanlage in der Garage.";
+
+/** @param {string} text */
+export function isEmergency(text) {
+  return emergencyPattern.test(text);
 }
 
 /** @param {ComplaintProtocol} protocol */
@@ -45,12 +66,13 @@ export function updateComplaintProtocol(text, protocol) {
   const lower = text.toLocaleLowerCase("de-AT");
   const next = { ...protocol };
   if (!next.category) {
-    if (/ticket|parkdickhead|schranke|einfahrt|ausfahrt/.test(lower)) next.category = /ticket|parkdickhead/.test(lower) ? "Parkticket oder Schranke" : "Ein-/Ausfahrt";
+    if (/ticket|schranke|einfahrt|ausfahrt/.test(lower)) next.category = /ticket/.test(lower) ? "Parkticket oder Schranke" : "Ein-/Ausfahrt";
     else if (/laden|e-lad/.test(lower)) next.category = "E-Laden";
     else if (/abrechnung|zahlung|rechnung/.test(lower)) next.category = "Parkgebühr oder Abrechnung";
-    else if (/sicher|gefahr|unfall|defekt/.test(lower)) next.category = "Sauberkeit oder Sicherheit";
+    else if (isEmergency(text) || safetyPattern.test(text)) next.category = "Sauberkeit oder Sicherheit";
   }
-  if (/sicher|gefahr|unfall|defekt/.test(lower)) next.priority = "sicherheit";
+  if (isEmergency(text) || safetyPattern.test(text)) next.priority = "sicherheit";
+  else if (/\bdefekt\b/u.test(lower) && next.priority !== "sicherheit") next.priority = "dringend";
   else if (/dringend|sofort|eilt|komme nicht (?:hinaus|rein)/.test(lower)) next.priority = "dringend";
   if (!next.location) next.location = locationFrom(text);
   if (!next.occurredAt) next.occurredAt = occurredAtFrom(text);
@@ -62,5 +84,5 @@ export function updateComplaintProtocol(text, protocol) {
 /** @param {string} text @param {ComplaintProtocol} protocol */
 export function answerWithLocalRules(text, protocol) {
   const next = updateComplaintProtocol(text, protocol);
-  return { reply: nextQuestion(next), protocol: next };
+  return { reply: isEmergency(text) ? emergencyReply : nextQuestion(next), protocol: next };
 }

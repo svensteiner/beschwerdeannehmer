@@ -11,6 +11,7 @@ function ComplaintHome() {
   const [error, setError] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [selectedPriority, setSelectedPriority] = useState("normal");
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState([
     { from: "bot", text: "Grüß Gott. Ich nehme Ihr Anliegen für die Garage auf. Was ist passiert?" },
@@ -25,6 +26,7 @@ function ComplaintHome() {
       const next = Object.fromEntries(Object.entries(value).filter(([, item]) => typeof item === "string")) as Record<string, string>;
       setDraft(next);
       setDescription(next.description ?? "");
+      setSelectedPriority(next.priority ?? "normal");
       sessionStorage.removeItem("garagen-complaint-draft");
     } catch {
       sessionStorage.removeItem("garagen-complaint-draft");
@@ -130,7 +132,8 @@ function ComplaintHome() {
             {draft && <div role="status" style={styles.draftNotice}>Angaben aus der Gesprächs-Demo wurden übernommen. Bitte prüfen und ergänzen Sie sie.</div>}
             <label style={styles.label}>Garage / Standort *<input style={styles.control} name="location" required maxLength={160} defaultValue={draft?.location ?? ""} placeholder="z. B. Garage Hauptbahnhof" /></label>
             <label style={styles.label}>Worum geht es? *<select style={styles.control} name="category" required defaultValue={draft?.category ?? ""}><option value="" disabled>Bitte auswählen</option><option>Ein-/Ausfahrt</option><option>Parkticket oder Schranke</option><option>Parkgebühr oder Abrechnung</option><option>E-Laden</option><option>Sauberkeit oder Sicherheit</option><option>Sonstiges</option></select></label>
-            <label style={styles.label}>Dringlichkeit<select style={styles.control} name="priority" defaultValue={draft?.priority ?? "normal"}><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
+            <label style={styles.label}>Dringlichkeit<select style={styles.control} name="priority" value={selectedPriority} onChange={(event) => setSelectedPriority(event.target.value)}><option value="normal">Normal</option><option value="dringend">Dringend</option><option value="sicherheit">Sicherheitsrelevant</option></select></label>
+            {selectedPriority === "sicherheit" && <div role="alert" style={styles.safetyNotice}><b>Wichtig:</b> Dieses Formular alarmiert niemanden automatisch. Bei akuter Gefahr nutzen Sie 112, 122, 133 oder 144 beziehungsweise die Notruftaste oder Gegensprechanlage in der Garage.</div>}
             <div style={styles.grid}><label style={styles.label}>Wann war der Vorfall?<input style={styles.control} name="occurredAt" type="datetime-local" defaultValue={draft?.occurredAt ?? ""} /></label><label style={styles.label}>Telefon für Rückfragen<input style={styles.control} name="contactPhone" type="tel" maxLength={30} autoComplete="tel" defaultValue={draft?.contactPhone ?? ""} /></label></div>
             <label style={styles.label}>Ihre Schilderung *<textarea style={styles.textarea} name="description" required minLength={20} maxLength={5000} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Was ist wann passiert?" rows={5} /><small style={styles.counter}>{description.length}/5000 Zeichen</small></label>
             <div style={styles.grid}><label style={styles.label}>Name *<input style={styles.control} name="name" required maxLength={120} /></label><label style={styles.label}>E-Mail *<input style={styles.control} name="email" type="email" required maxLength={254} /></label></div>
@@ -175,6 +178,7 @@ const styles: Record<string, CSSProperties> = {
   check: { display: "flex", gap: 10, alignItems: "flex-start", fontSize: 14, color: "#53615c" },
   success: { marginTop: 28, padding: 20, background: "#e4f1e8", borderRadius: 14, lineHeight: 1.6 },
   error: { padding: 14, background: "#fbe8e5", color: "#8b2d21", borderRadius: 10 },
+  safetyNotice: { padding: 14, background: "#fbe8e5", color: "#8b2d21", border: "1px solid #d89688", borderRadius: 10, lineHeight: 1.5 },
   draftNotice: { padding: 14, background: "#e4f1e8", color: "#1c5b4d", borderRadius: 10 },
   disabled: { opacity: 0.65, cursor: "wait" },
   counter: { display: "block", marginTop: 4, color: "#68736e", textAlign: "right" },

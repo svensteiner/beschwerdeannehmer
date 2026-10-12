@@ -46,7 +46,8 @@ export const Route = createFileRoute("/api/telefon/antwort")({
         const callId = typeof (body as { callId?: unknown }).callId === "string" ? (body as { callId: string }).callId.slice(0, 120) : "";
         const ended = (body as { ended?: unknown }).ended === true;
         let savedReference: string | undefined;
-        if (ended && callId && text) {
+        const recordingAllowed = process.env.GARAGEN_PHONE_RECORDING === "on" && (body as { consent?: unknown }).consent === true;
+        if (ended && callId && text && recordingAllowed) {
           const existing = (await listComplaints()).find((item) => item.description.startsWith(`Telefonanruf ${callId}:`));
           if (existing) savedReference = existing.reference;
           else {

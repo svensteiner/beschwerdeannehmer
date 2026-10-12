@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { deleteComplaint, listComplaints, purgeExpiredComplaints, saveComplaint, updateComplaintStatus } from "./store.server";
@@ -52,5 +52,26 @@ test("Beschwerde-Speicher: löscht einen Vorgang gezielt", async () => {
     await saveComplaint({ reference: "GW-TEST-6", createdAt: "2026-10-01T00:00:00.000Z", location: "Testgarage", category: "Sonstiges", description: "Eine ausreichend lange synthetische Beschwerde.", name: "Test", email: "test@example.invalid", occurredAt: "", contactPhone: "", priority: "normal" });
     assert.equal(await deleteComplaint("GW-TEST-6"), true);
     assert.equal((await listComplaints()).length, 0);
+    delete process.env.GARAGEN_DATA_DIR; await rm(root, { recursive: true, force: true });
+});
+
+test("Beschwerde-Speicher: sichert die letzte gültige Datei vor dem Überschreiben", async () => {
+    const root = await mkdtemp(join(tmpdir(), "garagen-")); process.env.GARAGEN_DATA_DIR = root;
+    const base = { createdAt: "2026-10-01T00:00:00.000Z", location: "Testgarage", category: "Sonstiges", description: "Eine ausreichend lange synthetische Beschwerde.", name: "Test", email: "test@example.invalid", occurredAt: "", contactPhone: "", priority: "normal" as const };
+    await saveComplaint({ ...base, reference: "GW-BACKUP-1" });
+    const original = await readFile(join(root, "beschwerden.json"), "utf8");
+    await saveComplaint({ ...base, reference: "GW-BACKUP-2" });
+    assert.equal(await readFile(join(root, "beschwerden.json.bak"), "utf8"), original);
+    delete process.env.GARAGEN_DATA_DIR; await rm(root, { recursive: true, force: true });
+});
+
+test("Beschwerde-Speicher: meldet beschädigte Dateien und überschreibt sie nicht", async () => {
+    const root = await mkdtemp(join(tmpdir(), "garagen-")); process.env.GARAGEN_DATA_DIR = root;
+    const target = join(root, "beschwerden.json");
+    const damaged = "{ keine gueltige JSON-Datei";
+    await writeFile(target, damaged, "utf8");
+    await assert.rejects(listComplaints(), /kann nicht sicher gelesen werden/);
+    await assert.rejects(saveComplaint({ reference: "GW-DEFEKT-1", createdAt: "2026-10-01T00:00:00.000Z", location: "Testgarage", category: "Sonstiges", description: "Eine ausreichend lange synthetische Beschwerde.", name: "Test", email: "test@example.invalid", occurredAt: "", contactPhone: "", priority: "normal" }), /kann nicht sicher gelesen werden/);
+    assert.equal(await readFile(target, "utf8"), damaged);
     delete process.env.GARAGEN_DATA_DIR; await rm(root, { recursive: true, force: true });
 });

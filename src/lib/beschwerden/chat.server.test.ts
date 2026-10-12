@@ -35,23 +35,23 @@ test("lokale Regeln fragen genau die nächste fehlende Angabe ab", async () => {
   }
 });
 
-test("lokale Regeln erkennen eine dringende Ausfahrt", async () => {
+test("lokale Regeln erkennen eine sicherheitsrelevante eingeschlossene Person", async () => {
   const previous = process.env.GARAGEN_LLM_BASE_URL;
   delete process.env.GARAGEN_LLM_BASE_URL;
   try {
     const result = await answerComplaint("Die Schranke öffnet nicht. Ich komme nicht hinaus und brauche dringend Hilfe.", [], emptyComplaintProtocol);
-    assert.equal(result.protocol.priority, "dringend");
+    assert.equal(result.protocol.priority, "sicherheit");
   } finally {
     if (previous === undefined) delete process.env.GARAGEN_LLM_BASE_URL;
     else process.env.GARAGEN_LLM_BASE_URL = previous;
   }
 });
 
-test("lokale Regeln fangen einen bekannten Sprach-Erkennungsfehler beim Parkticket ab", async () => {
+test("lokale Regeln erkennen ein Parkticket", async () => {
   const previous = process.env.GARAGEN_LLM_BASE_URL;
   delete process.env.GARAGEN_LLM_BASE_URL;
   try {
-    const result = await answerComplaint("Parkdickhead wird nicht erkannt.", [], emptyComplaintProtocol);
+    const result = await answerComplaint("Parkticket wird nicht erkannt.", [], emptyComplaintProtocol);
     assert.equal(result.protocol.category, "Parkticket oder Schranke");
   } finally {
     if (previous === undefined) delete process.env.GARAGEN_LLM_BASE_URL;
@@ -63,6 +63,6 @@ test("Live-Transkript ergänzt das Protokoll ohne eine zweite Bot-Antwort", () =
   const protocol = addTranscriptToProtocol("In der Garage Hauptbahnhof ist die Ausfahrt blockiert. Ich komme nicht hinaus.", emptyComplaintProtocol);
   assert.equal(protocol.location, "Hauptbahnhof");
   assert.equal(protocol.category, "Ein-/Ausfahrt");
-  assert.equal(protocol.priority, "dringend");
+  assert.equal(protocol.priority, "sicherheit");
   assert.match(protocol.summary, /Ausfahrt/i);
 });

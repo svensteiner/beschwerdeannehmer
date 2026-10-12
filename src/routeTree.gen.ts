@@ -20,6 +20,7 @@ import { Route as ApiGesundheitRouteImport } from './routes/api/gesundheit'
 import { Route as ApiTelefonAntwortRouteImport } from './routes/api/telefon/antwort'
 import { Route as ApiTelefonChatRouteImport } from './routes/api/telefon/chat'
 import { Route as ApiTelefonLiveConnectRouteImport } from './routes/api/telefon/live-connect'
+import { Route as ApiTelefonLiveStatusRouteImport } from './routes/api/telefon/live-status'
 import { Route as ApiTelefonProtokollRouteImport } from './routes/api/telefon/protokoll'
 import { Route as ApiTelefonSprechenRouteImport } from './routes/api/telefon/sprechen'
 
@@ -78,6 +79,11 @@ const ApiTelefonLiveConnectRoute = ApiTelefonLiveConnectRouteImport.update({
   path: '/api/telefon/live-connect',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTelefonLiveStatusRoute = ApiTelefonLiveStatusRouteImport.update({
+  id: '/api/telefon/live-status',
+  path: '/api/telefon/live-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTelefonProtokollRoute = ApiTelefonProtokollRouteImport.update({
   id: '/api/telefon/protokoll',
   path: '/api/telefon/protokoll',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
   '/api/telefon/chat': typeof ApiTelefonChatRoute
   '/api/telefon/live-connect': typeof ApiTelefonLiveConnectRoute
+  '/api/telefon/live-status': typeof ApiTelefonLiveStatusRoute
   '/api/telefon/protokoll': typeof ApiTelefonProtokollRoute
   '/api/telefon/sprechen': typeof ApiTelefonSprechenRoute
 }
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
   '/api/telefon/chat': typeof ApiTelefonChatRoute
   '/api/telefon/live-connect': typeof ApiTelefonLiveConnectRoute
+  '/api/telefon/live-status': typeof ApiTelefonLiveStatusRoute
   '/api/telefon/protokoll': typeof ApiTelefonProtokollRoute
   '/api/telefon/sprechen': typeof ApiTelefonSprechenRoute
 }
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/api/telefon/antwort': typeof ApiTelefonAntwortRoute
   '/api/telefon/chat': typeof ApiTelefonChatRoute
   '/api/telefon/live-connect': typeof ApiTelefonLiveConnectRoute
+  '/api/telefon/live-status': typeof ApiTelefonLiveStatusRoute
   '/api/telefon/protokoll': typeof ApiTelefonProtokollRoute
   '/api/telefon/sprechen': typeof ApiTelefonSprechenRoute
 }
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/api/telefon/antwort'
     | '/api/telefon/chat'
     | '/api/telefon/live-connect'
+    | '/api/telefon/live-status'
     | '/api/telefon/protokoll'
     | '/api/telefon/sprechen'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/api/telefon/antwort'
     | '/api/telefon/chat'
     | '/api/telefon/live-connect'
+    | '/api/telefon/live-status'
     | '/api/telefon/protokoll'
     | '/api/telefon/sprechen'
   id:
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/api/telefon/antwort'
     | '/api/telefon/chat'
     | '/api/telefon/live-connect'
+    | '/api/telefon/live-status'
     | '/api/telefon/protokoll'
     | '/api/telefon/sprechen'
   fileRoutesById: FileRoutesById
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   ApiTelefonAntwortRoute: typeof ApiTelefonAntwortRoute
   ApiTelefonChatRoute: typeof ApiTelefonChatRoute
   ApiTelefonLiveConnectRoute: typeof ApiTelefonLiveConnectRoute
+  ApiTelefonLiveStatusRoute: typeof ApiTelefonLiveStatusRoute
   ApiTelefonProtokollRoute: typeof ApiTelefonProtokollRoute
   ApiTelefonSprechenRoute: typeof ApiTelefonSprechenRoute
 }
@@ -278,6 +291,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTelefonLiveConnectRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/telefon/live-status': {
+      id: '/api/telefon/live-status'
+      path: '/api/telefon/live-status'
+      fullPath: '/api/telefon/live-status'
+      preLoaderRoute: typeof ApiTelefonLiveStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/telefon/protokoll': {
       id: '/api/telefon/protokoll'
       path: '/api/telefon/protokoll'
@@ -307,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTelefonAntwortRoute: ApiTelefonAntwortRoute,
   ApiTelefonChatRoute: ApiTelefonChatRoute,
   ApiTelefonLiveConnectRoute: ApiTelefonLiveConnectRoute,
+  ApiTelefonLiveStatusRoute: ApiTelefonLiveStatusRoute,
   ApiTelefonProtokollRoute: ApiTelefonProtokollRoute,
   ApiTelefonSprechenRoute: ApiTelefonSprechenRoute,
 }

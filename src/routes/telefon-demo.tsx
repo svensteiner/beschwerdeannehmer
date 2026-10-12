@@ -14,6 +14,8 @@ function TelefonDemoPage() {
   const [error, setError] = useState("");
   const [voiceReady, setVoiceReady] = useState<boolean | null>(null);
   const [liveState, setLiveState] = useState<"idle" | "connecting" | "live">("idle");
+  const [liveAvailable, setLiveAvailable] = useState(false);
+  const [liveConsent, setLiveConsent] = useState(false);
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [consent, setConsent] = useState(false);
@@ -29,6 +31,7 @@ function TelefonDemoPage() {
   const protocolRef = useRef(protocol);
   const liveTranscriptIds = useRef(new Set<string>());
   const liveProtocolQueue = useRef(Promise.resolve());
+  const liveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function applyProtocol(next: Protocol) {
     protocolRef.current = next;
@@ -53,7 +56,8 @@ function TelefonDemoPage() {
       .then((response) => response.json())
       .then((result: { voice?: { ready?: boolean } }) => { if (active) setVoiceReady(result.voice?.ready === true); })
       .catch(() => { if (active) setVoiceReady(false); });
-    return () => { active = false; stream.current?.getTracks().forEach((track) => track.stop()); liveStream.current?.getTracks().forEach((track) => track.stop()); liveConnection.current?.close(); };
+    void fetch("/api/telefon/live-status").then((response) => response.json()).then((result: { enabled?: boolean }) => { if (active) setLiveAvailable(result.enabled === true); }).catch(() => undefined);
+    return () => { active = false; if (liveTimeout.current) clearTimeout(liveTimeout.current); stream.current?.getTracks().forEach((track) => track.stop()); liveStream.current?.getTracks().forEach((track) => track.stop()); liveConnection.current?.close(); };
   }, []);
 
   async function sendAudio(blob: Blob) {
@@ -104,6 +108,8 @@ function TelefonDemoPage() {
   }
 
   function stopLive() {
+    if (liveTimeout.current) clearTimeout(liveTimeout.current);
+    liveTimeout.current = null;
     liveStream.current?.getTracks().forEach((track) => track.stop());
     liveStream.current = null;
     liveConnection.current?.close();
@@ -116,6 +122,7 @@ function TelefonDemoPage() {
   }
 
   async function startLive() {
+    if (!liveConsent) { setError("Bitte bestätigen Sie zuerst die Datenübermittlung an OpenAI."); return; }
     setError("");
     setLiveState("connecting");
     try {
@@ -151,10 +158,11 @@ function TelefonDemoPage() {
       microphone.getTracks().forEach((track) => peer.addTrack(track, microphone));
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
-      const answerResponse = await fetch("/api/telefon/live-connect", { method: "POST", headers: { "Content-Type": "application/sdp" }, body: offer.sdp });
+      const answerResponse = await fetch("/api/telefon/live-connect", { method: "POST", headers: { "Content-Type": "application/sdp", "x-garagen-live-consent": "yes" }, body: offer.sdp });
       if (!answerResponse.ok) { const body = await answerResponse.json().catch(() => ({})); throw new Error(String(body.error ?? "OpenAI-Live konnte die Audioverbindung nicht aufbauen.")); }
       await peer.setRemoteDescription({ type: "answer", sdp: await answerResponse.text() });
       setLiveState("live");
+      liveTimeout.current = setTimeout(() => { stopLive(); setError("Das optionale Live-Gespräch wurde nach fünf Minuten beendet."); }, 5 * 60 * 1000);
     } catch (caught) {
       stopLive();
       setError(caught instanceof Error ? caught.message : "OpenAI-Live konnte nicht gestartet werden.");
@@ -225,10 +233,11 @@ function TelefonDemoPage() {
         </div>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <button type="button" onClick={() => recording ? stop() : void start()} disabled={busy || liveState !== "idle"} className={`rounded-full px-6 py-3 font-bold text-white ${recording ? "bg-red-700" : "bg-primary"}`}>{recording ? "Aufnahme beenden" : "Lokales Mikrofon"}</button>
-          <button type="button" onClick={() => liveState === "live" ? stopLive() : void startLive()} disabled={busy || liveState === "connecting"} className={`rounded-full px-6 py-3 font-bold text-white ${liveState === "live" ? "bg-red-700" : "bg-orange-700"}`}>{liveState === "connecting" ? "OpenAI-Live verbindet …" : liveState === "live" ? "Live-Gespräch beenden" : "OpenAI-Live starten"}</button>
+          {liveAvailable && <button type="button" onClick={() => liveState === "live" ? stopLive() : void startLive()} disabled={busy || liveState === "connecting" || !liveConsent} className={`rounded-full px-6 py-3 font-bold text-white ${liveState === "live" ? "bg-red-700" : "bg-orange-700"}`}>{liveState === "connecting" ? "OpenAI-Live verbindet …" : liveState === "live" ? "Live-Gespräch beenden" : "OpenAI-Live starten"}</button>}
           <span className="text-sm text-muted-foreground">{liveState === "live" ? "Live-Gespräch aktiv: sprechen Sie ganz natürlich oder unterbrechen Sie die Antwort." : busy ? "Lokale Stimme verarbeitet …" : recording ? "Sie können jetzt sprechen." : voiceReady === null ? "Lokale Stimme wird geprüft …" : voiceReady ? "Lokale Stimme bereit. Keine externe KI aktiv." : "Lokale Stimme ist noch nicht gestartet. Text funktioniert weiterhin."}</span>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">Stimmprofil: sachlich, klar und professionell. OpenAI-Live ist optional. Mit dem Start stimmen Sie zu, dass das Gesprächsaudio für diese Sitzung an OpenAI übertragen wird.</p>
+        {liveAvailable && <label className="mt-3 flex gap-2 text-xs leading-5 text-muted-foreground"><input checked={liveConsent} onChange={(event) => setLiveConsent(event.target.checked)} type="checkbox" />Ich willige ein, dass Audio und Transkript für dieses höchstens fünfminütige Gespräch an OpenAI übertragen werden. Dabei können Kosten entstehen.</label>}
+        <p className="mt-3 text-xs text-muted-foreground">Stimmprofil: sachlich, klar und professionell. Die lokale Stimme bleibt Standard. OpenAI-Live ist nur verfügbar, wenn der Betreiber es ausdrücklich freigeschaltet hat.</p>
         <form onSubmit={sendText} className="mt-6 flex gap-3"><input value={text} onChange={(event) => setText(event.target.value)} placeholder="Text-Fallback für die Vorführung …" className="min-w-0 flex-1 rounded-xl border border-input bg-background px-4 py-3" aria-label="Text-Fallback" /><button className="rounded-xl bg-secondary px-4 py-3 font-bold" type="submit">Senden</button></form>
         {error && <p role="alert" className="mt-4 rounded-xl bg-red-100 p-3 text-sm text-red-900">{error}</p>}
       </section>

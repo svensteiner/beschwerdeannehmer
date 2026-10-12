@@ -1,4 +1,5 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
 import type { ComplaintPriority } from "./validation";
 
@@ -34,7 +35,21 @@ let writeQueue: Promise<void> = Promise.resolve();
 async function persist(items: Complaint[]) {
   const target = filePath();
   await mkdir(dirname(target), { recursive: true });
-  await writeFile(target, JSON.stringify(items, null, 2), "utf8");
+  const temporary = `${target}.${process.pid}.${randomUUID()}.tmp`;
+
+  try {
+    await readStoredComplaints(target);
+    await copyFile(target, `${target}.bak`);
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+  }
+
+  try {
+    await writeFile(temporary, JSON.stringify(items, null, 2), "utf8");
+    await rename(temporary, target);
+  } finally {
+    await rm(temporary, { force: true });
+  }
 }
 
 async function enqueueMutation<T>(mutation: () => Promise<T>): Promise<T> {
@@ -46,11 +61,20 @@ async function enqueueMutation<T>(mutation: () => Promise<T>): Promise<T> {
 }
 
 export async function listComplaints(): Promise<Complaint[]> {
+  const target = filePath();
   try {
-    const raw = await readFile(filePath(), "utf8");
-    const value = JSON.parse(raw);
-    return Array.isArray(value) ? value : [];
-  } catch { return []; }
+    return await readStoredComplaints(target);
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw new Error(`Beschwerde-Speicher kann nicht sicher gelesen werden: ${target}`, { cause: error });
+  }
+}
+
+async function readStoredComplaints(target: string): Promise<Complaint[]> {
+  const raw = await readFile(target, "utf8");
+  const value: unknown = JSON.parse(raw);
+  if (!Array.isArray(value)) throw new Error("Der Beschwerde-Speicher enthält keine Liste von Vorgängen.");
+  return value as Complaint[];
 }
 
 export async function saveComplaint(input: Omit<Complaint, "status" | "history">): Promise<Complaint> {
