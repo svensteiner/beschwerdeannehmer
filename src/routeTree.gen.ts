@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuswertungRouteImport } from './routes/auswertung'
 import { Route as BearbeitungRouteImport } from './routes/bearbeitung'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ImpressumRouteImport } from './routes/impressum'
@@ -27,6 +28,11 @@ import { Route as ApiTelefonSprechenRouteImport } from './routes/api/telefon/spr
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuswertungRoute = AuswertungRouteImport.update({
+  id: '/auswertung',
+  path: '/auswertung',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BearbeitungRoute = BearbeitungRouteImport.update({
@@ -97,6 +103,7 @@ const ApiTelefonSprechenRoute = ApiTelefonSprechenRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auswertung': typeof AuswertungRoute
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auswertung': typeof AuswertungRoute
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
@@ -130,6 +138,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auswertung': typeof AuswertungRoute
   '/bearbeitung': typeof BearbeitungRoute
   '/datenschutz': typeof DatenschutzRoute
   '/impressum': typeof ImpressumRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auswertung'
     | '/bearbeitung'
     | '/datenschutz'
     | '/impressum'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auswertung'
     | '/bearbeitung'
     | '/datenschutz'
     | '/impressum'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/auswertung'
     | '/bearbeitung'
     | '/datenschutz'
     | '/impressum'
@@ -197,6 +209,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuswertungRoute: typeof AuswertungRoute
   BearbeitungRoute: typeof BearbeitungRoute
   DatenschutzRoute: typeof DatenschutzRoute
   ImpressumRoute: typeof ImpressumRoute
@@ -219,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auswertung': {
+      id: '/auswertung'
+      path: '/auswertung'
+      fullPath: '/auswertung'
+      preLoaderRoute: typeof AuswertungRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bearbeitung': {
@@ -317,6 +337,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuswertungRoute: AuswertungRoute,
   BearbeitungRoute: BearbeitungRoute,
   DatenschutzRoute: DatenschutzRoute,
   ImpressumRoute: ImpressumRoute,
